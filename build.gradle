@@ -42,6 +42,9 @@ dependencies {
     // spring ai
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 
+    // s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
