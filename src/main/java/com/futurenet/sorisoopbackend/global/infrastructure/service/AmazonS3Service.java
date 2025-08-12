@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 @Service
@@ -29,6 +30,7 @@ public class AmazonS3Service {
         }
 
         try {
+
             String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
@@ -38,6 +40,21 @@ public class AmazonS3Service {
 
             return amazonS3.getUrl(bucket, fileName).toString();
         } catch (IOException e) {
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_UPLOAD_FAIL);
+        }
+    }
+
+    public String uploadImage(InputStream inputStream, String folder, String extension) {
+        try {
+            String fileName = folder + "/" + UUID.randomUUID() + "." + extension;
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("image/" + extension);
+
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata));
+
+            return amazonS3.getUrl(bucket, fileName).toString();
+        } catch (Exception e) {
             throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_UPLOAD_FAIL);
         }
     }

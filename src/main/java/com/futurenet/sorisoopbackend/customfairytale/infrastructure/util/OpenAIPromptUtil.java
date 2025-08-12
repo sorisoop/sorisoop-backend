@@ -16,4 +16,17 @@ public class OpenAIPromptUtil {
         -  ``` json ``` 이런거도 다 빼고 오로지 [{ "page": 1, "content": "..." }, ... ] 양식으로만
         """, age);
     }
+
+    public static String makeCustomFairyTaleImagePrompt(String content) {
+        return String.format("""
+        Create a children's book style illustration for the following scene:
+
+        "%s"
+
+        - Use a warm, soft, and dreamy watercolor or pastel style
+        - The illustration should match the atmosphere of the scene
+        - Emphasize a magical and emotional tone suitable for kids
+        - Keep the visual style consistent with the rest of the story
+        """, content);
+    }
 }
