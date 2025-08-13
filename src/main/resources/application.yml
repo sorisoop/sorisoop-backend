@@ -6,6 +6,8 @@ spring:
     name: sorisoop-backend
   config:
     import: optional:file:.env[.properties]
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
   ai:
     openai:
       api-key: ${OPEN_AI_KEY}
