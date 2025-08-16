@@ -5,12 +5,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
+import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResponse;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.OpenAIPromptUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.exception.GlobalErrorCode;
 import com.futurenet.sorisoopbackend.global.exception.RestApiException;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.image.ImagePrompt;
@@ -28,6 +30,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
@@ -49,7 +52,9 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         }
 
         String userImageUrl = amazonS3Service.uploadImage(image, FolderNameConstant.USER_DRAWING);
-        String prompt = OpenAIPromptUtil.makeCustomFairyTaleScriptPrompt(5);
+
+        String characterGuide;
+        List<MakeCustomFairyTaleDto> pages;
 
         try {
             URL imageUrl = URI.create(userImageUrl).toURL();
@@ -57,8 +62,51 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
                     .map(MimeType::valueOf)
                     .orElseThrow(() -> new RestApiException(GlobalErrorCode.INVALID_CONTENT_TYPE));
 
+            characterGuide = extractCharacterGuide(imageUrl, mimeType);
+            log.info("characterGuide1: {}", characterGuide);
+            pages = generateCustomFairyTaleScript(imageUrl, mimeType);
+
+        } catch (MalformedURLException e) {
+            throw new RestApiException(GlobalErrorCode.INVALID_URL);
+        }
+
+        return generateCustomFairyTaleImage(pages, characterGuide).stream()
+                .map(page -> new MakeCustomFairyTaleResponse(
+                        page.getPage(),
+                        page.getImageUrl(),
+                        page.getContent_kr()
+                ))
+                .toList();
+    }
+
+    /**
+     * 등장인물 정보 추출
+     * */
+    public String extractCharacterGuide(URL imageUrl, MimeType mimeType) {
+        String characterGuidePrompt = OpenAIPromptUtil.makeCharacterInfoPrompt();
+
+        ChatResponse characterResponse = chatClient.prompt()
+                .user(u -> u.text(characterGuidePrompt).media(mimeType, imageUrl))
+                .call()
+                .chatResponse();
+
+        if (characterResponse == null) {
+            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.OPENAI_CHARACTER_EXTRACT_RESPONSE_NULL);
+        }
+
+        return characterResponse.getResult().getOutput().getText();
+    }
+
+
+    /**
+     * 사용자 그림 기반 7페이지 분량 대본 생성
+     * */
+    public List<MakeCustomFairyTaleDto> generateCustomFairyTaleScript(URL imageUrl, MimeType mimeType) {
+        String contentPrompt = OpenAIPromptUtil.makeCustomFairyTaleScriptPrompt(5);
+
+        try {
             ChatResponse chatResponse = chatClient.prompt()
-                    .user(u -> u.text(prompt).media(mimeType, imageUrl))
+                    .user(u -> u.text(contentPrompt).media(mimeType, imageUrl))
                     .call()
                     .chatResponse();
 
@@ -69,43 +117,58 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
             String resultJson = chatResponse.getResult().getOutput().getText();
 
             ObjectMapper objectMapper = new ObjectMapper();
-            List<MakeCustomFairyTaleResponse> pages = objectMapper.readValue(resultJson, new TypeReference<List<MakeCustomFairyTaleResponse>>() {});
+            return objectMapper.readValue(resultJson, new TypeReference<List<MakeCustomFairyTaleDto>>() {});
 
-            for (MakeCustomFairyTaleResponse page : pages) {
-                String imagePrompt = OpenAIPromptUtil.makeCustomFairyTaleImagePrompt(page.getContent());
-
-                try {
-                    ImageResponse imageResponse = openAiImageModel.call(
-                            new ImagePrompt(imagePrompt, OpenAiImageOptions.builder()
-                                    .quality("standard")
-                                    .N(1)
-                                    .width(1024)
-                                    .height(1024)
-                                    .build()
-                            )
-                    );
-
-                    String imageUrlFromOpenAI = imageResponse.getResult().getOutput().getUrl();
-
-                    try (InputStream openAiImageStream = URI.create(imageUrlFromOpenAI).toURL().openStream()) {
-                        String s3Url = amazonS3Service.uploadImage(
-                                openAiImageStream,
-                                FolderNameConstant.CUSTOM_FAIRY_TALE,
-                                "png"
-                        );
-                        page.setImageUrl(s3Url);
-                    }
-                } catch (Exception e) {
-                    throw new CustomFairyTaleException(CustomFairyTaleErrorCode.OPENAI_IMAGE_GENERATE_FAIL);
-                }
-            }
-
-            return pages;
-
-        } catch (MalformedURLException e) {
-            throw new RestApiException(GlobalErrorCode.INVALID_URL);
         } catch (JsonProcessingException e) {
             throw new RestApiException(GlobalErrorCode.JSON_PROCESSING_FAIL);
         }
     }
+
+
+    /**
+     * 동화 이미지 생성
+     * */
+    public List<MakeCustomFairyTaleDto> generateCustomFairyTaleImage(List<MakeCustomFairyTaleDto> pages, String characterGuide) {
+
+        for (MakeCustomFairyTaleDto page : pages) {
+
+            String imagePrompt = OpenAIPromptUtil.makeCustomFairyTaleImagePrompt(characterGuide, page.getContent_en());
+
+            try {
+                ImageResponse imageResponse = openAiImageModel.call(
+                        new ImagePrompt(imagePrompt, OpenAiImageOptions.builder()
+                                .quality("standard")
+                                .N(1)
+                                .width(1024)
+                                .height(1024)
+                                .build()
+                        )
+                );
+
+                String imageUrlFromOpenAI = imageResponse.getResult().getOutput().getUrl();
+
+                try (InputStream openAiImageStream = URI.create(imageUrlFromOpenAI).toURL().openStream()) {
+                    String s3Url = amazonS3Service.uploadImage(
+                            openAiImageStream,
+                            FolderNameConstant.CUSTOM_FAIRY_TALE,
+                            "png"
+                    );
+                    page.setImageUrl(s3Url);
+
+                    if (page.getPage() == 1) {
+                        URL s3ImageUrl = URI.create(s3Url).toURL();
+                        MimeType mimeType = MimeType.valueOf("image/png");
+                        characterGuide = extractCharacterGuide(s3ImageUrl, mimeType);
+
+                        log.info("characterGuide2: {}", characterGuide);
+                    }
+                }
+            } catch (Exception e) {
+                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.OPENAI_IMAGE_GENERATE_FAIL);
+            }
+        }
+
+        return pages;
+    }
+
 }
