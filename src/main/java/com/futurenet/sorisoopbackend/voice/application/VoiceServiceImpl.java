@@ -1,7 +1,8 @@
 package com.futurenet.sorisoopbackend.voice.application;
 
-import com.futurenet.sorisoopbackend.voice.domain.VoiceMapper;
-import com.futurenet.sorisoopbackend.voice.dto.response.VoiceResponse;
+import com.futurenet.sorisoopbackend.voice.domain.VoiceRepository;
+import com.futurenet.sorisoopbackend.voice.dto.request.AddVoiceRequest;
+import com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +14,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VoiceServiceImpl implements VoiceService{
 
-    private final VoiceMapper voiceMapper;
+    private final VoiceRepository voiceRepository;
 
     @Transactional
     @Override
-    public List<VoiceResponse> getVoiceList(Long profileId) {
-        List<VoiceResponse> voices = voiceMapper.getVoiceList(profileId);
+    public List<GetVoiceResponse> getVoiceList(Long profileId) {
+        List<GetVoiceResponse> voices = voiceRepository.getVoiceList(profileId);
         return voices != null ? voices : Collections.emptyList();
     }
+
+    @Transactional
+    @Override
+    public void addVoice(AddVoiceRequest request, String voiceUrl) {
+        request.setTtsUrl(voiceUrl);
+        voiceRepository.saveVoice(request);
+    }
+
 }
