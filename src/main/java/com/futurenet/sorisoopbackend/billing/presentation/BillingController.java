@@ -1,15 +1,13 @@
 package com.futurenet.sorisoopbackend.billing.presentation;
 
 import com.futurenet.sorisoopbackend.billing.application.BillingService;
+import com.futurenet.sorisoopbackend.billing.dto.request.RegisterCardRequest;
 import com.futurenet.sorisoopbackend.billing.dto.response.CardStatusResponse;
 import com.futurenet.sorisoopbackend.billing.dto.response.CustomerKeyResponse;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/billing")
@@ -41,4 +39,14 @@ public class BillingController {
         return ResponseEntity.ok(new ApiResponse<>("BI100", "활성화 된 카드 조회 성공", result));
     }
 
+    /**
+     * 카드 등록 API
+     * - Toss에서 받은 authKey를 사용해 billingKey를 발급받아 DB에 저장
+     */
+    @PostMapping("/register-card")
+    public ResponseEntity<?> registerCard(@RequestBody RegisterCardRequest request) {
+        Long memberId = 1L; // TODO: 시큐리티 적용
+        billingService.registerCard(memberId, request.getCustomerKey(), request.getAuthKey());
+        return ResponseEntity.ok(new ApiResponse<>("BI100", "카드 등록 성공", null));
+    }
 }
