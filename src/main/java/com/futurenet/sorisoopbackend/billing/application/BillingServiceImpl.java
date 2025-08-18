@@ -1,6 +1,7 @@
 package com.futurenet.sorisoopbackend.billing.application;
 
 import com.futurenet.sorisoopbackend.billing.domain.BillingRepository;
+import com.futurenet.sorisoopbackend.billing.dto.response.CardStatusResponse;
 import com.futurenet.sorisoopbackend.billing.dto.response.CustomerKeyResponse;
 import com.futurenet.sorisoopbackend.billing.util.CustomerKeyUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,12 @@ public class BillingServiceImpl implements BillingService {
         billingRepository.updateCustomerKey(memberId, newKey);
 
         return new CustomerKeyResponse(newKey);
+    }
+
+    @Override
+    public CardStatusResponse hasActiveCard(Long memberId) {
+        int count = billingRepository.hasActiveCard(memberId);
+        boolean exists = count > 0;
+        return new CardStatusResponse(exists);
     }
 }

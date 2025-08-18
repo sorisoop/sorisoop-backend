@@ -16,5 +16,13 @@
         WHERE ID = #{memberId}
     </update>
 
+    <select id="hasActiveCard" parameterType="long" resultType="int">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_ACTIVE = 'Y'
+    </select>
+
+
 
 </mapper>

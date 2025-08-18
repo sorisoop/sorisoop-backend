@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Param;
 public interface BillingRepository {
     String getCustomerKeyByMemberId(@Param("memberId") Long memberId);
     void updateCustomerKey(@Param("memberId") Long memberId, @Param("customerKey") String customerKey);
+    int hasActiveCard(@Param("memberId") Long memberId);
 }
