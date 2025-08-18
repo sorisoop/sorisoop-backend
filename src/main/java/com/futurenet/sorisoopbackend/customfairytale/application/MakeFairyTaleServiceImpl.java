@@ -22,7 +22,6 @@ import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -47,12 +46,6 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
     @Override
     public List<MakeCustomFairyTaleResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request) {
-
-//        if (image == null || image.isEmpty()) {
-//            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.IMAGE_FILE_NULL);
-//        }
-
-     //   String userImageUrl = amazonS3Service.uploadImage(image, FolderNameConstant.USER_DRAWING);
 
         String characterGuide;
         List<MakeCustomFairyTaleDto> pages;
@@ -157,6 +150,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
                     page.setImageUrl(s3Url);
 
                     if (page.getPage() == 1) {
+                        log.info("imageUrl: {}", s3Url);
                         URL s3ImageUrl = URI.create(s3Url).toURL();
                         MimeType mimeType = MimeType.valueOf("image/png");
                         characterGuide = extractCharacterGuide(s3ImageUrl, mimeType);

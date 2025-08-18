@@ -13,6 +13,7 @@ public class CustomFairyTaleProducer {
     private final RabbitTemplate rabbitTemplate;
 
     public void sendMakeFairyTaleRequest(MakeCustomFairyTaleRequest request) {
+
         rabbitTemplate.convertAndSend(
                 RabbitConfig.FAIRYTALE_EXCHANGE,
                 RabbitConfig.FAIRYTALE_ROUTING_KEY,

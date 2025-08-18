@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum InfrastructureErrorCode implements ErrorCode {
 
-    S3_FILE_UPLOAD_FAIL("IF000", "S3 파일 업로드 실패", HttpStatus.BAD_REQUEST);
+    S3_FILE_UPLOAD_FAIL("IF000", "S3 파일 업로드 실패", HttpStatus.BAD_REQUEST),
+    IMAGE_FILE_NULL("IF001", "이미지가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
