@@ -5,7 +5,20 @@
         INSERT INTO voice (profile_id, title, image_url, tts_url, created_at, created_by)
         VALUES (#{profileId}, #{title}, #{imageUrl}, #{ttsUrl}, SYSDATE, #{profileId})
     </insert>
-
+    <update id="updateVoiceInfo">
+        UPDATE voice
+        <set>
+            <if test="request.title != null">
+                title = #{request.title},
+            </if>
+            <if test="request.imageUrl != null">
+                image_url = #{request.imageUrl},
+            </if>
+            updated_at = SYSDATE,
+            updated_by = #{request.profileId}
+        </set>
+        WHERE id = #{voiceId}
+    </update>
 
     <select id="getVoiceList" resultType="com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse">
         SELECT id, profile_id AS profileId, image_url AS imageUrl, title

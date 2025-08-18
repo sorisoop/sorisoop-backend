@@ -6,6 +6,7 @@ import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Servi
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.voice.application.VoiceService;
 import com.futurenet.sorisoopbackend.voice.dto.request.AddVoiceRequest;
+import com.futurenet.sorisoopbackend.voice.dto.request.UpdateVoiceInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,5 +37,10 @@ public class VoiceController {
         return ResponseEntity.ok(new ApiResponse<>("VO101", "목소리 등록 완료", null));
     }
 
+    @PatchMapping("/{voiceId}")
+    public ResponseEntity<?> updateVoiceInfo(@PathVariable Long voiceId, @RequestBody UpdateVoiceInfoRequest request){
+        voiceService.updateVoiceInfo(voiceId, request);
+        return ResponseEntity.ok(new ApiResponse<>("VO102", "목소리 정보 수정 완료", null));
+    }
 
 }
