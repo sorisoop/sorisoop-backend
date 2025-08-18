@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.billing.domain.BillingRepository">
+
+    <select id="getCustomerKeyByMemberId" parameterType="long" resultType="string">
+        SELECT CUSTOMER_KEY
+        FROM MEMBER
+        WHERE ID = #{memberId}
+    </select>
+
+    <update id="updateCustomerKey">
+        UPDATE MEMBER
+        SET CUSTOMER_KEY = #{customerKey},
+            UPDATED_AT = SYSDATE,
+            UPDATED_BY = #{memberId}
+        WHERE ID = #{memberId}
+    </update>
+
+
+</mapper>
