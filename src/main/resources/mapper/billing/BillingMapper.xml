@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.billing.domain.BillingRepository">
+
+    <select id="getCustomerKeyByMemberId" parameterType="long" resultType="string">
+        SELECT CUSTOMER_KEY
+        FROM MEMBER
+        WHERE ID = #{memberId}
+    </select>
+
+    <update id="updateCustomerKey">
+        UPDATE MEMBER
+        SET CUSTOMER_KEY = #{customerKey},
+            UPDATED_AT   = SYSDATE,
+            UPDATED_BY   = #{memberId}
+        WHERE ID = #{memberId}
+    </update>
+
+    <select id="hasActiveCard" parameterType="long" resultType="int">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_ACTIVE = 'Y'
+    </select>
+
+    <update id="deactivateCards">
+        UPDATE BILLING_CARD
+        SET IS_ACTIVE  = 'N',
+            UPDATED_AT = SYSDATE,
+            UPDATED_BY = #{memberId}
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_ACTIVE = 'Y'
+    </update>
+
+    <insert id="insertBillingCard">
+        INSERT INTO BILLING_CARD
+            (MEMBER_ID, BILLING_KEY, CARD_COMPANY, CARD_NUMBER, IS_ACTIVE, CREATED_AT, CREATED_BY)
+        VALUES
+            (#{memberId}, #{billingKey}, #{cardCompany}, #{cardNumber}, 'Y', SYSDATE, #{memberId})
+    </insert>
+
+    <select id="existsCard" resultType="int">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND CARD_COMPANY = #{issuerName}
+          AND CARD_NUMBER = #{cardNumber}
+    </select>
+
+</mapper>
