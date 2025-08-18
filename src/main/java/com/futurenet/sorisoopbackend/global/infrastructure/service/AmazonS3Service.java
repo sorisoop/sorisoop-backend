@@ -81,4 +81,26 @@ public class AmazonS3Service {
         }
     }
 
+    public void deleteFile(String ttsUrl){
+        try{
+            String bucketName = extractBucketName(ttsUrl);
+            String key = extractKey(ttsUrl);
+
+            amazonS3.deleteObject(bucketName, key);
+        }
+        catch (Exception e){
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_DELECT_FAIL);
+        }
+    }
+
+    // Url에서 bucket, key 추출하는 유틸
+    private String extractBucketName(String fileUrl) {
+        String host = fileUrl.split("\\.s3")[0];
+        return host.substring(host.lastIndexOf("/") + 1);
+    }
+
+    private String extractKey(String fileUrl) {
+        return fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + 15);
+    }
+
 }

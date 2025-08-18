@@ -43,4 +43,9 @@ public class VoiceController {
         return ResponseEntity.ok(new ApiResponse<>("VO102", "목소리 정보 수정 완료", null));
     }
 
+    @DeleteMapping("/{voiceId}")
+    public ResponseEntity<?> delectVoice(@PathVariable Long voiceId) {
+        voiceService.delectVoice(voiceId);
+        return ResponseEntity.ok(new ApiResponse<>("VO103", "목소리 삭제 완료", null));
+    }
 }

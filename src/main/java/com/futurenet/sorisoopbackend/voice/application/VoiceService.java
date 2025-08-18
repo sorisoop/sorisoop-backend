@@ -10,4 +10,5 @@ public interface VoiceService {
     List<GetVoiceResponse> getVoiceList(Long profileId);
     void addVoice(AddVoiceRequest request, String voiceUrl);
     void updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request);
+    void delectVoice(Long voiceId);
 }
