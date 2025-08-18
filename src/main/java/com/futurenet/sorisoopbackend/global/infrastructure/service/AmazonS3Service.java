@@ -63,4 +63,22 @@ public class AmazonS3Service {
         String contentType = file.getContentType();
         return contentType != null && contentType.startsWith("image/");
     }
+
+    public String uploadAudio(MultipartFile file, String folder) {
+        if (file.getContentType() == null || !file.getContentType().startsWith("audio/")) {
+            throw new IllegalArgumentException("음성 파일만 업로드 가능합니다.");
+        }
+        try {
+            String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata));
+            return amazonS3.getUrl(bucket, fileName).toString();
+        } catch (IOException e) {
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_UPLOAD_FAIL);
+        }
+    }
+
 }
