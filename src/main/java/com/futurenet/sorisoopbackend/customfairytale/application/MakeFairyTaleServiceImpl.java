@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
 import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleDto;
+import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairyTaleRequest;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResponse;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.OpenAIPromptUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
@@ -45,20 +46,20 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
     }
 
     @Override
-    public List<MakeCustomFairyTaleResponse> createCustomFairyTale(MultipartFile image) {
+    public List<MakeCustomFairyTaleResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request) {
 
-        if (image == null || image.isEmpty()) {
-            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.IMAGE_FILE_NULL);
-        }
+//        if (image == null || image.isEmpty()) {
+//            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.IMAGE_FILE_NULL);
+//        }
 
-        String userImageUrl = amazonS3Service.uploadImage(image, FolderNameConstant.USER_DRAWING);
+     //   String userImageUrl = amazonS3Service.uploadImage(image, FolderNameConstant.USER_DRAWING);
 
         String characterGuide;
         List<MakeCustomFairyTaleDto> pages;
 
         try {
-            URL imageUrl = URI.create(userImageUrl).toURL();
-            MimeType mimeType = Optional.ofNullable(image.getContentType())
+            URL imageUrl = URI.create(request.getImageUrl()).toURL();
+            MimeType mimeType = Optional.ofNullable(request.getImageContentType())
                     .map(MimeType::valueOf)
                     .orElseThrow(() -> new RestApiException(GlobalErrorCode.INVALID_CONTENT_TYPE));
 

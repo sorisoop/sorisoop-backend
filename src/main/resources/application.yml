@@ -18,6 +18,11 @@ spring:
       image:
         options:
           model: dall-e-3
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
 
 cloud:
   aws:
