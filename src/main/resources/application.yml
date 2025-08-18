@@ -23,6 +23,8 @@ spring:
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
+  jwt:
+    secret: ${JWT_SECRET}
 
 cloud:
   aws:
@@ -36,3 +38,9 @@ cloud:
       bucket: ${S3_BUCKET_NAME}
     stack:
       auto: false
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+
+billing:
+  customer-key-secret: ${CUSTOMER_KEY_SECRET}
