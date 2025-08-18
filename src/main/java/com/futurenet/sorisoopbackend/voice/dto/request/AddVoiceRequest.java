@@ -1,15 +1,17 @@
-package com.futurenet.sorisoopbackend.voice.dto.response;
+package com.futurenet.sorisoopbackend.voice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoiceResponse {
-    private Long id;
+public class AddVoiceRequest {
     private Long profileId;
-    private String imageUrl;
     private String title;
+    private String imageUrl;
+    @Setter
+    private String ttsUrl;
 }

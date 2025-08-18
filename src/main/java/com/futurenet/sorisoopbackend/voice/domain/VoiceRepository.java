@@ -1,11 +1,14 @@
-package com.futurenet.sorisoopbackend.voice.application;
+package com.futurenet.sorisoopbackend.voice.domain;
 
 import com.futurenet.sorisoopbackend.voice.dto.request.AddVoiceRequest;
 import com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-public interface VoiceService {
+@Mapper
+public interface VoiceRepository {
     List<GetVoiceResponse> getVoiceList(Long profileId);
-    void addVoice(AddVoiceRequest request, String voiceUrl);
+    void saveVoice(AddVoiceRequest request);
+
 }
