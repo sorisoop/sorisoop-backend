@@ -43,7 +43,7 @@ public class BillingController {
      * 카드 등록 API
      * - Toss에서 받은 authKey를 사용해 billingKey를 발급받아 DB에 저장
      */
-    @PostMapping("/register-card")
+    @PostMapping("/card")
     public ResponseEntity<?> registerCard(@RequestBody RegisterCardRequest request) {
         Long memberId = 1L; // TODO: 시큐리티 적용
         billingService.registerCard(memberId, request.getCustomerKey(), request.getAuthKey());
