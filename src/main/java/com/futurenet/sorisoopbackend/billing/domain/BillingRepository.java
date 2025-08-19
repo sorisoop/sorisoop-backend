@@ -20,5 +20,7 @@ public interface BillingRepository {
     void updateCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
     List<CreditCardResponse> getCreditCardsByMemberId(@Param("memberId") Long memberId);
     void insertCard(@Param("memberId") Long memberId, @Param("card") BrandPayCardResponse card);
+    BillingCard getCardById(@Param("memberId") Long memberId, @Param("cardId") Long cardId);
+    int deleteCard(@Param("memberId") Long memberId, @Param("cardId") Long cardId);
 
 }

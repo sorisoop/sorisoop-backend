@@ -89,4 +89,34 @@
           AND IS_ACTIVE = 'Y'
     </update>
 
+    <select id="getCardById" resultType="com.futurenet.sorisoopbackend.billing.domain.BillingCard">
+        SELECT ID            as id,
+               MEMBER_ID     as memberId,
+               METHOD_KEY    as methodKey,
+               CARD_NAME     as cardName,
+               CARD_NUMBER   as cardNumber,
+               ACQUIRER_CODE as acquirerCode,
+               CARD_TYPE     as cardType,
+               STATUS        as status,
+               ICON_URL      as iconUrl,
+               CARD_IMG_URL  as cardImgUrl,
+               COLOR_BG      as colorBg,
+               COLOR_TEXT    as colorText,
+               IS_ACTIVE     as isActive,
+               CREATED_AT    as createdAt,
+               UPDATED_AT    as updatedAt,
+               CREATED_BY    as createdBy,
+               UPDATED_BY    as updatedBy
+        FROM BILLING_CARD
+        WHERE ID = #{cardId}
+          AND MEMBER_ID = #{memberId}
+    </select>
+
+    <delete id="deleteCard">
+        DELETE
+        FROM BILLING_CARD
+        WHERE ID = #{cardId}
+          AND MEMBER_ID = #{memberId}
+    </delete>
+
 </mapper>

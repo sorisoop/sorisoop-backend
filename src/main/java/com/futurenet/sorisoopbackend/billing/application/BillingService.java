@@ -22,4 +22,5 @@ public interface BillingService {
     List<CreditCardResponse> getCreditCards(Long memberId);                  // 카드 조회
 
     CardStatusResponse hasActiveCard(Long memberId);
+    void deleteCard(Long memberId, Long cardId);
 }

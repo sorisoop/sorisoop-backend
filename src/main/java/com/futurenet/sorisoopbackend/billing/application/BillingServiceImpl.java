@@ -2,6 +2,7 @@ package com.futurenet.sorisoopbackend.billing.application;
 
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingException;
+import com.futurenet.sorisoopbackend.billing.domain.BillingCard;
 import com.futurenet.sorisoopbackend.billing.domain.BillingRepository;
 import com.futurenet.sorisoopbackend.billing.dto.response.*;
 import com.futurenet.sorisoopbackend.billing.infrastructure.TossClient;
@@ -72,6 +73,21 @@ public class BillingServiceImpl implements BillingService {
     @Transactional(readOnly = true)
     public List<CreditCardResponse> getCreditCards(Long memberId) {
         return billingRepository.getCreditCardsByMemberId(memberId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCard(Long memberId, Long cardId) {
+        BillingCard card = billingRepository.getCardById(memberId, cardId);
+        if(card==null) throw new BillingException(BillingErrorCode.NOT_FOUND_CARD);
+
+        CustomerTokenResponse token = billingRepository.getCustomerTokenByMemberId(memberId);
+        if (token == null) throw new BillingException(BillingErrorCode.NOT_FOUND_CUSTOMER_TOKEN);
+
+        tossClient.deletePaymentMethod(token.getAccessToken(), card.getMethodKey());
+
+        int deleted = billingRepository.deleteCard(memberId, cardId);
+        if (deleted == 0) throw new BillingException(BillingErrorCode.NOT_FOUND_CARD);
     }
 
     @Override

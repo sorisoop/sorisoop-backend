@@ -90,4 +90,27 @@ public class TossClient {
         }
     }
 
+    public void deletePaymentMethod(String customerToken, String methodKey) {
+        String url = TOSS_BASE_URL + "/brandpay/payments/methods/card/remove";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(customerToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("methodKey", methodKey);
+        log.info("Deleting card with token={}, methodKey={}", customerToken, methodKey);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+        log.info("Toss delete request headers={}, body={}", entity.getHeaders(), entity.getBody());
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+            log.info("Delete response: {}", response.getBody());
+        } catch (HttpStatusCodeException e) {
+            log.error("Failed to delete payment method: {}", e.getResponseBodyAsString());
+            throw new BillingException(BillingErrorCode.BILLING_CARD_DELETE_FAIL);
+        }
+    }
+
 }

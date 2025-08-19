@@ -63,6 +63,16 @@ public class BillingController {
     }
 
     /**
+     * 카드 삭제 API
+     */
+    @DeleteMapping("/card")
+    public ResponseEntity<?> deleteCard(@RequestParam Long cardId) {
+        Long memberId = 1L; // TODO: 시큐리티 적용
+        billingService.deleteCard(memberId, cardId);
+        return ResponseEntity.ok(new ApiResponse<>("BI100", "카드 삭제 성공", null));
+    }
+
+    /**
      * 활성화된 결제 카드 존재 여부 조회 API
      * - 회원이 등록한 카드 중 is_active = 'Y' 상태가 존재하는지 확인
      */
@@ -73,3 +83,5 @@ public class BillingController {
         return ResponseEntity.ok(new ApiResponse<>("BI100", "활성화 된 카드 조회 성공", result));
     }
 }
+
+
