@@ -60,19 +60,22 @@ public class BillingServiceImpl implements BillingService {
         List<BrandPayCardResponse> creditCards =
                 tossClient.getPaymentMethods(customerKey, token.getAccessToken());
 
+
         billingRepository.deactivateCards(memberId);
 
-        creditCards.forEach(card -> {
-            if (billingRepository.existsCard(memberId, card.getMethodKey()) == 0) {
-                billingRepository.insertCard(memberId, card);
-            }
-        });
+        creditCards.stream()
+                .filter(card -> "ENABLED".equals(card.getStatus()))
+                .forEach(card -> {
+                    if (billingRepository.existsCard(memberId, card.getMethodKey()) == 0) {
+                        billingRepository.insertCard(memberId, card);
+                    }
+                });
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CreditCardResponse> getCreditCards(Long memberId) {
-        return billingRepository.getCreditCardsByMemberId(memberId);
+    public List<CreditCardResponse> getCards(Long memberId) {
+        return billingRepository.getCardsByMemberId(memberId);
     }
 
     @Override

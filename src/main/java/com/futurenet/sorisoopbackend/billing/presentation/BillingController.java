@@ -39,16 +39,15 @@ public class BillingController {
     // ────────────────────────────────
 
     /**
-     * Brandpay Redirect Callback (카드 등록)
+     * Brandpay Redirect Callback (토큰 저장)
      * - 토스가 리다이렉트 시켜줄 때 customerKey + code를 쿼리스트링으로 전달
-     * - 여기서 customerToken을 발급받아 DB 저장 후 카드 등록
+     * - 여기서 customerToken을 발급받아 저장
      */
     @GetMapping("/callback-auth")
-    public ResponseEntity<?> registerCard(@RequestParam String customerKey,
-                                          @RequestParam String code) {
+    public ResponseEntity<?> callBackAuth(@RequestParam String customerKey,
+                                     @RequestParam String code) {
         Long memberId = 1L; // TODO: 시큐리티 적용
         billingService.handleBrandpayAuth(memberId, customerKey, code);
-        billingService.registerCard(memberId);
         return ResponseEntity.ok(new ApiResponse<>("BI100", "브랜드페이 인증 성공", null));
     }
 
@@ -58,8 +57,19 @@ public class BillingController {
     @GetMapping("/card")
     public ResponseEntity<?> getCards() {
         Long memberId = 1L; // TODO: 시큐리티 적용
-        List<CreditCardResponse> result = billingService.getCreditCards(memberId);
+        List<CreditCardResponse> result = billingService.getCards(memberId);
         return ResponseEntity.ok(new ApiResponse<>("BI100", "카드 조회 성공", result));
+    }
+
+    /**
+     * 카드 직접 등록 API
+     *
+     */
+    @PostMapping("/card")
+    public ResponseEntity<?> registerCard() {
+        Long memberId = 1L; // TODO: 시큐리티 적용
+        billingService.registerCard(memberId);
+        return ResponseEntity.ok(new ApiResponse<>("BI100", "카드 등록 성공", null));
     }
 
     /**
@@ -83,5 +93,3 @@ public class BillingController {
         return ResponseEntity.ok(new ApiResponse<>("BI100", "활성화 된 카드 조회 성공", result));
     }
 }
-
-

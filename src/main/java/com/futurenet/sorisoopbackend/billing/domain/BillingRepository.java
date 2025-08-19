@@ -18,7 +18,7 @@ public interface BillingRepository {
     CustomerTokenResponse getCustomerTokenByMemberId(@Param("memberId") Long memberId);
     void insertCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
     void updateCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
-    List<CreditCardResponse> getCreditCardsByMemberId(@Param("memberId") Long memberId);
+    List<CreditCardResponse> getCardsByMemberId(@Param("memberId") Long memberId);
     void insertCard(@Param("memberId") Long memberId, @Param("card") BrandPayCardResponse card);
     BillingCard getCardById(@Param("memberId") Long memberId, @Param("cardId") Long cardId);
     int deleteCard(@Param("memberId") Long memberId, @Param("cardId") Long cardId);

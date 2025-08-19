@@ -19,7 +19,7 @@ public interface BillingService {
 
     void registerCard(Long memberId);                                        // 카드 등록
 
-    List<CreditCardResponse> getCreditCards(Long memberId);                  // 카드 조회
+    List<CreditCardResponse> getCards(Long memberId);                  // 카드 조회
 
     CardStatusResponse hasActiveCard(Long memberId);
     void deleteCard(Long memberId, Long cardId);
