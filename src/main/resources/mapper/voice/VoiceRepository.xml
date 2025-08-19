@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.voice.domain.VoiceRepository">
+    <insert id="saveVoice">
+        INSERT INTO voice (profile_id, title, image_url, tts_url, created_at, created_by)
+        VALUES (#{profileId}, #{title}, #{imageUrl}, #{ttsUrl}, SYSDATE, #{profileId})
+    </insert>
+
+    <update id="updateVoiceInfo">
+        UPDATE voice
+        <set>
+            <if test="request.title != null">
+                title = #{request.title},
+            </if>
+            <if test="request.imageUrl != null">
+                image_url = #{request.imageUrl},
+            </if>
+            updated_at = SYSDATE,
+            updated_by = #{request.profileId}
+        </set>
+        WHERE id = #{voiceId}
+    </update>
+
+    <select id="getVoiceList" resultType="com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse">
+        SELECT id, profile_id AS profileId, image_url AS imageUrl, title
+        FROM voice
+        WHERE profile_id = #{profileId}
+    </select>
+
+    <select id="getVoiceForDelete" resultType="com.futurenet.sorisoopbackend.voice.dto.response.DeleteVoiceResponse">
+        SELECT id, tts_url AS ttsUrl
+        FROM voice
+        WHERE id = #{voiceId}
+    </select>
+
+    <delete id="deleteVoice">
+        DELETE FROM voice WHERE id = #{voiceId}
+    </delete>
+</mapper>

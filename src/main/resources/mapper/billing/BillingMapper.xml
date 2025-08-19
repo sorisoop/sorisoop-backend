@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.billing.domain.BillingRepository">
+
+    <select id="getCustomerKeyByMemberId" parameterType="long" resultType="string">
+        SELECT CUSTOMER_KEY
+        FROM MEMBER
+        WHERE ID = #{memberId}
+    </select>
+
+    <update id="updateCustomerKey">
+        UPDATE MEMBER
+        SET CUSTOMER_KEY = #{customerKey},
+            UPDATED_AT   = SYSDATE,
+            UPDATED_BY   = #{memberId}
+        WHERE ID = #{memberId}
+    </update>
+
+    <select id="getCustomerTokenByMemberId"
+            resultType="com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse">
+        SELECT CUSTOMER_TOKEN as accessToken,
+               REFRESH_TOKEN  as refreshToken,
+               EXPIRES_AT     as expiresAt
+        FROM BRAND_PAY_TOKEN
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <insert id="insertCustomerToken">
+        INSERT INTO BRAND_PAY_TOKEN (MEMBER_ID, CUSTOMER_TOKEN, REFRESH_TOKEN, EXPIRES_AT, CREATED_AT)
+        VALUES (#{memberId},
+                #{token.accessToken},
+                #{token.refreshToken},
+                #{token.expiresAt},
+                SYSDATE)
+    </insert>
+
+    <update id="updateCustomerToken">
+        UPDATE BRAND_PAY_TOKEN
+        SET CUSTOMER_TOKEN = #{token.accessToken},
+            REFRESH_TOKEN  = #{token.refreshToken},
+            EXPIRES_AT     = #{token.expiresAt}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <select id="getCardsByMemberId"
+            resultType="com.futurenet.sorisoopbackend.billing.dto.response.CreditCardResponse">
+        SELECT ID,
+               CARD_NAME,
+               CARD_NUMBER,
+               ACQUIRER_CODE,
+               CARD_TYPE,
+               ICON_URL,
+               CARD_IMG_URL,
+               COLOR_BG,
+               COLOR_TEXT,
+               IS_ACTIVE
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="hasActiveCard" parameterType="long" resultType="int">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_ACTIVE = 'Y'
+    </select>
+
+    <select id="existsCard" resultType="int">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND METHOD_KEY = #{methodKey}
+    </select>
+
+    <insert id="insertCard">
+        INSERT INTO BILLING_CARD (MEMBER_ID, METHOD_KEY, CARD_NAME, CARD_NUMBER, ACQUIRER_CODE,
+                                  CARD_TYPE, STATUS, ICON_URL, CARD_IMG_URL, COLOR_BG, COLOR_TEXT,
+                                  IS_ACTIVE, CREATED_AT, CREATED_BY)
+        VALUES (#{memberId}, #{card.methodKey}, #{card.cardName}, #{card.cardNumber}, #{card.acquirerCode},
+                #{card.cardType}, #{card.status}, #{card.iconUrl}, #{card.cardImgUrl}, #{card.colorBg},
+                #{card.colorText}, 'Y', SYSDATE, #{memberId})
+    </insert>
+
+    <update id="deactivateCards">
+        UPDATE BILLING_CARD
+        SET IS_ACTIVE  = 'N',
+            UPDATED_AT = SYSDATE,
+            UPDATED_BY = #{memberId}
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_ACTIVE = 'Y'
+    </update>
+
+    <select id="getCardById" resultType="com.futurenet.sorisoopbackend.billing.domain.BillingCard">
+        SELECT ID            as id,
+               MEMBER_ID     as memberId,
+               METHOD_KEY    as methodKey,
+               CARD_NAME     as cardName,
+               CARD_NUMBER   as cardNumber,
+               ACQUIRER_CODE as acquirerCode,
+               CARD_TYPE     as cardType,
+               STATUS        as status,
+               ICON_URL      as iconUrl,
+               CARD_IMG_URL  as cardImgUrl,
+               COLOR_BG      as colorBg,
+               COLOR_TEXT    as colorText,
+               IS_ACTIVE     as isActive,
+               CREATED_AT    as createdAt,
+               UPDATED_AT    as updatedAt,
+               CREATED_BY    as createdBy,
+               UPDATED_BY    as updatedBy
+        FROM BILLING_CARD
+        WHERE ID = #{cardId}
+          AND MEMBER_ID = #{memberId}
+    </select>
+
+    <delete id="deleteCard">
+        DELETE
+        FROM BILLING_CARD
+        WHERE ID = #{cardId}
+          AND MEMBER_ID = #{memberId}
+    </delete>
+
+</mapper>

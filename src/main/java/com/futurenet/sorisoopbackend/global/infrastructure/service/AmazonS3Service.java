@@ -63,4 +63,44 @@ public class AmazonS3Service {
         String contentType = file.getContentType();
         return contentType != null && contentType.startsWith("image/");
     }
+
+    public String uploadAudio(MultipartFile file, String folder) {
+        if (file.getContentType() == null || !file.getContentType().startsWith("audio/")) {
+            throw new IllegalArgumentException("음성 파일만 업로드 가능합니다.");
+        }
+        try {
+            String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata));
+            return amazonS3.getUrl(bucket, fileName).toString();
+        } catch (IOException e) {
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_UPLOAD_FAIL);
+        }
+    }
+
+    public void deleteFile(String ttsUrl){
+        try{
+            String bucketName = extractBucketName(ttsUrl);
+            String key = extractKey(ttsUrl);
+
+            amazonS3.deleteObject(bucketName, key);
+        }
+        catch (Exception e){
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_DELECT_FAIL);
+        }
+    }
+
+    // Url에서 bucket, key 추출하는 유틸
+    private String extractBucketName(String fileUrl) {
+        String host = fileUrl.split("\\.s3")[0];
+        return host.substring(host.lastIndexOf("/") + 1);
+    }
+
+    private String extractKey(String fileUrl) {
+        return fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + 15);
+    }
+
 }

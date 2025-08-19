@@ -44,3 +44,4 @@ mybatis:
 
 billing:
   customer-key-secret: ${CUSTOMER_KEY_SECRET}
+  secret-key: ${TOSS_SECRET_KEY}
