@@ -16,12 +16,69 @@
         WHERE ID = #{memberId}
     </update>
 
+    <select id="getCustomerTokenByMemberId"
+            resultType="com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse">
+        SELECT CUSTOMER_TOKEN as accessToken,
+               REFRESH_TOKEN  as refreshToken,
+               EXPIRES_AT     as expiresAt
+        FROM MEMBER_BRANDPAY_TOKEN
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <insert id="insertCustomerToken">
+        INSERT INTO BILLING_CUSTOMER_TOKEN (MEMBER_ID, CUSTOMER_TOKEN, REFRESH_TOKEN, EXPIRES_AT)
+        VALUES (#{memberId},
+                #{token.accessToken},
+                #{token.refreshToken},
+                #{token.expiresAt})
+    </insert>
+
+    <update id="updateCustomerToken">
+        UPDATE BILLING_CUSTOMER_TOKEN
+        SET CUSTOMER_TOKEN = #{token.accessToken},
+            REFRESH_TOKEN  = #{token.refreshToken},
+            EXPIRES_AT     = #{token.expiresAt}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <select id="getCreditCardsByMemberId"
+            resultType="com.futurenet.sorisoopbackend.billing.dto.response.CreditCardResponse">
+        SELECT ID,
+               CARD_NAME,
+               CARD_NUMBER,
+               ACQUIRER_CODE,
+               CARD_TYPE,
+               ICON_URL,
+               CARD_IMG_URL,
+               COLOR_BG,
+               COLOR_TEXT,
+               IS_ACTIVE
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
     <select id="hasActiveCard" parameterType="long" resultType="int">
         SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
         FROM BILLING_CARD
         WHERE MEMBER_ID = #{memberId}
           AND IS_ACTIVE = 'Y'
     </select>
+
+    <select id="existsCard" resultType="int">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND METHOD_KEY = #{methodKey}
+    </select>
+
+    <insert id="insertCard">
+        INSERT INTO BILLING_CARD (MEMBER_ID, METHOD_KEY, CARD_NAME, CARD_NUMBER, ACQUIRER_CODE,
+                                  CARD_TYPE, STATUS, ICON_URL, CARD_IMG_URL, COLOR_BG, COLOR_TEXT,
+                                  IS_ACTIVE, CREATED_AT, CREATED_BY)
+        VALUES (#{memberId}, #{card.methodKey}, #{card.cardName}, #{card.cardNumber}, #{card.acquirerCode},
+                #{card.cardType}, #{card.status}, #{card.iconUrl}, #{card.cardImgUrl}, #{card.colorBg},
+                #{card.colorText}, 'Y', SYSDATE, #{memberId})
+    </insert>
 
     <update id="deactivateCards">
         UPDATE BILLING_CARD
@@ -31,20 +88,5 @@
         WHERE MEMBER_ID = #{memberId}
           AND IS_ACTIVE = 'Y'
     </update>
-
-    <insert id="insertBillingCard">
-        INSERT INTO BILLING_CARD
-            (MEMBER_ID, BILLING_KEY, CARD_COMPANY, CARD_NUMBER, IS_ACTIVE, CREATED_AT, CREATED_BY)
-        VALUES
-            (#{memberId}, #{billingKey}, #{cardCompany}, #{cardNumber}, 'Y', SYSDATE, #{memberId})
-    </insert>
-
-    <select id="existsCard" resultType="int">
-        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
-        FROM BILLING_CARD
-        WHERE MEMBER_ID = #{memberId}
-          AND CARD_COMPANY = #{issuerName}
-          AND CARD_NUMBER = #{cardNumber}
-    </select>
 
 </mapper>

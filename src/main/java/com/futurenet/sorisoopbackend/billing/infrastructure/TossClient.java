@@ -1,9 +1,11 @@
 package com.futurenet.sorisoopbackend.billing.infrastructure;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingException;
-import com.futurenet.sorisoopbackend.billing.dto.response.BillingKeyResponse;
-import com.futurenet.sorisoopbackend.billing.dto.response.PaymentMethodsResponse;
+import com.futurenet.sorisoopbackend.billing.dto.response.BrandPayCardResponse;
+import com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,25 +15,21 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TossClient {
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper;
 
     @Value("${billing.secret-key}")
     private String secretKey;
     private static final String TOSS_BASE_URL = "https://api.tosspayments.com/v1";
 
-    /**
-     * 빌링키 발급 요청 -> 카드정보 대신 사용하는 키
-     */
-    public BillingKeyResponse issueBillingKey(String customerKey, String authKey) {
-        String url = TOSS_BASE_URL + "/billing/authorizations/issue";
+    public CustomerTokenResponse issueCustomerToken(String customerKey, String code) {
+        String url = TOSS_BASE_URL + "/brandpay/authorizations/access-token";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -39,23 +37,57 @@ public class TossClient {
         headers.set("Authorization", "Basic " + encodedAuth);
 
         Map<String, String> body = new HashMap<>();
+        body.put("grantType", "AuthorizationCode");
         body.put("customerKey", customerKey);
-        body.put("authKey", authKey);
+        body.put("code", code);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
 
         try {
-            ResponseEntity<BillingKeyResponse> response = restTemplate.exchange(
+            ResponseEntity<CustomerTokenResponse> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
                     entity,
-                    BillingKeyResponse.class
+                    CustomerTokenResponse.class
             );
             return response.getBody();
         } catch (HttpStatusCodeException e) {
+            log.error("Failed to issue customerToken: {}", e.getResponseBodyAsString());
             throw new BillingException(BillingErrorCode.BILLING_KEY_ISSUE_FAIL);
         } catch (Exception e) {
             throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
         }
     }
+
+    public List<BrandPayCardResponse> getPaymentMethods(String customerKey, String customerToken) {
+        String url = TOSS_BASE_URL + "/brandpay/payments/methods?customerKey=" + customerKey;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + customerToken);
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    String.class
+            );
+
+            JsonNode body = objectMapper.readTree(response.getBody());
+            List<BrandPayCardResponse> cards = new ArrayList<>();
+
+            if (body.has("cards")) {
+                for (JsonNode card : body.get("cards")) {
+                    cards.add(BrandPayCardResponse.of(card));
+                }
+            }
+
+            return cards;
+        } catch (Exception e) {
+            throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
+        }
+    }
+
 }
