@@ -49,7 +49,7 @@ public enum CardCompany {
     private static final Map<String, CardCompany> CODE_MAP =
             Arrays.stream(values()).collect(Collectors.toMap(CardCompany::getCode, e -> e));
 
-    public static CardCompany fromCode(String code) {
-        return CODE_MAP.getOrDefault(code, UNKNOWN);
+    public static CardCompany fromCode(String acquirerCode) {
+        return CODE_MAP.getOrDefault(acquirerCode, UNKNOWN);
     }
 }

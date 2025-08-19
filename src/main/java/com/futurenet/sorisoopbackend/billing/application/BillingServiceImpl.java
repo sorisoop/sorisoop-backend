@@ -2,19 +2,20 @@ package com.futurenet.sorisoopbackend.billing.application;
 
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingException;
+import com.futurenet.sorisoopbackend.billing.domain.BillingCard;
 import com.futurenet.sorisoopbackend.billing.domain.BillingRepository;
-import com.futurenet.sorisoopbackend.billing.domain.CardCompany;
-import com.futurenet.sorisoopbackend.billing.dto.response.BillingKeyResponse;
-import com.futurenet.sorisoopbackend.billing.dto.response.CardStatusResponse;
-import com.futurenet.sorisoopbackend.billing.dto.response.CustomerKeyResponse;
-import com.futurenet.sorisoopbackend.billing.dto.response.PaymentMethodsResponse;
+import com.futurenet.sorisoopbackend.billing.dto.response.*;
 import com.futurenet.sorisoopbackend.billing.infrastructure.TossClient;
 import com.futurenet.sorisoopbackend.billing.util.CustomerKeyUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillingServiceImpl implements BillingService {
@@ -34,30 +35,68 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    public CardStatusResponse hasActiveCard(Long memberId) {
-        int count = billingRepository.hasActiveCard(memberId);
-        boolean exists = count > 0;
-        return new CardStatusResponse(exists);
+    @Transactional
+    public void handleBrandpayAuth(Long memberId, String customerKey, String code) {
+        CustomerTokenResponse response = tossClient.issueCustomerToken(customerKey, code);
+
+        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(response.getExpiresIn());
+        response.setExpiresAt(expiresAt);
+
+        if (billingRepository.getCustomerTokenByMemberId(memberId) == null) {
+            billingRepository.insertCustomerToken(memberId, response);
+            return;
+        }
+
+        billingRepository.updateCustomerToken(memberId, response);
     }
 
     @Override
     @Transactional
-    public void registerCard(Long memberId, String customerKey, String authKey) {
-        BillingKeyResponse billingKeyResponse = tossClient.issueBillingKey(customerKey, authKey);
-        String issuerCode = billingKeyResponse.getCard().getIssuerCode();
-        String maskedNumber = billingKeyResponse.getCard().getNumber();
-        CardCompany company = CardCompany.fromCode(issuerCode);
-        String issuerName = company.getKoreanName();
+    public void registerCard(Long memberId) {
+        CustomerTokenResponse token = billingRepository.getCustomerTokenByMemberId(memberId);
+        if (token == null) throw new BillingException(BillingErrorCode.NOT_FOUND_CUSTOMER_TOKEN);
 
-        int count = billingRepository.existsCard(memberId, issuerName, maskedNumber);
-        if (count > 0) throw new BillingException(BillingErrorCode.DUPLICATE_CARD);
+        String customerKey = billingRepository.getCustomerKeyByMemberId(memberId);
+        List<BrandPayCardResponse> creditCards =
+                tossClient.getPaymentMethods(customerKey, token.getAccessToken());
+
 
         billingRepository.deactivateCards(memberId);
-        billingRepository.insertBillingCard(
-                memberId,
-                billingKeyResponse.getBillingKey(),
-                company.getKoreanName(),
-                billingKeyResponse.getCard().getNumber()
-        );
+
+        creditCards.stream()
+                .filter(card -> "ENABLED".equals(card.getStatus()))
+                .forEach(card -> {
+                    if (billingRepository.existsCard(memberId, card.getMethodKey()) == 0) {
+                        billingRepository.insertCard(memberId, card);
+                    }
+                });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CreditCardResponse> getCards(Long memberId) {
+        return billingRepository.getCardsByMemberId(memberId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCard(Long memberId, Long cardId) {
+        BillingCard card = billingRepository.getCardById(memberId, cardId);
+        if(card==null) throw new BillingException(BillingErrorCode.NOT_FOUND_CARD);
+
+        CustomerTokenResponse token = billingRepository.getCustomerTokenByMemberId(memberId);
+        if (token == null) throw new BillingException(BillingErrorCode.NOT_FOUND_CUSTOMER_TOKEN);
+
+        tossClient.deletePaymentMethod(token.getAccessToken(), card.getMethodKey());
+
+        int deleted = billingRepository.deleteCard(memberId, cardId);
+        if (deleted == 0) throw new BillingException(BillingErrorCode.NOT_FOUND_CARD);
+    }
+
+    @Override
+    public CardStatusResponse hasActiveCard(Long memberId) {
+        int count = billingRepository.hasActiveCard(memberId);
+        boolean exists = count > 0;
+        return new CardStatusResponse(exists);
     }
 }
