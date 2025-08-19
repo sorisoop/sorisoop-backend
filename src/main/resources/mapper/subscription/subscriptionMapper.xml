@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.futurenet.sorisoopbackend.payment.domain.PaymentRepository">
+<mapper namespace="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionRepository">
 
     <select id="getSubscriptionByMemberId"
             parameterType="long"
-            resultType="com.futurenet.sorisoopbackend.payment.dto.response.SubscriptionResponse">
+            resultType="com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse">
         SELECT S.STATUS,
                P.TYPE,
                S.NEXT_BILLING_AT,

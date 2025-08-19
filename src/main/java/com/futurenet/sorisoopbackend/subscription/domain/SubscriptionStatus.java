@@ -1,4 +1,4 @@
-package com.futurenet.sorisoopbackend.payment.domain;
+package com.futurenet.sorisoopbackend.subscription.domain;
 
 public enum SubscriptionStatus {
     ACTIVE,

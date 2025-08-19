@@ -1,7 +1,7 @@
-package com.futurenet.sorisoopbackend.payment.dto.response;
+package com.futurenet.sorisoopbackend.subscription.dto.response;
 
-import com.futurenet.sorisoopbackend.payment.domain.SubscriptionPlanType;
-import com.futurenet.sorisoopbackend.payment.domain.SubscriptionStatus;
+import com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlanType;
+import com.futurenet.sorisoopbackend.subscription.domain.SubscriptionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
