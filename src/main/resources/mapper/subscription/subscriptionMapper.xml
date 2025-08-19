@@ -14,5 +14,10 @@
         WHERE S.MEMBER_ID = #{memberId}
     </select>
 
+
+    <select id="getSubscriptionPlans" resultType="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan">
+        SELECT ID, TYPE, PRICE
+        FROM SUBSCRIPTION_PLAN
+    </select>
 </mapper>
 
