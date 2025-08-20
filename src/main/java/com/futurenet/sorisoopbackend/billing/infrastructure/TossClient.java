@@ -149,7 +149,6 @@ public class TossClient {
                     StandardCharsets.UTF_8
             );
 
-            log.info("결제 승인 성공: {}", responseBody);
             return objectMapper.readTree(responseBody);
         } catch (HttpStatusCodeException e) {
             log.error("결제 승인 실패: {}", e.getResponseBodyAsString());
