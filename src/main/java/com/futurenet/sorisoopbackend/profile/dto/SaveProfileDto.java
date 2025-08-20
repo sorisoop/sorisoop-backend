@@ -1,20 +1,18 @@
-package com.futurenet.sorisoopbackend.profile.dto.response;
+package com.futurenet.sorisoopbackend.profile.dto;
 
 import com.futurenet.sorisoopbackend.profile.domain.Gender;
 import com.futurenet.sorisoopbackend.profile.domain.Role;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindProfileResponse {
-    private Long id;
-    private String nickname;
+public class SaveProfileDto {
     private String profileImage;
+    private Long memberId;
+    private String nickname;
     private Role role;
     private Integer age;
     private Gender gender;

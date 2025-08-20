@@ -4,6 +4,7 @@ import com.futurenet.sorisoopbackend.auth.application.exception.AuthErrorCode;
 import com.futurenet.sorisoopbackend.auth.application.exception.AuthException;
 import com.futurenet.sorisoopbackend.auth.constant.AuthConstants;
 import com.futurenet.sorisoopbackend.auth.domain.RefreshTokenRepository;
+import com.futurenet.sorisoopbackend.auth.dto.request.SaveRefreshTokenRequest;
 import com.futurenet.sorisoopbackend.auth.util.JwtUtil;
 import com.futurenet.sorisoopbackend.auth.util.RequestUtil;
 import com.futurenet.sorisoopbackend.auth.util.ResponseUtil;
@@ -42,6 +43,12 @@ public class JwtServiceImpl implements JwtService {
 
         String newAccessToken = jwtUtil.createAccessToken("access", memberId, profileId, role, AuthConstants.ACCESS_EXPIRED);
         String newRefreshToken = jwtUtil.createRefreshToken("refresh", memberId, profileId, deviceId, AuthConstants.REFRESH_EXPIRED);
+
+        int result = refreshTokenRepository.saveRefreshToken(new SaveRefreshTokenRequest(newRefreshToken, profileId, memberId, deviceId));
+
+        if (result == 0) {
+            throw new AuthException(AuthErrorCode.TOKEN_ISSUE_FAIL);
+        }
 
         response.addHeader("Set-Cookie", ResponseUtil.createResponseCookie("Authorization", newAccessToken, AuthConstants.ACCESS_COOKIE_EXPIRED));
         response.addHeader("Set-Cookie", ResponseUtil.createResponseCookie("refresh", newRefreshToken, AuthConstants.REFRESH_COOKIE_EXPIRED));

@@ -2,6 +2,7 @@ package com.futurenet.sorisoopbackend.voice.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.voice.application.VoiceService;
@@ -32,7 +33,7 @@ public class VoiceController {
         ObjectMapper mapper = new ObjectMapper();
         AddVoiceRequest request = mapper.readValue(requestJson, AddVoiceRequest.class);
 
-        String voiceUrl = amazonS3Service.uploadAudio(voiceFile, "voices");
+        String voiceUrl = amazonS3Service.uploadAudio(voiceFile, FolderNameConstant.VOICE);
         voiceService.addVoice(request, voiceUrl);
         return ResponseEntity.ok(new ApiResponse<>("VO101", "목소리 등록 완료", null));
     }

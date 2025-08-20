@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AuthErrorCode implements ErrorCode {
 
-    REFRESH_ERROR("AU003", "리프레시 토큰 에러입니다.", HttpStatus.UNAUTHORIZED);
+    REFRESH_ERROR("AU003", "리프레시 토큰 에러입니다.", HttpStatus.UNAUTHORIZED),
+    TOKEN_ISSUE_FAIL("AU004", "토큰 발급을 실패했습니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

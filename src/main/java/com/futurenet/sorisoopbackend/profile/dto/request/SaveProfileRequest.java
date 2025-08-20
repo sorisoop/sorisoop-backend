@@ -2,6 +2,7 @@ package com.futurenet.sorisoopbackend.profile.dto.request;
 
 import com.futurenet.sorisoopbackend.profile.domain.Gender;
 import com.futurenet.sorisoopbackend.profile.domain.Role;
+import com.futurenet.sorisoopbackend.profile.dto.SaveProfileDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,17 @@ public class SaveProfileRequest {
     private String nickname;
     @NotNull
     private Role role;
-    private int age;
+    private Integer age;
     private Gender gender;
+
+    public SaveProfileDto toDto(String profileImage, Long memberId) {
+        return SaveProfileDto.builder()
+                .profileImage(profileImage)
+                .memberId(memberId)
+                .nickname(nickname)
+                .role(role)
+                .age(age)
+                .gender(gender)
+                .build();
+    }
 }
