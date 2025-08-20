@@ -12,4 +12,5 @@ public interface SubscriptionRepository {
     List<SubscriptionPlan> getSubscriptionPlans();
     SubscriptionPlan getSubscriptionPlanByType(@Param("planType") String planType);
     int insertSubscription(Subscription subscription);
+    void cancelSubscription(@Param("memberId") Long memberId);
 }

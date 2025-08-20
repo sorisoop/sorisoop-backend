@@ -53,5 +53,15 @@
                 #{createdAt},
                 #{createdBy})
     </insert>
+
+    <update id="cancelSubscription" parameterType="long">
+        UPDATE SUBSCRIPTION
+        SET STATUS       = 'CANCELLED',
+            CANCELLED_AT = NEXT_BILLING_AT,
+            UPDATED_AT   = SYSDATE,
+            UPDATED_BY   = #{memberId}
+        WHERE MEMBER_ID = #{memberId}
+          AND STATUS = 'ACTIVE'
+    </update>
 </mapper>
 

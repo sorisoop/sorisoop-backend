@@ -12,5 +12,5 @@ public interface SubscriptionService {
     SubscriptionResponse getSubscription(Long memberId);
     List<SubscriptionPlan> getSubscriptionPlans();
     SubscriptionStartResponse startSubscription(Long memberId, SubscriptionStartRequest request);
-
+    void cancelSubscription(Long memberId);
 }

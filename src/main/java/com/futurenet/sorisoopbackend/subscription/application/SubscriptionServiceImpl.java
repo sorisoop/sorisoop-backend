@@ -108,4 +108,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         return new SubscriptionStartResponse(status, type, nextBillingAt);
     }
+
+    @Override
+    public void cancelSubscription(Long memberId) {
+        subscriptionRepository.cancelSubscription(memberId);
+    }
 }
