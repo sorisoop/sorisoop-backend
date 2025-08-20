@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionRepository">
+
+    <select id="getSubscriptionByMemberId"
+            parameterType="long"
+            resultType="com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse">
+        SELECT S.STATUS,
+               P.TYPE,
+               S.NEXT_BILLING_AT,
+               S.CANCELLED_AT
+        FROM SUBSCRIPTION S
+                 JOIN SUBSCRIPTION_PLAN P ON S.SUBSCRIPTION_PLAN_ID = P.ID
+        WHERE S.MEMBER_ID = #{memberId}
+    </select>
+
+
+    <select id="getSubscriptionPlans" resultType="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan">
+        SELECT ID, TYPE, PRICE
+        FROM SUBSCRIPTION_PLAN
+    </select>
+
+    <select id="getSubscriptionPlanByType"
+            parameterType="string"
+            resultType="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan">
+        SELECT ID,
+               TYPE,
+               PRICE
+        FROM SUBSCRIPTION_PLAN
+        WHERE TYPE = #{planType}
+    </select>
+
+    <insert id="insertSubscription"
+            parameterType="com.futurenet.sorisoopbackend.subscription.domain.Subscription"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO SUBSCRIPTION (MEMBER_ID,
+                                  SUBSCRIPTION_PLAN_ID,
+                                  STATUS,
+                                  STARTED_AT,
+                                  NEXT_BILLING_AT,
+                                  LAST_APPROVED_AT,
+                                  CREATED_AT,
+                                  CREATED_BY)
+        VALUES (#{memberId},
+                #{subscriptionPlanId},
+                #{status},
+                #{startedAt},
+                #{nextBillingAt},
+                #{lastApprovedAt},
+                #{createdAt},
+                #{createdBy})
+    </insert>
+</mapper>
+
