@@ -25,6 +25,10 @@ public class AmazonS3Service {
 
     public String uploadImage(MultipartFile file, String folder) {
 
+        if (file == null || file.isEmpty()) {
+            throw new InfrastructureException(InfrastructureErrorCode.IMAGE_FILE_NULL);
+        }
+
         if (!isImage(file)) {
             throw new IllegalArgumentException("파일 형식 불일치");
         }

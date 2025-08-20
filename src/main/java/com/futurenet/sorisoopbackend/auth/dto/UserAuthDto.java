@@ -12,8 +12,9 @@ public class UserAuthDto {
     private Long profileId;
     private String role;
 
-    public UserAuthDto(Long memberId, String role) {
+    public UserAuthDto(Long memberId, String email, String role) {
         this.memberId = memberId;
+        this.email = email;
         this.role = role;
     }
 

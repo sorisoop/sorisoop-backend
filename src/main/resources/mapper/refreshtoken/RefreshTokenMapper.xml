@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.auth.domain.RefreshTokenRepository">
+
+    <select id="getRefreshTokenByMemberIdAndProfileIdAndDeviceId" resultType="string">
+        SELECT token
+        FROM (
+            SELECT token
+            FROM refresh_token
+            WHERE member_id = #{memberId} AND profile_id = #{profileId} AND device_id = #{deviceId}
+            ORDER BY created_at DESC
+        )
+        WHERE ROWNUM = 1
+
+    </select>
+
+    <insert id="saveRefreshToken" parameterType="com.futurenet.sorisoopbackend.auth.dto.request.SaveRefreshTokenRequest">
+        INSERT INTO refresh_token (token, member_id, profile_id, device_id)
+        VALUES (#{request.refreshToken}, #{request.memberId}, #{request.profileId}, #{request.deviceId})
+    </insert>
+</mapper>
