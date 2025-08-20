@@ -59,57 +59,49 @@ public class TossClient {
         }
     }
 
-    public List<BrandPayCardResponse> getPaymentMethods(String customerKey, String customerToken) {
-        String url = TOSS_BASE_URL + "/brandpay/payments/methods?customerKey=" + customerKey;
+    /**
+     * 브랜드페이 결제 승인
+     * @param paymentKey 프론트 successUrl에서 전달받은 paymentKey
+     * @param orderId 프론트 successUrl에서 전달받은 orderId
+     * @param amount 프론트 successUrl에서 전달받은 amount
+     * @return 결제 승인 결과 JSON
+     */
+    public JsonNode confirmPayment(String paymentKey, String orderId, int amount) {
+        String url = TOSS_BASE_URL + "/payments/confirm";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + customerToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String encodedAuth = Base64.getEncoder()
+                .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
+        headers.set("Authorization", "Basic " + encodedAuth);
 
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        Map<String, Object> body = new HashMap<>();
+        body.put("paymentKey", paymentKey);
+        body.put("orderId", orderId);
+        body.put("amount", amount);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(
                     url,
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     entity,
                     String.class
             );
 
-            JsonNode body = objectMapper.readTree(response.getBody());
-            List<BrandPayCardResponse> cards = new ArrayList<>();
+            String responseBody = new String(
+                    response.getBody().getBytes(StandardCharsets.ISO_8859_1),
+                    StandardCharsets.UTF_8
+            );
 
-            if (body.has("cards")) {
-                for (JsonNode card : body.get("cards")) {
-                    cards.add(BrandPayCardResponse.of(card));
-                }
-            }
-
-            return cards;
-        } catch (Exception e) {
-            throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
-        }
-    }
-
-    public void deletePaymentMethod(String customerToken, String methodKey) {
-        String url = TOSS_BASE_URL + "/brandpay/payments/methods/card/remove";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(customerToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("methodKey", methodKey);
-        log.info("Deleting card with token={}, methodKey={}", customerToken, methodKey);
-
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        log.info("Toss delete request headers={}, body={}", entity.getHeaders(), entity.getBody());
-
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-            log.info("Delete response: {}", response.getBody());
+            return objectMapper.readTree(responseBody);
         } catch (HttpStatusCodeException e) {
-            log.error("Failed to delete payment method: {}", e.getResponseBodyAsString());
-            throw new BillingException(BillingErrorCode.BILLING_CARD_DELETE_FAIL);
+            log.error("결제 승인 실패: {}", e.getResponseBodyAsString());
+            throw new BillingException(BillingErrorCode.PAYMENT_CONFIRM_FAIL);
+        } catch (Exception e) {
+            log.error("결제 승인 중 알 수 없는 오류", e);
+            throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
         }
     }
 
