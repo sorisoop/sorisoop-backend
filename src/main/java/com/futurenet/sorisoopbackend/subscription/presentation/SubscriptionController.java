@@ -1,5 +1,6 @@
 package com.futurenet.sorisoopbackend.subscription.presentation;
 
+import com.amazonaws.Response;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.subscription.application.SubscriptionService;
 import com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan;
@@ -30,6 +31,13 @@ public class SubscriptionController {
         Long memberId = 1L; // TODO: 시큐리티
         SubscriptionStartResponse result = subscriptionService.startSubscription(memberId, request);
         return ResponseEntity.ok(new ApiResponse<>("PA100", "구독 시작 성공", result));
+    }
+
+    @PostMapping("/restart")
+    public ResponseEntity<?> restartSubscription() {
+        Long memberId = 1L; // TODO: 시큐리티
+        SubscriptionStartResponse result = subscriptionService.restartSubscription(memberId);
+        return ResponseEntity.ok(new ApiResponse<>("PA100", "구독 재시작 성공", result));
     }
 
     @DeleteMapping
