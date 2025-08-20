@@ -93,7 +93,7 @@ public class AmazonS3Service {
             amazonS3.deleteObject(bucketName, key);
         }
         catch (Exception e){
-            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_DELECT_FAIL);
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_DELETE_FAIL);
         }
     }
 
