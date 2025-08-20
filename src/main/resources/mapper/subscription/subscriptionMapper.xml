@@ -5,12 +5,15 @@
     <select id="getSubscriptionByMemberId"
             parameterType="long"
             resultType="com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse">
-        SELECT S.STATUS,
-               P.TYPE,
-               S.NEXT_BILLING_AT,
-               S.CANCELLED_AT
+        SELECT S.STATUS           AS status,
+               P.TYPE             AS type,
+               S.STARTED_AT       AS startedAt,
+               S.NEXT_BILLING_AT  AS nextBillingAt,
+               S.CANCELLED_AT     AS cancelledAt,
+               S.LAST_APPROVED_AT AS lastApprovedAt
         FROM SUBSCRIPTION S
-                 JOIN SUBSCRIPTION_PLAN P ON S.SUBSCRIPTION_PLAN_ID = P.ID
+                 JOIN SUBSCRIPTION_PLAN P
+                      ON S.SUBSCRIPTION_PLAN_ID = P.ID
         WHERE S.MEMBER_ID = #{memberId}
     </select>
 
