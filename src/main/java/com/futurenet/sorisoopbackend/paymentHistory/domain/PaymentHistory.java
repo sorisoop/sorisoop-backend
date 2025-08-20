@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class PaymentHistory {
     private Long id;
     private Long subscribeId;
-    private Long billingCardId;
     private String orderId;
     private String paymentKey;
     private String method;

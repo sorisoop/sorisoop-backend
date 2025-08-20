@@ -59,60 +59,6 @@ public class TossClient {
         }
     }
 
-    public List<BrandPayCardResponse> getPaymentMethods(String customerKey, String customerToken) {
-        String url = TOSS_BASE_URL + "/brandpay/payments/methods?customerKey=" + customerKey;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + customerToken);
-
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    entity,
-                    String.class
-            );
-
-            JsonNode body = objectMapper.readTree(response.getBody());
-            List<BrandPayCardResponse> cards = new ArrayList<>();
-
-            if (body.has("cards")) {
-                for (JsonNode card : body.get("cards")) {
-                    cards.add(BrandPayCardResponse.of(card));
-                }
-            }
-
-            return cards;
-        } catch (Exception e) {
-            throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
-        }
-    }
-
-    public void deletePaymentMethod(String customerToken, String methodKey) {
-        String url = TOSS_BASE_URL + "/brandpay/payments/methods/card/remove";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(customerToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("methodKey", methodKey);
-        log.info("Deleting card with token={}, methodKey={}", customerToken, methodKey);
-
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        log.info("Toss delete request headers={}, body={}", entity.getHeaders(), entity.getBody());
-
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-            log.info("Delete response: {}", response.getBody());
-        } catch (HttpStatusCodeException e) {
-            log.error("Failed to delete payment method: {}", e.getResponseBodyAsString());
-            throw new BillingException(BillingErrorCode.BILLING_CARD_DELETE_FAIL);
-        }
-    }
-
     /**
      * 브랜드페이 결제 승인
      * @param paymentKey 프론트 successUrl에서 전달받은 paymentKey

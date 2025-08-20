@@ -51,10 +51,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public SubscriptionStartResponse startSubscription(Long memberId, SubscriptionStartRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
-        BillingCard card = Optional.ofNullable(billingRepository.getActiveCard(memberId))
-                .orElseThrow(() -> new BillingException(BillingErrorCode.NOT_FOUND_ACTIVE_CARD));
-
-
         SubscriptionPlan plan = Optional.ofNullable(
                 subscriptionRepository.getSubscriptionPlanByType(request.getPlanType().name())
         ).orElseThrow(() -> new SubScriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
@@ -97,7 +93,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         PaymentHistory history = PaymentHistory.builder()
                 .subscribeId(subscription.getId())
-                .billingCardId(card.getId())
                 .orderId(orderId)
                 .paymentKey(paymentKey)
                 .method(method)
