@@ -1,9 +1,6 @@
 package com.futurenet.sorisoopbackend.subscription.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
-import com.futurenet.sorisoopbackend.billing.application.exception.BillingException;
-import com.futurenet.sorisoopbackend.billing.domain.BillingCard;
 import com.futurenet.sorisoopbackend.billing.domain.BillingRepository;
 import com.futurenet.sorisoopbackend.billing.infrastructure.TossClient;
 import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryErrorCode;
@@ -26,19 +23,33 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
-    private final BillingRepository billingRepository;
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final TossClient tossClient;
 
     @Override
     public SubscriptionResponse getSubscription(Long memberId) {
-        return subscriptionRepository.getSubscriptionByMemberId(memberId);
+        Subscription subscription = subscriptionRepository.getSubscriptionByMemberId(memberId);
+        if (subscription == null) return null;
+
+        String planType = subscriptionRepository.
+                getSubscriptionPlanById(subscription.getSubscriptionPlanId())
+                .getType();
+
+        return new SubscriptionResponse(
+                subscription.getStatus().name(),
+                planType,
+                subscription.getStartedAt(),
+                subscription.getNextBillingAt().atStartOfDay(),
+                subscription.getCancelledAt(),
+                subscription.getLastApprovedAt()
+        );
     }
 
     @Override
@@ -63,8 +74,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         String paymentKey = paymentResult.get("paymentKey").asText();
         String orderId = paymentResult.get("orderId").asText();
-        LocalDateTime approvedAt = OffsetDateTime.parse(paymentResult.get("approvedAt").asText())
-                .toLocalDateTime();
+        LocalDateTime approvedAt = OffsetDateTime.parse(paymentResult.get("approvedAt").asText()).toLocalDateTime();
         String method = paymentResult.get("method").asText();
         int amount = paymentResult.get("totalAmount").asInt();
         String paymentStatus = paymentResult.get("status").asText();
@@ -107,5 +117,38 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         if (payCount <= 0) throw new PaymentHistoryException(PaymentHistoryErrorCode.PAYMENT_HISTORY_CREATE_FAIL);
 
         return new SubscriptionStartResponse(status, type, nextBillingAt);
+    }
+
+    @Override
+    @Transactional
+    public SubscriptionStartResponse restartSubscription(Long memberId) {
+        LocalDate today = LocalDate.now();
+
+        Subscription subscription = Optional.ofNullable(
+                subscriptionRepository.getSubscriptionByMemberId(memberId)
+        ).orElseThrow(() -> new SubScriptionException(SubscriptionErrorCode.NOT_FOUND_SUBSCRIPTION));
+
+        if (!SubscriptionStatus.CANCELLED.equals(subscription.getStatus())) {
+            throw new SubScriptionException(SubscriptionErrorCode.INVALID_STATUS);
+        }
+
+        SubscriptionPlan plan = Optional.ofNullable(
+                subscriptionRepository.getSubscriptionPlanById(subscription.getSubscriptionPlanId())
+        ).orElseThrow(() -> new SubScriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
+        LocalDate nextBillingAt = subscription.getNextBillingAt();
+
+        if (nextBillingAt.isAfter(today)) {
+            subscriptionRepository.updateSubscriptionStatus(subscription.getId(), SubscriptionStatus.ACTIVE, memberId);
+            return new SubscriptionStartResponse(SubscriptionStatus.ACTIVE, plan.getPlanTypeEnum(), nextBillingAt);
+        }
+
+        throw new SubScriptionException(SubscriptionErrorCode.RESTART_REQUIRES_PAYMENT);
+
+    }
+
+
+    @Override
+    public void cancelSubscription(Long memberId) {
+        subscriptionRepository.cancelSubscription(memberId);
     }
 }

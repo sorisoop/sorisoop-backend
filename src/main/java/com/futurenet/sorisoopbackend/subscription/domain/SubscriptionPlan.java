@@ -9,4 +9,13 @@ public class SubscriptionPlan {
     private Long id;
     private String type;
     private int price;
+
+    public int getDurationMonths() {
+        return SubscriptionPlanType.valueOf(type).getDurationMonths();
+    }
+
+    public SubscriptionPlanType getPlanTypeEnum() {
+        return SubscriptionPlanType.valueOf(type);
+    }
+
 }

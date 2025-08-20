@@ -4,13 +4,20 @@
 
     <select id="getSubscriptionByMemberId"
             parameterType="long"
-            resultType="com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse">
-        SELECT S.STATUS,
-               P.TYPE,
-               S.NEXT_BILLING_AT,
-               S.CANCELLED_AT
+            resultType="com.futurenet.sorisoopbackend.subscription.domain.Subscription">
+        SELECT S.ID                   AS id,
+               S.MEMBER_ID            AS memberId,
+               S.SUBSCRIPTION_PLAN_ID AS subscriptionPlanId,
+               S.STATUS               AS status,
+               S.STARTED_AT           AS startedAt,
+               S.NEXT_BILLING_AT      AS nextBillingAt,
+               S.CANCELLED_AT         AS cancelledAt,
+               S.LAST_APPROVED_AT     AS lastApprovedAt,
+               S.CREATED_AT           AS createdAt,
+               S.UPDATED_AT           AS updatedAt,
+               S.CREATED_BY           AS createdBy,
+               S.UPDATED_BY           AS updatedBy
         FROM SUBSCRIPTION S
-                 JOIN SUBSCRIPTION_PLAN P ON S.SUBSCRIPTION_PLAN_ID = P.ID
         WHERE S.MEMBER_ID = #{memberId}
     </select>
 
@@ -28,6 +35,16 @@
                PRICE
         FROM SUBSCRIPTION_PLAN
         WHERE TYPE = #{planType}
+    </select>
+
+    <select id="getSubscriptionPlanById"
+            parameterType="long"
+            resultType="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan">
+        SELECT ID,
+               TYPE,
+               PRICE
+        FROM SUBSCRIPTION_PLAN
+        WHERE ID = #{planId}
     </select>
 
     <insert id="insertSubscription"
@@ -50,5 +67,24 @@
                 #{createdAt},
                 #{createdBy})
     </insert>
+
+    <update id="cancelSubscription" parameterType="long">
+        UPDATE SUBSCRIPTION
+        SET STATUS       = 'CANCELLED',
+            CANCELLED_AT = NEXT_BILLING_AT,
+            UPDATED_AT   = SYSDATE,
+            UPDATED_BY   = #{memberId}
+        WHERE MEMBER_ID = #{memberId}
+          AND STATUS = 'ACTIVE'
+    </update>
+
+    <update id="updateSubscriptionStatus">
+        UPDATE SUBSCRIPTION
+        SET STATUS     = #{status},
+            UPDATED_AT = SYSDATE,
+            UPDATED_BY = #{updatedBy}
+        WHERE ID = #{subscriptionId}
+    </update>
+
 </mapper>
 

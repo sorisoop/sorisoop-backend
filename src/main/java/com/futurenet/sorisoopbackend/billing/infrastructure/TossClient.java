@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
 import com.futurenet.sorisoopbackend.billing.application.exception.BillingException;
-import com.futurenet.sorisoopbackend.billing.dto.response.BrandPayCardResponse;
 import com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,5 +103,4 @@ public class TossClient {
             throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
         }
     }
-
 }

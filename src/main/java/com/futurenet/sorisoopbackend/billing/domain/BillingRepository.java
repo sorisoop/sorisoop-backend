@@ -1,11 +1,9 @@
 package com.futurenet.sorisoopbackend.billing.domain;
 
-import com.futurenet.sorisoopbackend.billing.dto.response.BrandPayCardResponse;
 import com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
 
 @Mapper
 public interface BillingRepository {
