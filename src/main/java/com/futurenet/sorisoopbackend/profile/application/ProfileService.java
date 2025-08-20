@@ -1,0 +1,11 @@
+package com.futurenet.sorisoopbackend.profile.application;
+
+import com.futurenet.sorisoopbackend.profile.dto.request.SaveProfileRequest;
+import com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse;
+
+import java.util.List;
+
+public interface ProfileService {
+    List<FindProfileResponse> getAllProfilesByMemberId(Long memberId);
+    void saveProfile(SaveProfileRequest request, Long memberId);
+}

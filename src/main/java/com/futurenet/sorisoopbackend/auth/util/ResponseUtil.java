@@ -25,11 +25,11 @@ public class ResponseUtil {
     public static String createResponseCookie(String key, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(key, value)
                 .httpOnly(true)
-                .secure(true)
+                //.secure(true)
                 .path("/")
                 .maxAge(maxAge)
-                .sameSite("None")
-                .domain(".n-e.kr")
+                //.sameSite("None")
+                //.domain(".n-e.kr")
                 .build();
 
         return cookie.toString();
