@@ -19,5 +19,36 @@
         SELECT ID, TYPE, PRICE
         FROM SUBSCRIPTION_PLAN
     </select>
+
+    <select id="getSubscriptionPlanByType"
+            parameterType="string"
+            resultType="com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan">
+        SELECT ID,
+               TYPE,
+               PRICE
+        FROM SUBSCRIPTION_PLAN
+        WHERE TYPE = #{planType}
+    </select>
+
+    <insert id="insertSubscription"
+            parameterType="com.futurenet.sorisoopbackend.subscription.domain.Subscription"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO SUBSCRIPTION (MEMBER_ID,
+                                  SUBSCRIPTION_PLAN_ID,
+                                  STATUS,
+                                  STARTED_AT,
+                                  NEXT_BILLING_AT,
+                                  LAST_APPROVED_AT,
+                                  CREATED_AT,
+                                  CREATED_BY)
+        VALUES (#{memberId},
+                #{subscriptionPlanId},
+                #{status},
+                #{startedAt},
+                #{nextBillingAt},
+                #{lastApprovedAt},
+                #{createdAt},
+                #{createdBy})
+    </insert>
 </mapper>
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.paymentHistory.domain.PaymentHistoryRepository">
+    <insert id="insertPaymentHistory"
+            parameterType="com.futurenet.sorisoopbackend.paymentHistory.domain.PaymentHistory"
+    >
+        INSERT INTO PAYMENT_HISTORY (SUBSCRIBE_ID,
+                                     BILLING_CARD_ID,
+                                     ORDER_ID,
+                                     PAYMENT_KEY,
+                                     METHOD,
+                                     PAID_AT,
+                                     STATUS,
+                                     AMOUNT,
+                                     CREATED_AT,
+                                     CREATED_BY)
+        VALUES (#{subscribeId},
+                #{billingCardId},
+                #{orderId},
+                #{paymentKey},
+                #{method},
+                #{paidAt},
+                #{status},
+                #{amount},
+                #{createdAt},
+                #{createdBy})
+    </insert>
+</mapper>

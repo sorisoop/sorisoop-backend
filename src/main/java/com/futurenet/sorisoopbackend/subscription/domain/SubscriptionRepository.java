@@ -10,5 +10,6 @@ import java.util.List;
 public interface SubscriptionRepository {
     SubscriptionResponse getSubscriptionByMemberId(@Param("memberId") Long memberId);
     List<SubscriptionPlan> getSubscriptionPlans();
-
+    SubscriptionPlan getSubscriptionPlanByType(@Param("planType") String planType);
+    int insertSubscription(Subscription subscription);
 }

@@ -22,5 +22,5 @@ public interface BillingRepository {
     void insertCard(@Param("memberId") Long memberId, @Param("card") BrandPayCardResponse card);
     BillingCard getCardById(@Param("memberId") Long memberId, @Param("cardId") Long cardId);
     int deleteCard(@Param("memberId") Long memberId, @Param("cardId") Long cardId);
-
+    BillingCard getActiveCard(@Param("memberId") Long memberId);
 }

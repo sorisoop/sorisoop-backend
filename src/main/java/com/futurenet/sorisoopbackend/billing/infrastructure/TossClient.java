@@ -113,4 +113,51 @@ public class TossClient {
         }
     }
 
+    /**
+     * 브랜드페이 결제 승인
+     * @param paymentKey 프론트 successUrl에서 전달받은 paymentKey
+     * @param orderId 프론트 successUrl에서 전달받은 orderId
+     * @param amount 프론트 successUrl에서 전달받은 amount
+     * @return 결제 승인 결과 JSON
+     */
+    public JsonNode confirmPayment(String paymentKey, String orderId, int amount) {
+        String url = TOSS_BASE_URL + "/payments/confirm";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String encodedAuth = Base64.getEncoder()
+                .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
+        headers.set("Authorization", "Basic " + encodedAuth);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("paymentKey", paymentKey);
+        body.put("orderId", orderId);
+        body.put("amount", amount);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
+
+            String responseBody = new String(
+                    response.getBody().getBytes(StandardCharsets.ISO_8859_1),
+                    StandardCharsets.UTF_8
+            );
+
+            log.info("결제 승인 성공: {}", responseBody);
+            return objectMapper.readTree(responseBody);
+        } catch (HttpStatusCodeException e) {
+            log.error("결제 승인 실패: {}", e.getResponseBodyAsString());
+            throw new BillingException(BillingErrorCode.PAYMENT_CONFIRM_FAIL);
+        } catch (Exception e) {
+            log.error("결제 승인 중 알 수 없는 오류", e);
+            throw new BillingException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
+        }
+    }
+
 }

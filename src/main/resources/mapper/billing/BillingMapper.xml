@@ -120,4 +120,30 @@
           AND MEMBER_ID = #{memberId}
     </delete>
 
+    <select id="getActiveCard"
+            parameterType="long"
+            resultType="com.futurenet.sorisoopbackend.billing.domain.BillingCard">
+        SELECT ID            as id,
+               MEMBER_ID     as memberId,
+               METHOD_KEY    as methodKey,
+               CARD_NAME     as cardName,
+               CARD_NUMBER   as cardNumber,
+               ACQUIRER_CODE as acquirerCode,
+               CARD_TYPE     as cardType,
+               STATUS        as status,
+               ICON_URL      as iconUrl,
+               CARD_IMG_URL  as cardImgUrl,
+               COLOR_BG      as colorBg,
+               COLOR_TEXT    as colorText,
+               IS_ACTIVE     as isActive,
+               CREATED_AT    as createdAt,
+               UPDATED_AT    as updatedAt,
+               CREATED_BY    as createdBy,
+               UPDATED_BY    as updatedBy
+        FROM BILLING_CARD
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_ACTIVE = 'Y'
+          AND ROWNUM = 1
+    </select>
+
 </mapper>
