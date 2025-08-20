@@ -7,7 +7,6 @@ import com.futurenet.sorisoopbackend.auth.oauth2.dto.response.OAuth2Response;
 import com.futurenet.sorisoopbackend.member.application.MemberAuthService;
 import com.futurenet.sorisoopbackend.member.application.MemberService;
 import com.futurenet.sorisoopbackend.member.dto.request.OAuthSignupRequest;
-import com.futurenet.sorisoopbackend.member.dto.request.SignupRequest;
 import com.futurenet.sorisoopbackend.member.dto.response.FindMemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -36,9 +35,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (member == null) {
             OAuthSignupRequest oAuthSignupRequest = OAuthSignupRequest.from(oAuth2Response);
             Long memberId = memberAuthService.oAuthSignup(oAuthSignupRequest);
-            userAuthDto = new UserAuthDto(memberId, "ROLE_USER");
+            userAuthDto = new UserAuthDto(memberId, oAuth2Response.getEmail(), "ROLE_USER");
         } else {
-            userAuthDto = new UserAuthDto(member.getId(), "ROLE_USER");
+            userAuthDto = new UserAuthDto(member.getId(), oAuth2Response.getEmail(), "ROLE_USER");
         }
 
         return new UserPrincipal(userAuthDto);

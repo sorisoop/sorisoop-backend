@@ -25,6 +25,10 @@ public class AmazonS3Service {
 
     public String uploadImage(MultipartFile file, String folder) {
 
+        if (file == null || file.isEmpty()) {
+            throw new InfrastructureException(InfrastructureErrorCode.IMAGE_FILE_NULL);
+        }
+
         if (!isImage(file)) {
             throw new IllegalArgumentException("파일 형식 불일치");
         }
@@ -89,7 +93,7 @@ public class AmazonS3Service {
             amazonS3.deleteObject(bucketName, key);
         }
         catch (Exception e){
-            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_DELECT_FAIL);
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_DELETE_FAIL);
         }
     }
 

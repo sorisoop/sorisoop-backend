@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.profile.domain.ProfileRepository">
+
+    <select id="findAllProfilesByMemberId" resultType="com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse">
+        SELECT id, nickname, profile_image AS profileImage, role, age, gender
+        FROM profile
+        WHERE member_id = #{memberId}
+    </select>
+
+    <insert id="saveProfile" parameterType="com.futurenet.sorisoopbackend.profile.dto.SaveProfileDto">
+        INSERT INTO profile (member_id, nickname, profile_image, role, age, gender, created_by)
+        VALUES (
+        #{request.memberId},
+        #{request.nickname},
+        #{request.profileImage, jdbcType=VARCHAR},
+        #{request.role, jdbcType=VARCHAR},
+        #{request.age, jdbcType=INTEGER},
+        #{request.gender, jdbcType=VARCHAR},
+        #{request.memberId}
+        )
+    </insert>
+
+    <select id="existsProfileByMemberIdAndProfileId" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM profile
+        WHERE member_id = #{memberId}
+        AND id = #{profileId}
+    </select>
+
+</mapper>

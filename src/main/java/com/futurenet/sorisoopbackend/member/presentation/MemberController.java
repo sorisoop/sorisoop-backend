@@ -5,12 +5,13 @@ import com.futurenet.sorisoopbackend.member.application.MemberAuthService;
 import com.futurenet.sorisoopbackend.member.application.MemberService;
 import com.futurenet.sorisoopbackend.member.dto.request.SignupRequest;
 import com.futurenet.sorisoopbackend.member.dto.response.FindMemberResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -18,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping
-    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
         memberAuthService.signup(request);
         return ResponseEntity.ok(new ApiResponse<>("ME100", "회원가입 성공", null));
     }
