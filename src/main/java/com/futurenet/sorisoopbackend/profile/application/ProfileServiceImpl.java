@@ -76,4 +76,14 @@ public class ProfileServiceImpl implements ProfileService {
         response.addHeader("Set-Cookie", ResponseUtil.createResponseCookie("Authorization", newAccessToken, AuthConstants.ACCESS_COOKIE_EXPIRED));
         response.addHeader("Set-Cookie", ResponseUtil.createResponseCookie("refresh", newRefreshToken, AuthConstants.REFRESH_COOKIE_EXPIRED));
     }
+
+    @Override
+    @Transactional
+    public void deleteProfile(Long profileId, Long memberId) {
+        int result = profileRepository.deleteProfileByMemberIdAndProfileId(memberId, profileId);
+
+        if (result == 0) {
+            throw new ProfileException(ProfileErrorCode.DELETE_PROFILE_FAIL);
+        }
+    }
 }
