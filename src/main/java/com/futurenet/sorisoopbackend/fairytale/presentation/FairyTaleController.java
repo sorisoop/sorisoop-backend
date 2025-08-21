@@ -19,7 +19,7 @@ public class FairyTaleController {
 
     private final FairyTaleService fairyTaleService;
 
-    @GetMapping("/{fairyTaleId}")
+    @GetMapping("/{fairyTaleId}/contents")
     public ResponseEntity<?> readFairyTale(@PathVariable Long fairyTaleId) {
         List<FIndFairyTaleContentResponse> result = fairyTaleService.getFairyTaleContents(fairyTaleId);
         return ResponseEntity.ok(new ApiResponse<>("FT100", "동화 내용 조회 성공", result));
