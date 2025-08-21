@@ -8,5 +8,6 @@
         SELECT id, page, image_url AS imageUrl, content
         FROM fairy_tale_content
         WHERE fairy_tale_id = #{fairyTaleId}
+        ORDER BY page
     </select>
 </mapper>
