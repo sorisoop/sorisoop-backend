@@ -11,4 +11,5 @@ public interface ProfileService {
     List<FindProfileResponse> getAllProfilesByMemberId(Long memberId);
     void saveProfile(SaveProfileRequest request, Long memberId);
     void selectProfile(Long profileId, Long memberId, HttpServletRequest request, HttpServletResponse response);
+    void deleteProfile(Long profileId, Long memberId);
 }

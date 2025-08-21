@@ -31,4 +31,10 @@
         AND id = #{profileId}
     </select>
 
+    <delete id="deleteProfileByMemberIdAndProfileId">
+        DELETE FROM profile
+        WHERE member_id = #{memberId}
+        AND id = #{profileId}
+    </delete>
+
 </mapper>

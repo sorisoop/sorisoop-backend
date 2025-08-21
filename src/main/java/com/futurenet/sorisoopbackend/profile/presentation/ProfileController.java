@@ -41,4 +41,10 @@ public class ProfileController {
         return ResponseEntity.ok(new ApiResponse<>("PR102", "프로필 선택 성공", null));
     }
 
+    @DeleteMapping("/{profileId}")
+    public ResponseEntity<?> deleteProfile(@PathVariable Long profileId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        profileService.deleteProfile(profileId, userPrincipal.getId());
+        return ResponseEntity.ok(new ApiResponse<>("PR103", "프로필 삭제 성공", null));
+    }
+
 }
