@@ -34,7 +34,6 @@ public class AmazonS3Service {
         }
 
         try {
-
             String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());

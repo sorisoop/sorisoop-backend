@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MakeCustomFairyTaleRequest {
+    private Long profileId;
     private String imageUrl;
     private String imageContentType;
 }

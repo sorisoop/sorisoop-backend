@@ -21,6 +21,8 @@ public class CustomFairyTaleConsumer {
         List<MakeCustomFairyTaleResponse> result = makeFairyTaleService.createCustomFairyTale(request);
 
         for (MakeCustomFairyTaleResponse response : result) {
+            System.out.println(response.getPage());
+            System.out.println(response.getImageUrl());
             System.out.println(response.getContent());
         }
     }

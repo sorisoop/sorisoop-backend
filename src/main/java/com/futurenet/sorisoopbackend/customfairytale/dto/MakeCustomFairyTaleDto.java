@@ -14,4 +14,6 @@ public class MakeCustomFairyTaleDto {
     private String imageUrl;
     private String content_kr;
     private String content_en;
+    private String sceneType;
+    private String emotion;
 }

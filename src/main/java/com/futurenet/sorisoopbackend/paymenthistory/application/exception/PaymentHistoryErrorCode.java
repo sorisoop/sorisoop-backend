@@ -1,4 +1,4 @@
-package com.futurenet.sorisoopbackend.paymentHistory.application.exception;
+package com.futurenet.sorisoopbackend.paymenthistory.application.exception;
 
 import com.futurenet.sorisoopbackend.global.exception.ErrorCode;
 import lombok.AllArgsConstructor;

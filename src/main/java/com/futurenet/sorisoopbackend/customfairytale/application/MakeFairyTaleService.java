@@ -7,5 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface MakeFairyTaleService {
+    List<String> makeSynopsis(MultipartFile image, Long memberID);
     List<MakeCustomFairyTaleResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request);
 }

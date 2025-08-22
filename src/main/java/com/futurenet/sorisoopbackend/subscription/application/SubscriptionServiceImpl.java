@@ -1,12 +1,11 @@
 package com.futurenet.sorisoopbackend.subscription.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.futurenet.sorisoopbackend.billing.domain.BillingRepository;
 import com.futurenet.sorisoopbackend.billing.infrastructure.TossClient;
-import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryErrorCode;
-import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryException;
-import com.futurenet.sorisoopbackend.paymentHistory.domain.PaymentHistory;
-import com.futurenet.sorisoopbackend.paymentHistory.domain.PaymentHistoryRepository;
+import com.futurenet.sorisoopbackend.paymenthistory.application.exception.PaymentHistoryErrorCode;
+import com.futurenet.sorisoopbackend.paymenthistory.application.exception.PaymentHistoryException;
+import com.futurenet.sorisoopbackend.paymenthistory.domain.PaymentHistory;
+import com.futurenet.sorisoopbackend.paymenthistory.domain.PaymentHistoryRepository;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubScriptionException;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionErrorCode;
 import com.futurenet.sorisoopbackend.subscription.domain.*;
@@ -23,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Service
