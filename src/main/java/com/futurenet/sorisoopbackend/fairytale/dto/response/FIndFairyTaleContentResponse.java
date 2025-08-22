@@ -13,5 +13,5 @@ public class FIndFairyTaleContentResponse {
     private Long id;
     private int page;
     private String imageUrl;
-    private String content;
+    private String script;
 }
