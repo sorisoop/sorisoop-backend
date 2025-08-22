@@ -1,5 +1,6 @@
 package com.futurenet.sorisoopbackend.member.presentation;
 
+import com.futurenet.sorisoopbackend.member.dto.response.CustomerKeyResponse;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.member.application.MemberAuthService;
 import com.futurenet.sorisoopbackend.member.application.MemberService;
@@ -28,6 +29,13 @@ public class MemberController {
     public ResponseEntity<?> checkEmail(@RequestParam("email") String email) {
         FindMemberResponse result = memberService.getMemberByEmail(email);
         return ResponseEntity.ok(new ApiResponse<>("ME101", "이메일 조회 성공", result.getEmail()));
+    }
+
+    @PostMapping("/customer-key")
+    public ResponseEntity<?> getCustomerKey() {
+        Long memberId = 1L; // TODO: 시큐리티 적용
+        CustomerKeyResponse result = memberService.getCustomerKeyByMemberId(memberId);
+        return ResponseEntity.ok(new ApiResponse<>("ME102", "정상적으로 처리되었습니다.", result));
     }
 
 }
