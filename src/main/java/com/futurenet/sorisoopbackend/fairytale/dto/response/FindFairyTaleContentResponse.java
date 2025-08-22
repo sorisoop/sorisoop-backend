@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FIndFairyTaleContentResponse {
+public class FindFairyTaleContentResponse {
     private Long id;
+    private String title;
     private int page;
     private String imageUrl;
     private String script;
