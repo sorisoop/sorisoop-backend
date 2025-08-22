@@ -1,7 +1,7 @@
 package com.futurenet.sorisoopbackend.fairytale.presentation;
 
 import com.futurenet.sorisoopbackend.fairytale.application.FairyTaleService;
-import com.futurenet.sorisoopbackend.fairytale.dto.response.FIndFairyTaleContentResponse;
+import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class FairyTaleController {
 
     @GetMapping("/{fairyTaleId}/contents")
     public ResponseEntity<?> readFairyTale(@PathVariable Long fairyTaleId) {
-        List<FIndFairyTaleContentResponse> result = fairyTaleService.getFairyTaleContents(fairyTaleId);
+        List<FindFairyTaleContentResponse> result = fairyTaleService.getFairyTaleContents(fairyTaleId);
         return ResponseEntity.ok(new ApiResponse<>("FT100", "동화 내용 조회 성공", result));
     }
 }

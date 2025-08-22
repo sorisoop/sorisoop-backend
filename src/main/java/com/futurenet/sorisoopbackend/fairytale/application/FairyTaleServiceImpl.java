@@ -1,7 +1,7 @@
 package com.futurenet.sorisoopbackend.fairytale.application;
 
 import com.futurenet.sorisoopbackend.fairytale.domain.FairyTaleRepository;
-import com.futurenet.sorisoopbackend.fairytale.dto.response.FIndFairyTaleContentResponse;
+import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ public class FairyTaleServiceImpl implements FairyTaleService {
     private final FairyTaleRepository fairyTaleRepository;
 
     @Override
-    public List<FIndFairyTaleContentResponse> getFairyTaleContents(Long fairyTaleId) {
+    public List<FindFairyTaleContentResponse> getFairyTaleContents(Long fairyTaleId) {
         return fairyTaleRepository.getAllFairyTaleContentsByFairyTaleId(fairyTaleId);
     }
 }
