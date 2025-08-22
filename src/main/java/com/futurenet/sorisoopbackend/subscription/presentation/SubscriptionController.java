@@ -19,6 +19,14 @@ import java.util.List;
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
+    @GetMapping("/callback-auth")
+    public ResponseEntity<?> callBackAuth(@RequestParam String customerKey,
+                                          @RequestParam String code) {
+        Long memberId = 1L; // TODO: 시큐리티 적용
+        subscriptionService.handleBrandpayAuth(memberId, customerKey, code);
+        return ResponseEntity.ok(new ApiResponse<>("PA100", "브랜드페이 인증 성공", null));
+    }
+
     @GetMapping
     public ResponseEntity<?> getSubscription() {
         Long memberId = 1L; // TODO: 시큐리티

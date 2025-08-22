@@ -10,7 +10,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-@Component
 public class CustomerKeyUtil {
 
     private static String CUSTOMER_KEY_SECRET;

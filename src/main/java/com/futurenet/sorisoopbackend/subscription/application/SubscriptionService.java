@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface SubscriptionService {
+    void handleBrandpayAuth(Long memberId, String customerKey, String code);
     SubscriptionResponse getSubscription(Long memberId);
     List<SubscriptionPlan> getSubscriptionPlans();
     SubscriptionStartResponse startSubscription(Long memberId, SubscriptionStartRequest request);
