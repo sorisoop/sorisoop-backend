@@ -1,6 +1,5 @@
 package com.futurenet.sorisoopbackend.subscription.presentation;
 
-import com.amazonaws.Response;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.subscription.application.SubscriptionService;
 import com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan;
@@ -18,6 +17,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
+
+    @GetMapping("/callback-auth")
+    public ResponseEntity<?> callBackAuth(@RequestParam String customerKey,
+                                          @RequestParam String code) {
+        Long memberId = 1L; // TODO: 시큐리티 적용
+        subscriptionService.handleBrandpayAuth(memberId, customerKey, code);
+        return ResponseEntity.ok(new ApiResponse<>("PA100", "브랜드페이 인증 성공", null));
+    }
 
     @GetMapping
     public ResponseEntity<?> getSubscription() {

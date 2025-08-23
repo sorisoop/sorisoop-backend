@@ -25,4 +25,18 @@
         FROM member
         WHERE email = #{email}
     </select>
+
+    <select id="getCustomerKeyByMemberId" parameterType="long" resultType="string">
+        SELECT customer_key
+        FROM member
+        WHERE id = #{memberId}
+    </select>
+
+    <update id="updateCustomerKey">
+        UPDATE member
+        SET customer_key = #{customerKey},
+        updated_at = SYSDATE,
+        updated_by = #{memberId}
+        WHERE id = #{memberId}
+    </update>
 </mapper>

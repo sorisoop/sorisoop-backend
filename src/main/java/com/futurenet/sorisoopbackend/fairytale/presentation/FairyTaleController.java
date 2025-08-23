@@ -2,7 +2,7 @@ package com.futurenet.sorisoopbackend.fairytale.presentation;
 
 import com.futurenet.sorisoopbackend.fairytale.application.FairyTaleService;
 
-import com.futurenet.sorisoopbackend.fairytale.dto.response.FIndFairyTaleContentResponse;
+import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleCategoryResponse;
 
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;

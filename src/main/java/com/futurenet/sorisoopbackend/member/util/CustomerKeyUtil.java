@@ -1,7 +1,7 @@
-package com.futurenet.sorisoopbackend.billing.util;
+package com.futurenet.sorisoopbackend.member.util;
 
-import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
-import com.futurenet.sorisoopbackend.billing.application.exception.BillingException;
+import com.futurenet.sorisoopbackend.member.application.exception.MemberErrorCode;
+import com.futurenet.sorisoopbackend.member.application.exception.MemberException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ public class CustomerKeyUtil {
             byte[] hash = digest.digest(raw.getBytes(StandardCharsets.UTF_8));
             return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
-            throw new BillingException(BillingErrorCode.CUSTOMER_KEY_GENERATION_FAIL);
+            throw new MemberException(MemberErrorCode.CUSTOMER_KEY_GENERATION_FAIL);
         }
     }
 
