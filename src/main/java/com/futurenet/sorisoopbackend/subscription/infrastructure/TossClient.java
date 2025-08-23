@@ -2,8 +2,10 @@ package com.futurenet.sorisoopbackend.subscription.infrastructure;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.futurenet.sorisoopbackend.billing.application.exception.BillingErrorCode;
-import com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse;
+import com.futurenet.sorisoopbackend.brandPayToken.application.exception.BrandPayTokenErrorCode;
+import com.futurenet.sorisoopbackend.brandPayToken.application.exception.BrandPayTokenException;
+import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
+import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionErrorCode;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,9 +56,9 @@ public class TossClient {
             return response.getBody();
         } catch (HttpStatusCodeException e) {
             log.error("Failed to issue customerToken: {}", e.getResponseBodyAsString());
-            throw new SubscriptionException(BillingErrorCode.BILLING_KEY_ISSUE_FAIL);
+            throw new BrandPayTokenException(BrandPayTokenErrorCode.BRANDPAY_TOKEN_ISSUE_FAIL);
         } catch (Exception e) {
-            throw new SubscriptionException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
+            throw new SubscriptionException(SubscriptionErrorCode.UNKNOWN_ERROR);
         }
     }
 
@@ -99,10 +101,10 @@ public class TossClient {
             return objectMapper.readTree(responseBody);
         } catch (HttpStatusCodeException e) {
             log.error("결제 승인 실패: {}", e.getResponseBodyAsString());
-            throw new SubscriptionException(BillingErrorCode.PAYMENT_CONFIRM_FAIL);
+            throw new SubscriptionException(SubscriptionErrorCode.PAYMENT_CONFIRM_FAIL);
         } catch (Exception e) {
             log.error("결제 승인 중 알 수 없는 오류", e);
-            throw new SubscriptionException(BillingErrorCode.BILLING_UNKNOWN_ERROR);
+            throw new SubscriptionException(SubscriptionErrorCode.UNKNOWN_ERROR);
         }
     }
 }

@@ -1,8 +1,7 @@
 package com.futurenet.sorisoopbackend.subscription.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.futurenet.sorisoopbackend.billing.dto.response.CustomerTokenResponse;
-import com.futurenet.sorisoopbackend.billing.infrastructure.TossClient;
+import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
 import com.futurenet.sorisoopbackend.member.domain.MemberRepository;
 import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryErrorCode;
 import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryException;
@@ -14,6 +13,7 @@ import com.futurenet.sorisoopbackend.subscription.domain.*;
 import com.futurenet.sorisoopbackend.subscription.dto.request.SubscriptionStartRequest;
 import com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse;
 import com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionStartResponse;
+import com.futurenet.sorisoopbackend.subscription.infrastructure.TossClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,16 +38,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public void handleBrandpayAuth(Long memberId, String customerKey, String code) {
 
         CustomerTokenResponse response = tossClient.issueCustomerToken(customerKey, code);
+        response.setExpiresAt(LocalDateTime.now().plusSeconds(response.getExpiresIn()));
 
-        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(response.getExpiresIn());
-        response.setExpiresAt(expiresAt);
+        String existingKey = memberRepository.getCustomerKeyByMemberId(memberId);
 
-        if (memberRepository.getCustomerKeyByMemberId(memberId) == null) {
-            memberRepository.insertCustomerToken(memberId, response);
-            return;
+        int affectedRows = (existingKey == null)
+                ? subscriptionRepository.insertCustomerToken(memberId, response)
+                : subscriptionRepository.updateCustomerToken(memberId, response);
+
+        if (affectedRows <= 0) {
+            throw new SubscriptionException(SubscriptionErrorCode.CUSTOMER_TOKEN_SAVE_FAIL);
         }
-
-        memberRepository.updateCustomerToken(memberId, response);
     }
 
     @Override

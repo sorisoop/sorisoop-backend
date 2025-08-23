@@ -1,6 +1,5 @@
 package com.futurenet.sorisoopbackend.subscription.presentation;
 
-import com.amazonaws.Response;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.subscription.application.SubscriptionService;
 import com.futurenet.sorisoopbackend.subscription.domain.SubscriptionPlan;

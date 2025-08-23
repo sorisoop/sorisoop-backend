@@ -14,9 +14,10 @@ public enum SubscriptionErrorCode implements ErrorCode {
     INVALID_STATUS("SU004", "올바르지 않은 상태입니다.",HttpStatus.BAD_REQUEST),
     RESTART_REQUIRES_PAYMENT("SU005","구독을 재시작하려면 새 결제가 필요합니다.", HttpStatus.PAYMENT_REQUIRED),
     CUSTOMER_TOKEN_ISSUE_FAIL("SU006", "결제 수단 등록 중 문제가 발생했습니다.", HttpStatus.BAD_REQUEST),
+    CUSTOMER_TOKEN_SAVE_FAIL("SU007", "결제 수단 정보를 저장하지 못했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     PAYMENT_CONFIRM_FAIL("SU007", "결제 승인에 실패했습니다.", HttpStatus.BAD_REQUEST),
-    PAYMENT_UNKNOWN_ERROR("SU008", "결제 처리 중 알 수 없는 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-    
+    UNKNOWN_ERROR("SU009", "브랜드페이 처리 중 알 수 없는 오류", HttpStatus.INTERNAL_SERVER_ERROR);
+
     private final String code;
     private final String message;
     private final HttpStatus httpStatus;

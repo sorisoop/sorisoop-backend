@@ -1,5 +1,6 @@
 package com.futurenet.sorisoopbackend.subscription.domain;
 
+import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
 import com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,5 +18,6 @@ public interface SubscriptionRepository {
     int updateSubscriptionStatus(@Param("subscriptionId") Long subscriptionId,
                                  @Param("status") SubscriptionStatus status,
                                  @Param("updatedBy") Long updatedBy);
-
+    int insertCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
+    int updateCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
 }
