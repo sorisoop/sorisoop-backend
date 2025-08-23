@@ -35,6 +35,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final TossClient tossClient;
 
     @Override
+    @Transactional
     public void handleBrandpayAuth(Long memberId, String customerKey, String code) {
 
         CustomerTokenResponse response = tossClient.issueCustomerToken(customerKey, code);
@@ -52,6 +53,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public SubscriptionResponse getSubscription(Long memberId) {
         Subscription subscription = subscriptionRepository.getSubscriptionByMemberId(memberId);
         if (subscription == null) return null;
@@ -71,6 +73,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public List<SubscriptionPlan> getSubscriptionPlans() {
         return subscriptionRepository.getSubscriptionPlans();
     }
@@ -79,6 +82,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public SubscriptionStartResponse startSubscription(Long memberId, SubscriptionStartRequest request) {
         LocalDateTime now = LocalDateTime.now();
+
+        Subscription existing = subscriptionRepository.getSubscriptionByMemberId(memberId);
+        if (existing != null && SubscriptionStatus.ACTIVE.equals(existing.getStatus())) {
+            throw new SubscriptionException(SubscriptionErrorCode.ALREADY_ACTIVE);
+        }
 
         SubscriptionPlan plan = Optional.ofNullable(
                 subscriptionRepository.getSubscriptionPlanByType(request.getPlanType().name())
@@ -155,17 +163,29 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         ).orElseThrow(() -> new SubscriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
         LocalDate nextBillingAt = subscription.getNextBillingAt();
 
-        if (nextBillingAt.isAfter(today)) {
-            subscriptionRepository.updateSubscriptionStatus(subscription.getId(), SubscriptionStatus.ACTIVE, memberId);
-            return new SubscriptionStartResponse(SubscriptionStatus.ACTIVE, plan.getPlanTypeEnum(), nextBillingAt);
+        if (!nextBillingAt.isAfter(today)) {
+            throw new SubscriptionException(SubscriptionErrorCode.RESTART_REQUIRES_PAYMENT);
         }
 
-        throw new SubscriptionException(SubscriptionErrorCode.RESTART_REQUIRES_PAYMENT);
+        int updated = subscriptionRepository.updateSubscriptionStatus(
+                subscription.getId(),
+                SubscriptionStatus.ACTIVE,
+                memberId
+        );
 
+        if (updated <= 0) {
+            throw new SubscriptionException(SubscriptionErrorCode.UPDATE_STATUS_FAIL);
+        }
+
+        return new SubscriptionStartResponse(SubscriptionStatus.ACTIVE, plan.getPlanTypeEnum(), nextBillingAt);
     }
 
     @Override
+    @Transactional
     public void cancelSubscription(Long memberId) {
-        subscriptionRepository.cancelSubscription(memberId);
+        int updated = subscriptionRepository.cancelSubscription(memberId);
+        if (updated <= 0) {
+            throw new SubscriptionException(SubscriptionErrorCode.CANCEL_FAIL);
+        }
     }
 }
