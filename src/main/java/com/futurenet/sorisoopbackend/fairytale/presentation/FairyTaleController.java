@@ -35,4 +35,10 @@ public class FairyTaleController {
         List<FairyTaleResponse> result = fairyTaleService.getFairyTaleList(categoryId, page);
         return ResponseEntity.ok(new ApiResponse<>("FT102", "카테고리 별 동화책 목록 조회 성공", result));
     }
+
+    @GetMapping
+    public ResponseEntity<?> searchFairyTales(@RequestParam String keyword, int page) {
+        List<FairyTaleResponse> result = fairyTaleService.searchFairyTaleList(keyword, page);
+        return ResponseEntity.ok(new ApiResponse<>("FT103", "동화책 검색 성공", result));
+    }
 }

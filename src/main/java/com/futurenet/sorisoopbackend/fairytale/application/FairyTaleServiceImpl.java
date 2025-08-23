@@ -37,4 +37,9 @@ public class FairyTaleServiceImpl implements FairyTaleService {
         return fairyTaleRepository.getAllFairyTaleListByCategoryId(categoryId, start, PAGE_SIZE);
     }
 
+    @Override
+    public List<FairyTaleResponse> searchFairyTaleList(String keyword, int page) {
+        int start = (page - 1) * PAGE_SIZE;
+        return fairyTaleRepository.getFairyTaleListByKeyword(keyword, start, PAGE_SIZE);
+    }
 }
