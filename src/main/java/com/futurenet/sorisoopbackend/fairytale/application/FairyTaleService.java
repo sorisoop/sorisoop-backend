@@ -12,4 +12,5 @@ public interface FairyTaleService {
     List<FairyTaleCategoryResponse> getFairyTaleCategories();
     List<FairyTaleResponse> getFairyTaleList(Long categoryId, int page);
     List<FairyTaleResponse> searchFairyTaleList(String keyword, int page);
+    FairyTaleResponse getFairyTaleDetail(Long fairyTaleId);
 }

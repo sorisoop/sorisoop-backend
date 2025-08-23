@@ -37,8 +37,14 @@ public class FairyTaleController {
     }
 
     @GetMapping
-    public ResponseEntity<?> searchFairyTales(@RequestParam String keyword, int page) {
+    public ResponseEntity<?> searchFairyTales(@RequestParam String keyword, @RequestParam int page) {
         List<FairyTaleResponse> result = fairyTaleService.searchFairyTaleList(keyword, page);
         return ResponseEntity.ok(new ApiResponse<>("FT103", "동화책 검색 성공", result));
+    }
+
+    @GetMapping("/{fairyTaleId}")
+    public ResponseEntity<?> getFairyTaleDetail(@PathVariable Long fairyTaleId){
+        FairyTaleResponse result = fairyTaleService.getFairyTaleDetail(fairyTaleId);
+        return ResponseEntity.ok(new ApiResponse<>("FT104", "동화책 상세 조회 성공", result));
     }
 }
