@@ -1,17 +1,13 @@
 package com.futurenet.sorisoopbackend.fairytale.presentation;
 
 import com.futurenet.sorisoopbackend.fairytale.application.FairyTaleService;
-
-import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleCategoryResponse;
-
+import com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse;
+import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +28,11 @@ public class FairyTaleController {
     public ResponseEntity<?> getCategories() {
         List<FairyTaleCategoryResponse> result = fairyTaleService.getFairyTaleCategories();
         return ResponseEntity.ok(new ApiResponse<>("FT101", "동화 카테고리 조회 성공", result));
+    }
+
+    @GetMapping("/categories/{categoryId}")
+    public ResponseEntity<?> getFairyTaleList(@PathVariable Long categoryId, @RequestParam int page) {
+        List<FairyTaleResponse> result = fairyTaleService.getFairyTaleList(categoryId, page);
+        return ResponseEntity.ok(new ApiResponse<>("FT102", "카테고리 별 동화책 목록 조회 성공", result));
     }
 }
