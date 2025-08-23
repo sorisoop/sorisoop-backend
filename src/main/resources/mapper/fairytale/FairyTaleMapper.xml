@@ -10,4 +10,8 @@
         WHERE fairy_tale_id = #{fairyTaleId}
         ORDER BY page
     </select>
+    <select id="getAllFairyTaleCategories" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleCategoryResponse">
+        SELECT id, name
+        FROM fairy_tale_category
+    </select>
 </mapper>
