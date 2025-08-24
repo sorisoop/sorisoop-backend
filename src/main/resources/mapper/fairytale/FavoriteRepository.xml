@@ -5,11 +5,23 @@
         INSERT INTO favorite (fairy_tale_id, created_at, created_by, profile_id)
         VALUES (#{fairyTaleId}, SYSDATE, #{profileId}, #{profileId})
     </insert>
-    <select id="getFavoriteCount" resultType="java.lang.Integer">
+    <delete id="deleteFavorite">
+        DELETE FROM favorite WHERE fairy_tale_id = #{fairyTaleId} AND profile_id = #{profileId}
+    </delete>
+    <select id="getFavoriteCount" resultType="java.lang.Boolean">
         SELECT CASE WHEN EXISTS (
         SELECT 1 FROM favorite
         WHERE profile_id = #{profileId} AND fairy_tale_id = #{fairyTaleId}
         ) THEN 1 ELSE 0 END
         FROM dual
+    </select>
+    <select id="getFavoriteFairyTalesByProfileId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse">
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, c.name
+        FROM favorite f
+        JOIN fairy_tale ft ON f.fairy_tale_id = ft.id
+        JOIN fairy_tale_category c ON ft.category_id = c.id
+        WHERE f.profile_id = #{profileId}
+        ORDER BY f.created_at DESC
+        OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
 </mapper>
