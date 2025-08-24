@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
 import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleDto;
+import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptResponse;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.OpenAIPromptUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.exception.GlobalErrorCode;
@@ -15,8 +16,10 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
@@ -41,9 +44,33 @@ public class OpenAIService {
     /**
      * 동화 시놉시스 생성
      * */
-    public List<String> generateCustomFairyTaleSynopsis(URL imageUrl, MimeType mimeType) {
-        String synopsisPrompt = OpenAIPromptUtil.makeSynopsisPrompt();
+    @Retryable
+    public List<ConceptResponse> generateCustomFairyTaleSynopsis(URL imageUrl, MimeType mimeType, int age) {
+        String synopsisPrompt = OpenAIPromptUtil.makeStorySynopsisPrompt(age);
 
+        OpenAiChatOptions options = OpenAiChatOptions.builder()
+                .model("gpt-4o")
+                .maxTokens(100)
+                .temperature(0.5)
+                .build();
+
+        try {
+            ChatResponse synopsisResponse = chatClient.prompt()
+                    .user(u -> u.text(synopsisPrompt).media(mimeType, imageUrl))
+                    .options(options)
+                    .call()
+                    .chatResponse();
+
+            if (synopsisResponse == null) {
+                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SYNOPSIS_GENERATE_FAIL);
+            }
+
+            String resultJson = synopsisResponse.getResult().getOutput().getText();
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(resultJson, new TypeReference<List<ConceptResponse>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RestApiException(GlobalErrorCode.JSON_PROCESSING_FAIL);
+        }
     }
 
 

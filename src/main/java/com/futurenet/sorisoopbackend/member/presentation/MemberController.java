@@ -24,10 +24,10 @@ public class MemberController {
         return ResponseEntity.ok(new ApiResponse<>("ME100", "회원가입 성공", null));
     }
 
-    @GetMapping("check-email")
+    @GetMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestParam("email") String email) {
-        FindMemberResponse result = memberService.getMemberByEmail(email);
-        return ResponseEntity.ok(new ApiResponse<>("ME101", "이메일 조회 성공", result.getEmail()));
+        boolean result = memberService.getMemberByEmail(email);
+        return ResponseEntity.ok(new ApiResponse<>("ME101", "이메일 조회 성공", result));
     }
 
 }

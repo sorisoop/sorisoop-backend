@@ -16,14 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberAuthServiceImpl implements MemberAuthService {
 
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     @Transactional
     public Long oAuthSignup(OAuthSignupRequest request) {
 
-        FindMemberResponse member = memberService.getMemberByEmail(request.getEmail());
+        FindMemberResponse member = memberRepository.getMemberByEmail(request.getEmail());
 
         if (member != null) {
             throw new MemberException(MemberErrorCode.ALREADY_EXIST);
@@ -41,7 +40,7 @@ public class MemberAuthServiceImpl implements MemberAuthService {
     @Override
     @Transactional
     public void signup(SignupRequest request) {
-        FindMemberResponse member = memberService.getMemberByEmail(request.getEmail());
+        FindMemberResponse member = memberRepository.getMemberByEmail(request.getEmail());
 
         if (member != null) {
             throw new MemberException(MemberErrorCode.ALREADY_EXIST);

@@ -37,4 +37,10 @@
         AND id = #{profileId}
     </delete>
 
+    <select id="getProfileByProfileId" resultType="com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse">
+        SELECT id, nickname, profile_image AS profileImage, role, age, gender
+        FROM profile
+        WHERE id = #{profileId}
+    </select>
+
 </mapper>

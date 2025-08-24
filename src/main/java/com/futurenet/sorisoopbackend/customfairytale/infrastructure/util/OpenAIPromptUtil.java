@@ -4,29 +4,34 @@ public class OpenAIPromptUtil {
 
     private OpenAIPromptUtil() {}
 
+
     public static String makeStorySynopsisPrompt(int age) {
         return String.format("""
-            You are a creative children's book writer.
-            
-            Look at the provided image, and imagine 3 completely different story synopses (short summaries) suitable for a children's fairy tale book.
-            
-            For each synopsis, do the following:
-            - Write in two languages: first in Korean (for children/parents), then in English (for reference)
-            - Clearly introduce the main character, the setting, and a key problem, adventure, or special experience
-            - Each story must be unique, creative, positive, and suitable for children aged %d
-            - Each story should be a single paragraph, 3-4 sentences, not just variations of the same plot
-            
+                You are a creative children's book editor.
+
+                    Look at the provided image and suggest 3 different story themes (short concepts or ideas) that would fit this picture for a children's fairy tale.
+
+                    - Each theme should be a short phrase, not a full sentence. (e.g. "Mysterious Adventure", "Fantastic Friendship", "Magical Journey")
+                    - Write first in Korean (for children/parents), then in English (for reference).
+                    - Each theme must be positive, imaginative, and suitable for children aged %d.
+                    - All three themes must be clearly different and directly inspired by something in the image.
+
+                    Output ONLY the following JSON array.
+                    No comments, no extra text, no code blocks.
+
             Output format:
             [
-              { "id": 1, "synopsis_kr": "한글 요약", "synopsis_en": "English summary" },
-              { "id": 2, "synopsis_kr": "한글 요약", "synopsis_en": "English summary" },
-              { "id": 3, "synopsis_kr": "한글 요약", "synopsis_en": "English summary" }
+              {"concept_kr": "~~~", "concept_en": "~~~" },
+              {"concept_kr": "~~~", "concept_en": "~~~" },
+              {"concept_kr": "~~~", "concept_en": "~~~" },
             ]
-            
-            **IMPORTANT:**
-            - Output ONLY valid JSON in the exact format above.
-            - Do NOT add any comments, explanations, or code block symbols like ``` or similar.
-            - Only the pure JSON array should be returned.
+
+            Example:
+            [
+                {"concept_kr": "신비로운 모험", "concept_en": "Mysterious Adventure"},
+                {"concept_kr": "기발한 우정", "concept_en": "Fantastic Friendship"},
+                {"concept_kr": "환상적인 여행", "concept_en": "Magical Journey"}
+            ]
             """, age);
     }
 

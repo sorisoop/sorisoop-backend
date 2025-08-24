@@ -1,9 +1,13 @@
 server:
-  port: 9090
+  port: 8080
 
 spring:
   application:
     name: sorisoop-backend
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
   config:
     import: optional:file:.env[.properties]
   datasource:

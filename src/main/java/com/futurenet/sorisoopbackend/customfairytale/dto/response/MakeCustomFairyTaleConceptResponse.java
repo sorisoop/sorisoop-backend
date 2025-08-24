@@ -1,17 +1,18 @@
-package com.futurenet.sorisoopbackend.customfairytale.dto.request;
+package com.futurenet.sorisoopbackend.customfairytale.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class MakeCustomFairyTaleRequest {
-    private Long profileId;
+@NoArgsConstructor
+public class MakeCustomFairyTaleConceptResponse {
     private String imageUrl;
     private String imageContentType;
-    private String concept;
+    List<ConceptResponse> conceptResponse;
 }
