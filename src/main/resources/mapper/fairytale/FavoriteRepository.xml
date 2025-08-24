@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.futurenet.sorisoopbackend.fairytale.domain.FavoriteRepository">
+    <insert id="addFavorite">
+        INSERT INTO favorite (fairy_tale_id, created_at, created_by, profile_id)
+        VALUES (#{fairyTaleId}, SYSDATE, #{profileId}, #{profileId})
+    </insert>
+    <select id="getFavoriteCount" resultType="java.lang.Integer">
+        SELECT CASE WHEN EXISTS (
+        SELECT 1 FROM favorite
+        WHERE profile_id = #{profileId} AND fairy_tale_id = #{fairyTaleId}
+        ) THEN 1 ELSE 0 END
+        FROM dual
+    </select>
+</mapper>
