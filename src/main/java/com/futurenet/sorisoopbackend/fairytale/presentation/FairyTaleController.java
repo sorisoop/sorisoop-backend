@@ -1,6 +1,7 @@
 package com.futurenet.sorisoopbackend.fairytale.presentation;
 
 import com.futurenet.sorisoopbackend.fairytale.application.FairyTaleService;
+import com.futurenet.sorisoopbackend.fairytale.application.FavoriteService;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleCategoryResponse;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
@@ -17,6 +18,7 @@ import java.util.List;
 public class FairyTaleController {
 
     private final FairyTaleService fairyTaleService;
+    private final FavoriteService favoriteService;
 
     @GetMapping("/{fairyTaleId}/contents")
     public ResponseEntity<?> readFairyTale(@PathVariable Long fairyTaleId) {
@@ -46,5 +48,11 @@ public class FairyTaleController {
     public ResponseEntity<?> getFairyTaleDetail(@PathVariable Long fairyTaleId){
         FairyTaleResponse result = fairyTaleService.getFairyTaleDetail(fairyTaleId);
         return ResponseEntity.ok(new ApiResponse<>("FT104", "동화책 상세 조회 성공", result));
+    }
+
+    @PostMapping("/{fairyTaleId}/favorites")
+    public ResponseEntity<?> addFavorite(@PathVariable Long fairyTaleId, @RequestParam Long profileId) {
+        favoriteService.addFavorite(fairyTaleId, profileId);
+        return ResponseEntity.ok(new ApiResponse<>("FT201", "동화책 찜하기 성공", null));
     }
 }
