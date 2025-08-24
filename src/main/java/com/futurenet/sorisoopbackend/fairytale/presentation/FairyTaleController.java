@@ -55,4 +55,16 @@ public class FairyTaleController {
         favoriteService.addFavorite(fairyTaleId, profileId);
         return ResponseEntity.ok(new ApiResponse<>("FT201", "동화책 찜하기 성공", null));
     }
+
+    @GetMapping("/{profileId}/favorites")
+    public ResponseEntity<?> getFavorites(@PathVariable Long profileId, @RequestParam int page) {
+        List<FairyTaleResponse> result = favoriteService.getFavoriteFairyTales(profileId, page);
+        return ResponseEntity.ok(new ApiResponse<>("FT202", "찜한 동화책 목록 조회 성공", result));
+    }
+
+    @DeleteMapping("/{fairyTaleId}/favorites")
+    public ResponseEntity<?> deleteFavorite(@PathVariable Long fairyTaleId, @RequestParam Long profileId) {
+        favoriteService.deleteFavorite(fairyTaleId, profileId);
+        return ResponseEntity.ok(new ApiResponse<>("FT203", "찜한 동화책 삭제 성공", null));
+    }
 }
