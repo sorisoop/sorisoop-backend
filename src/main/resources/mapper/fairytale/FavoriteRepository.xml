@@ -16,7 +16,7 @@
         FROM dual
     </select>
     <select id="getFavoriteFairyTalesByProfileId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, c.name,
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, c.name AS categoryName,
         1 AS favorite
         FROM favorite f
         JOIN fairy_tale ft

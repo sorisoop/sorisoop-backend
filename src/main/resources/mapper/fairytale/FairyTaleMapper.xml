@@ -16,7 +16,7 @@
         FROM fairy_tale_category
     </select>
         <select id="getAllFairyTaleListByCategoryId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name,
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name AS categoryName,
         CASE
         WHEN fav.fairy_tale_id IS NOT NULL THEN 1
         ELSE 0
@@ -35,7 +35,7 @@
     </select>
 
     <select id="getFairyTaleListByKeyword" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name,
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name AS categoryName,
         CASE
         WHEN fav.fairy_tale_id IS NOT NULL THEN 1
         ELSE 0
@@ -51,7 +51,7 @@
         OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
     <select id="getFairyTaleDetailByFairyTaleId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name,
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name AS categoryName,
         CASE
         WHEN fav.fairy_tale_id IS NOT NULL THEN 1
         ELSE 0
