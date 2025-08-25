@@ -64,4 +64,19 @@
         AND fav.profile_id = #{profileId,jdbcType=NUMERIC}
         WHERE ft.id = #{fairyTaleId}
     </select>
+    <select id="getFairyTalesRandom" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name AS categoryName,
+        CASE
+        WHEN fav.fairy_tale_id IS NOT NULL THEN 1
+        ELSE 0
+        END AS favorite
+        FROM fairy_tale ft
+        JOIN fairy_tale_category ftc
+        ON ft.category_id = ftc.id
+        LEFT JOIN favorite fav
+        ON fav.fairy_tale_id = ft.id
+        AND fav.profile_id = #{profileId,jdbcType=NUMERIC}
+        ORDER BY DBMS_RANDOM.VALUE
+        FETCH FIRST 20 ROWS ONLY
+    </select>
 </mapper>

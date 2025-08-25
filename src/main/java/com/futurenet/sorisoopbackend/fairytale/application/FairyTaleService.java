@@ -13,4 +13,5 @@ public interface FairyTaleService {
     List<FindFairyTaleResponse> getFairyTaleList(Long categoryId, int page, Long profileId);
     List<FindFairyTaleResponse> searchFairyTaleList(String keyword, int page, Long profileId);
     FindFairyTaleResponse getFairyTaleDetail(Long fairyTaleId, Long profileId);
+    List<FindFairyTaleResponse> getFairyTalesRandom(Long profileId);
 }
