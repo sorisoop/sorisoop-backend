@@ -52,6 +52,12 @@ public class FairyTaleController {
         return ResponseEntity.ok(new ApiResponse<>("FT104", "동화책 상세 조회 성공", result));
     }
 
+    @GetMapping("/random")
+    public ResponseEntity<?> getFairyTalesRandom(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        List<FindFairyTaleResponse> result = fairyTaleService.getFairyTalesRandom(userPrincipal.getProfileId());
+        return ResponseEntity.ok(new ApiResponse<>("FT105", "동화책 랜덤 조회", result));
+    }
+
     @PostMapping("/{fairyTaleId}/favorites")
     public ResponseEntity<?> addFavorite(@PathVariable Long fairyTaleId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         favoriteService.addFavorite(fairyTaleId, userPrincipal.getProfileId());

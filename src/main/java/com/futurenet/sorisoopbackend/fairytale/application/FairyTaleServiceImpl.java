@@ -49,4 +49,9 @@ public class FairyTaleServiceImpl implements FairyTaleService {
     public FindFairyTaleResponse getFairyTaleDetail(Long fairyTaleId, Long profileId) {
         return fairyTaleRepository.getFairyTaleDetailByFairyTaleId(fairyTaleId, profileId);
     }
+
+    @Override
+    public List<FindFairyTaleResponse> getFairyTalesRandom(Long profileId) {
+        return fairyTaleRepository.getFairyTalesRandom(profileId);
+    }
 }
