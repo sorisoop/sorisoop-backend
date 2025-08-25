@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class FairyTaleCategoryResponse {
+public class FindFairyTaleCategoryResponse {
     private Long id;
     private String name;
 }
