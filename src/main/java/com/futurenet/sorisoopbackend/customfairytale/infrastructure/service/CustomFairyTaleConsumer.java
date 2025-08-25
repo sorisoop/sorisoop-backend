@@ -2,12 +2,17 @@ package com.futurenet.sorisoopbackend.customfairytale.infrastructure.service;
 
 import com.futurenet.sorisoopbackend.customfairytale.application.MakeFairyTaleService;
 import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairyTaleRequest;
+import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.global.infrastructure.config.RabbitConfig;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CustomFairyTaleConsumer {
@@ -17,12 +22,10 @@ public class CustomFairyTaleConsumer {
     @RabbitListener(queues = RabbitConfig.FAIRYTALE_QUEUE)
     public void receiveMakeFairyTaleRequest(MakeCustomFairyTaleRequest request) {
         try {
-            System.out.println("컨슈머 동작");
-            makeFairyTaleService.createCustomFairyTale(request);
-            System.out.println("동화 생성 완료");
+            List<MakeCustomFairyTaleContentResponse> response = makeFairyTaleService.createCustomFairyTale(request);
+            log.info("결과: {}:", response.toString());
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("큐 비움");
+            log.error(e.getMessage());
         }
     }
 }

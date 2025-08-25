@@ -114,8 +114,6 @@ public class OpenAIService {
 
             String resultJson = chatResponse.getResult().getOutput().getText();
 
-            System.out.println("대본 생성 결과: " + resultJson);
-
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(resultJson, new TypeReference<MakeCustomFairyTaleDto>() {});
 

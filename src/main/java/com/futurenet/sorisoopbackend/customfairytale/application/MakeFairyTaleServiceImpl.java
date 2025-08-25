@@ -75,7 +75,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
     @Transactional
     public List<MakeCustomFairyTaleContentResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request) {
 
-        System.out.println("서비스 호출");
+        log.info("서비스 시작");
         FindProfileResponse profileResponse = profileRepository.getProfileByProfileId(request.getProfileId());
 
         String characterGuide;
