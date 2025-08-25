@@ -48,6 +48,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         response.addHeader("Set-Cookie", ResponseUtil.createResponseCookie("Authorization", accessToken, AuthConstants.ACCESS_COOKIE_EXPIRED));
 
-        ResponseUtil.setResponse(response, "AU103", "OAuth2 로그인 성공", HttpStatus.OK);
+        response.sendRedirect("https://sorisoop.n-e.kr/profile");
     }
 }
