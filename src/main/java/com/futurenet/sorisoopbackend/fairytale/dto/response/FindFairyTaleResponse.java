@@ -12,7 +12,7 @@ public class FindFairyTaleResponse {
     private String author;
     private String thumbnailImage;
     private int pageCount;
-    private String name; // 카테고리 이름
+    private String categoryName; // 카테고리 이름
     @JsonProperty("isFavorite")
     private boolean favorite; // 찜 상태 T: 찜O, F: 찜X
 }
