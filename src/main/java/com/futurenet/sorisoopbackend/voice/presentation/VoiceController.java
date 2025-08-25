@@ -2,6 +2,7 @@ package com.futurenet.sorisoopbackend.voice.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.futurenet.sorisoopbackend.auth.dto.UserPrincipal;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
@@ -10,6 +11,7 @@ import com.futurenet.sorisoopbackend.voice.dto.request.AddVoiceRequest;
 import com.futurenet.sorisoopbackend.voice.dto.request.UpdateVoiceInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,14 +24,12 @@ public class VoiceController {
     private final AmazonS3Service amazonS3Service;
 
     @GetMapping
-    public ResponseEntity<?> getVoices(@RequestParam("profileId") Long profileId) {
-        return ResponseEntity.ok(new ApiResponse<>("VO100", "목소리 리스트 조회 완료", voiceService.getVoiceList(profileId)));
+    public ResponseEntity<?> getVoices(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("VO100", "목소리 리스트 조회 완료", voiceService.getVoiceList(userPrincipal.getProfileId())));
     }
 
     @PostMapping
-    public ResponseEntity<?> addVoice(@RequestPart("voice") MultipartFile voiceFile,
-                                      @RequestParam("request") String requestJson) throws JsonProcessingException {
-
+    public ResponseEntity<?> addVoice(@RequestPart("voice") MultipartFile voiceFile, @RequestParam("request") String requestJson) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         AddVoiceRequest request = mapper.readValue(requestJson, AddVoiceRequest.class);
 

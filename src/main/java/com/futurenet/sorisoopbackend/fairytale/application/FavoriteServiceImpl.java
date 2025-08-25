@@ -1,7 +1,7 @@
 package com.futurenet.sorisoopbackend.fairytale.application;
 
 import com.futurenet.sorisoopbackend.fairytale.domain.FavoriteRepository;
-import com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse;
+import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     @Transactional
-    public List<FairyTaleResponse> getFavoriteFairyTales(Long profileId, int page) {
+    public List<FindFairyTaleResponse> getFavoriteFairyTales(Long profileId, int page) {
         int start = (page -1) * PAGE_SIZE;
         return favoriteRepository.getFavoriteFairyTalesByProfileId(profileId, start, PAGE_SIZE);
     }

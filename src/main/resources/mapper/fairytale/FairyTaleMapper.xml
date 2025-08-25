@@ -11,34 +11,57 @@
         WHERE fc.fairy_tale_id = #{fairyTaleId}
         ORDER BY fc.page
     </select>
-    <select id="getAllFairyTaleCategories" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleCategoryResponse">
+    <select id="getAllFairyTaleCategories" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleCategoryResponse">
         SELECT id, name
         FROM fairy_tale_category
     </select>
-    <select id="getAllFairyTaleListByCategoryId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name
+        <select id="getAllFairyTaleListByCategoryId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name,
+        CASE
+        WHEN fav.fairy_tale_id IS NOT NULL THEN 1
+        ELSE 0
+        END AS isFavorite
         FROM fairy_tale ft
         JOIN fairy_tale_category ftc ON ft.category_id = ftc.id
+        LEFT JOIN favorite fav ON fav.fairy_tale_id = ft.id
+        AND fav.profile_id = #{profileId}
         <where>
             <if test="categoryId != 0">
-                FT.CATEGORY_ID = #{categoryId}
+                ft.category_id = #{categoryId}
             </if>
         </where>
         ORDER BY ft.id DESC
         OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
-    <select id="getFairyTaleListByKeyword" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name
+
+    <select id="getFairyTaleListByKeyword" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name,
+        CASE
+        WHEN fav.fairy_tale_id IS NOT NULL THEN 1
+        ELSE 0
+        END AS favorite
         FROM fairy_tale ft
-        JOIN fairy_tale_category ftc ON ft.category_id = ftc.id
+        JOIN fairy_tale_category ftc
+        ON ft.category_id = ftc.id
+        LEFT JOIN favorite fav
+        ON fav.fairy_tale_id = ft.id
+        AND fav.profile_id = #{profileId,jdbcType=NUMERIC}
         WHERE ft.title LIKE '%' || #{keyword} || '%'
         ORDER BY ft.id DESC
         OFFSET #{start} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
-    <select id="getFairyTaleDetailByFairyTaleId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FairyTaleResponse">
-        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name
+    <select id="getFairyTaleDetailByFairyTaleId" resultType="com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse">
+        SELECT ft.id, ft.title, ft.author, ft.thumbnail_image AS thumbnailImage, ft.page_count AS pageCount, ftc.name,
+        CASE
+        WHEN fav.fairy_tale_id IS NOT NULL THEN 1
+        ELSE 0
+        END AS favorite
         FROM fairy_tale ft
-        JOIN fairy_tale_category ftc ON ft.category_id = ftc.id
+        JOIN fairy_tale_category ftc
+        ON ft.category_id = ftc.id
+        LEFT JOIN favorite fav
+        ON fav.fairy_tale_id = ft.id
+        AND fav.profile_id = #{profileId,jdbcType=NUMERIC}
         WHERE ft.id = #{fairyTaleId}
     </select>
 </mapper>
