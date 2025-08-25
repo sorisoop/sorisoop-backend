@@ -1,6 +1,12 @@
 package com.futurenet.sorisoopbackend.subscription.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
+import com.futurenet.sorisoopbackend.member.domain.MemberRepository;
+import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryErrorCode;
+import com.futurenet.sorisoopbackend.paymentHistory.application.exception.PaymentHistoryException;
+import com.futurenet.sorisoopbackend.paymentHistory.domain.PaymentHistory;
+import com.futurenet.sorisoopbackend.paymentHistory.domain.PaymentHistoryRepository;
 import com.futurenet.sorisoopbackend.billing.infrastructure.TossClient;
 import com.futurenet.sorisoopbackend.paymenthistory.application.exception.PaymentHistoryErrorCode;
 import com.futurenet.sorisoopbackend.paymenthistory.application.exception.PaymentHistoryException;
@@ -8,10 +14,12 @@ import com.futurenet.sorisoopbackend.paymenthistory.domain.PaymentHistory;
 import com.futurenet.sorisoopbackend.paymenthistory.domain.PaymentHistoryRepository;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubScriptionException;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionErrorCode;
+import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionException;
 import com.futurenet.sorisoopbackend.subscription.domain.*;
 import com.futurenet.sorisoopbackend.subscription.dto.request.SubscriptionStartRequest;
 import com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse;
 import com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionStartResponse;
+import com.futurenet.sorisoopbackend.subscription.infrastructure.TossClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,9 +37,29 @@ import java.util.Optional;
 public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final PaymentHistoryRepository paymentHistoryRepository;
+    private final MemberRepository memberRepository;
     private final TossClient tossClient;
 
     @Override
+    @Transactional
+    public void handleBrandpayAuth(Long memberId, String customerKey, String code) {
+
+        CustomerTokenResponse response = tossClient.issueCustomerToken(customerKey, code);
+        response.setExpiresAt(LocalDateTime.now().plusSeconds(response.getExpiresIn()));
+
+        String existingKey = memberRepository.getCustomerKeyByMemberId(memberId);
+
+        int affectedRows = (existingKey == null)
+                ? subscriptionRepository.insertCustomerToken(memberId, response)
+                : subscriptionRepository.updateCustomerToken(memberId, response);
+
+        if (affectedRows <= 0) {
+            throw new SubscriptionException(SubscriptionErrorCode.CUSTOMER_TOKEN_SAVE_FAIL);
+        }
+    }
+
+    @Override
+    @Transactional
     public SubscriptionResponse getSubscription(Long memberId) {
         Subscription subscription = subscriptionRepository.getSubscriptionByMemberId(memberId);
         if (subscription == null) return null;
@@ -51,6 +79,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
+    @Transactional
     public List<SubscriptionPlan> getSubscriptionPlans() {
         return subscriptionRepository.getSubscriptionPlans();
     }
@@ -60,9 +89,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public SubscriptionStartResponse startSubscription(Long memberId, SubscriptionStartRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
+        Subscription existing = subscriptionRepository.getSubscriptionByMemberId(memberId);
+        if (existing != null && SubscriptionStatus.ACTIVE.equals(existing.getStatus())) {
+            throw new SubscriptionException(SubscriptionErrorCode.ALREADY_ACTIVE);
+        }
+
         SubscriptionPlan plan = Optional.ofNullable(
                 subscriptionRepository.getSubscriptionPlanByType(request.getPlanType().name())
-        ).orElseThrow(() -> new SubScriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
+        ).orElseThrow(() -> new SubscriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
 
         JsonNode paymentResult = tossClient.confirmPayment(
                 request.getPaymentKey(),
@@ -96,7 +130,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         int subCount = subscriptionRepository.insertSubscription(subscription);
         if (subCount <= 0) {
-            throw new SubScriptionException(SubscriptionErrorCode.SUBSCRIPTION_CREATE_FAIL);
+            throw new SubscriptionException(SubscriptionErrorCode.SUBSCRIPTION_CREATE_FAIL);
         }
 
         PaymentHistory history = PaymentHistory.builder()
@@ -124,29 +158,40 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Subscription subscription = Optional.ofNullable(
                 subscriptionRepository.getSubscriptionByMemberId(memberId)
-        ).orElseThrow(() -> new SubScriptionException(SubscriptionErrorCode.NOT_FOUND_SUBSCRIPTION));
+        ).orElseThrow(() -> new SubscriptionException(SubscriptionErrorCode.NOT_FOUND_SUBSCRIPTION));
 
         if (!SubscriptionStatus.CANCELLED.equals(subscription.getStatus())) {
-            throw new SubScriptionException(SubscriptionErrorCode.INVALID_STATUS);
+            throw new SubscriptionException(SubscriptionErrorCode.INVALID_STATUS);
         }
 
         SubscriptionPlan plan = Optional.ofNullable(
                 subscriptionRepository.getSubscriptionPlanById(subscription.getSubscriptionPlanId())
-        ).orElseThrow(() -> new SubScriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
+        ).orElseThrow(() -> new SubscriptionException(SubscriptionErrorCode.NOT_FOUND_PLAN));
         LocalDate nextBillingAt = subscription.getNextBillingAt();
 
-        if (nextBillingAt.isAfter(today)) {
-            subscriptionRepository.updateSubscriptionStatus(subscription.getId(), SubscriptionStatus.ACTIVE, memberId);
-            return new SubscriptionStartResponse(SubscriptionStatus.ACTIVE, plan.getPlanTypeEnum(), nextBillingAt);
+        if (!nextBillingAt.isAfter(today)) {
+            throw new SubscriptionException(SubscriptionErrorCode.RESTART_REQUIRES_PAYMENT);
         }
 
-        throw new SubScriptionException(SubscriptionErrorCode.RESTART_REQUIRES_PAYMENT);
+        int updated = subscriptionRepository.updateSubscriptionStatus(
+                subscription.getId(),
+                SubscriptionStatus.ACTIVE,
+                memberId
+        );
 
+        if (updated <= 0) {
+            throw new SubscriptionException(SubscriptionErrorCode.UPDATE_STATUS_FAIL);
+        }
+
+        return new SubscriptionStartResponse(SubscriptionStatus.ACTIVE, plan.getPlanTypeEnum(), nextBillingAt);
     }
 
-
     @Override
+    @Transactional
     public void cancelSubscription(Long memberId) {
-        subscriptionRepository.cancelSubscription(memberId);
+        int updated = subscriptionRepository.cancelSubscription(memberId);
+        if (updated <= 0) {
+            throw new SubscriptionException(SubscriptionErrorCode.CANCEL_FAIL);
+        }
     }
 }

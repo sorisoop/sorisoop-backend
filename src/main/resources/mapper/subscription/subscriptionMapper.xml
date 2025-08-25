@@ -86,5 +86,22 @@
         WHERE ID = #{subscriptionId}
     </update>
 
+    <insert id="insertCustomerToken">
+        INSERT INTO BRAND_PAY_TOKEN (MEMBER_ID, CUSTOMER_TOKEN, REFRESH_TOKEN, EXPIRES_AT, CREATED_AT)
+        VALUES (#{memberId},
+                #{token.accessToken},
+                #{token.refreshToken},
+                #{token.expiresAt},
+                SYSDATE)
+    </insert>
+
+    <update id="updateCustomerToken">
+        UPDATE BRAND_PAY_TOKEN
+        SET CUSTOMER_TOKEN = #{token.accessToken},
+            REFRESH_TOKEN  = #{token.refreshToken},
+            EXPIRES_AT     = #{token.expiresAt}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
 </mapper>
 
