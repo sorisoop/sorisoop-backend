@@ -13,4 +13,5 @@ public interface ProfileRepository {
     int saveProfile(@Param("request") SaveProfileDto request);
     boolean existsProfileByMemberIdAndProfileId(Long memberId, Long profileId);
     int deleteProfileByMemberIdAndProfileId(Long memberId, Long profileId);
+    FindProfileResponse getProfileByProfileId(Long profileId);
 }

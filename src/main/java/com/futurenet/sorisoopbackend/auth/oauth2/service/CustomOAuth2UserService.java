@@ -5,7 +5,7 @@ import com.futurenet.sorisoopbackend.auth.dto.UserPrincipal;
 import com.futurenet.sorisoopbackend.auth.oauth2.dto.response.KakaoResponse;
 import com.futurenet.sorisoopbackend.auth.oauth2.dto.response.OAuth2Response;
 import com.futurenet.sorisoopbackend.member.application.MemberAuthService;
-import com.futurenet.sorisoopbackend.member.application.MemberService;
+import com.futurenet.sorisoopbackend.member.domain.MemberRepository;
 import com.futurenet.sorisoopbackend.member.dto.request.OAuthSignupRequest;
 import com.futurenet.sorisoopbackend.member.dto.response.FindMemberResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberAuthService memberAuthService;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -28,7 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         OAuth2Response oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
 
-        FindMemberResponse member = memberService.getMemberByEmail(oAuth2Response.getEmail());
+        FindMemberResponse member = memberRepository.getMemberByEmail(oAuth2Response.getEmail());
 
         UserAuthDto userAuthDto = null;
 

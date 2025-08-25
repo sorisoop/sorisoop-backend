@@ -1,4 +1,4 @@
-package com.futurenet.sorisoopbackend.paymentHistory.domain;
+package com.futurenet.sorisoopbackend.paymenthistory.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -5,14 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MakeCustomFairyTaleDto {
-    private String title;
-    private Long categoryId;
-    private List<MakeCustomFairyTaleContentDto> pages;
+public class MakeCustomFairyTaleContentDto {
+    private int page;
+    private String imageUrl;
+    private String contentKr;
+    private String contentEn;
+    private String sceneType;
+    private String emotion;
 }

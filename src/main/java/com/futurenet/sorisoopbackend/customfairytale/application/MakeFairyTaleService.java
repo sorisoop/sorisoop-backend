@@ -1,11 +1,13 @@
 package com.futurenet.sorisoopbackend.customfairytale.application;
 
 import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairyTaleRequest;
-import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResponse;
+import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleContentResponse;
+import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleConceptResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface MakeFairyTaleService {
-    List<MakeCustomFairyTaleResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request);
+    MakeCustomFairyTaleConceptResponse makeSynopsis(MultipartFile image, Long profileId);
+    List<MakeCustomFairyTaleContentResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request);
 }

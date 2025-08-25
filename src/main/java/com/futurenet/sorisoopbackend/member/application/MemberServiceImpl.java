@@ -18,8 +18,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public FindMemberResponse getMemberByEmail(String email) {
-        return memberRepository.getMemberByEmail(email);
+    public boolean getMemberByEmail(String email) {
+        FindMemberResponse response = memberRepository.getMemberByEmail(email);
+        return response == null;
     }
 
     @Override
@@ -33,4 +34,6 @@ public class MemberServiceImpl implements MemberService {
 
         return new CustomerKeyResponse(newKey);
     }
+
+
 }

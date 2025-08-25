@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.customfairytale.domain.CustomFairyTaleRepository">
+    <insert id="saveCustomFairyTale" parameterType="com.futurenet.sorisoopbackend.customfairytale.dto.request.SaveCustomFairyTaleRequest"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
+
+        INSERT INTO custom_fairy_tale ( category_id, profile_id, title, thumbnail_image, page_count, created_by )
+        VALUES ( #{request.categoryId}, #{request.profileId}, #{request.title}, #{request.thumbnailImage}, #{request.pageCount}, #{request.profileId} )
+    </insert>
+
+    <select id="getAllCustomFairyTaleByCategoryIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleResponse">
+        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, fc.name AS categoryName
+        FROM custom_fairy_tale cft JOIN fairy_tale_category fc ON cft.category_id = fc.id
+        WHERE cft.profile_id = #{profileId}
+        <if test="categoryId != 0">
+            AND cft.category_id = #{categoryId}
+        </if>
+    </select>
+
+    <select id="getCustomFairyTaleDetailByCustomFairyTaleIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleDetailResponse">
+        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, cft.page_count AS pageCount, ftc.name AS categoryName
+        FROM custom_fairy_tale cft JOIN fairy_tale_category ftc ON cft.category_id = ftc.id
+        WHERE cft.id = #{customFairyTaleId} AND cft.profile_id = #{profileId}
+    </select>
+</mapper>
+

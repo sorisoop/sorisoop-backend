@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.customfairytale.domain.CustomFairyTaleContentRepository">
+    <insert id="saveCustomFairyTaleContents" parameterType="com.futurenet.sorisoopbackend.customfairytale.dto.request.SaveCustomFairyTaleContentRequest">
+        INSERT INTO custom_fairy_tale_content (
+        custom_fairy_tale_id,
+        page,
+        image_url,
+        script
+        )
+        <foreach collection="contents" item="item" separator="," open="VALUES" close="">
+            (
+            #{item.customFairyTaleId},
+            #{item.page},
+            #{item.imageUrl},
+            #{item.script}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getAllCustomFairyTaleContentsByCustomFairyTaleIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleContentResponse">
+        SELECT cfc.id AS id, cft.title AS title, cfc.page AS page, cfc.image_url AS imageUrl, cfc.script AS script
+        FROM custom_fairy_tale_content cfc JOIN custom_fairy_tale cft ON cfc.custom_fairy_tale_id = cft.id
+        WHERE cfc.custom_fairy_tale_id = #{customFairyTaleId}
+        AND cft.profile_id = #{profileId}
+        ORDER BY cfc.page ASC
+    </select>
+</mapper>
+
