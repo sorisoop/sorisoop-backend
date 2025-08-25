@@ -1,8 +1,15 @@
 package com.futurenet.sorisoopbackend.customfairytale.application;
 
+import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
+import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
+import com.futurenet.sorisoopbackend.customfairytale.domain.CustomFairyTaleContentRepository;
+import com.futurenet.sorisoopbackend.customfairytale.domain.CustomFairyTaleRepository;
+import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleContentDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairyTaleRequest;
-import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResponse;
+import com.futurenet.sorisoopbackend.customfairytale.dto.request.SaveCustomFairyTaleContentRequest;
+import com.futurenet.sorisoopbackend.customfairytale.dto.request.SaveCustomFairyTaleRequest;
+import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleConceptResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptResponse;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.service.OpenAIService;
@@ -33,7 +40,12 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
     private final AmazonS3Service amazonS3Service;
     private final OpenAIService openAIService;
     private final ProfileRepository profileRepository;
+    private final CustomFairyTaleRepository customFairyTaleRepository;
+    private final CustomFairyTaleContentRepository customFairyTaleContentRepository;
 
+    /**
+     * 동화 컨셉 샏성
+     * */
     @Override
     public MakeCustomFairyTaleConceptResponse makeSynopsis(MultipartFile image, Long profileId) {
 
@@ -56,12 +68,19 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         return new MakeCustomFairyTaleConceptResponse(savedImageUrl, image.getContentType(), conceptResponse);
     }
 
+    /**
+     * 동화 생성
+     * */
     @Override
     @Transactional
-    public List<MakeCustomFairyTaleResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request) {
+    public List<MakeCustomFairyTaleContentResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request) {
+
+        System.out.println("서비스 호출");
+        FindProfileResponse profileResponse = profileRepository.getProfileByProfileId(request.getProfileId());
 
         String characterGuide;
-        List<MakeCustomFairyTaleDto> pages;
+        MakeCustomFairyTaleDto dto;
+        Long customFairyTaleId;
 
         try {
             URL imageUrl = URI.create(request.getImageUrl()).toURL();
@@ -71,20 +90,45 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
             characterGuide = openAIService.extractCharacterGuide(imageUrl, mimeType);
             log.info("characterGuide1: {}", characterGuide);
-            pages = openAIService.generateCustomFairyTaleScript(imageUrl, mimeType);
+            dto = openAIService.generateCustomFairyTaleScript(imageUrl, mimeType, profileResponse.getAge(), request.getConcept());
+
+            SaveCustomFairyTaleRequest saveCustomFairyTaleRequest = SaveCustomFairyTaleRequest.of(dto, request.getProfileId(), request.getImageUrl());
+            int result = customFairyTaleRepository.saveCustomFairyTale(saveCustomFairyTaleRequest);
+
+            if (result == 0) {
+                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SAVE_CUSTOM_FAIRY_TALE_FAIL);
+            }
+
+            customFairyTaleId = saveCustomFairyTaleRequest.getId();
 
         } catch (MalformedURLException e) {
             throw new RestApiException(GlobalErrorCode.INVALID_URL);
         }
 
-        return openAIService.generateCustomFairyTaleImage(pages, characterGuide).stream()
-                .map(page -> new MakeCustomFairyTaleResponse(
+        List<MakeCustomFairyTaleContentDto> completedPages = openAIService.generateCustomFairyTaleImage(dto.getPages(), characterGuide);
+
+        List<SaveCustomFairyTaleContentRequest> contentRequests = completedPages.stream()
+                .map(page -> new SaveCustomFairyTaleContentRequest(
+                        customFairyTaleId,
                         page.getPage(),
                         page.getImageUrl(),
-                        page.getContent_kr()
+                        page.getContentKr()
+                ))
+                .toList();
+
+        int result = customFairyTaleContentRepository.saveCustomFairyTaleContents(contentRequests);
+
+        if (result != contentRequests.size()) {
+            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SAVE_CUSTOM_FAIRY_TALE_CONTENT_FAIL);
+        }
+
+        return completedPages.stream()
+                .map(page -> new MakeCustomFairyTaleContentResponse(
+                        page.getPage(),
+                        dto.getTitle(),
+                        page.getImageUrl(),
+                        page.getContentKr()
                 ))
                 .toList();
     }
-
-
 }

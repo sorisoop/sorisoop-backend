@@ -13,6 +13,8 @@ spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
   ai:
+    retry:
+      max-attempts: 1
     openai:
       api-key: ${OPEN_AI_KEY}
       chat:
@@ -49,3 +51,8 @@ mybatis:
 billing:
   customer-key-secret: ${CUSTOMER_KEY_SECRET}
   secret-key: ${TOSS_SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.amqp: DEBUG
+    org.springframework.messaging: DEBUG

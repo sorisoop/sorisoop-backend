@@ -7,10 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class MakeCustomFairyTaleResponse {
-    private int page;
-    private String imageUrl;
-    private String content;
+@NoArgsConstructor
+public class FindCustomFairyTaleResponse {
+    private Long id;
+    private String title;
+    private String thumbnailImage;
+    private String categoryName;
 }

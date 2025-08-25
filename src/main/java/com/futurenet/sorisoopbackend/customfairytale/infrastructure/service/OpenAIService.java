@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
+import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleContentDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptResponse;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.OpenAIPromptUtil;
@@ -44,7 +45,7 @@ public class OpenAIService {
     /**
      * 동화 시놉시스 생성
      * */
-    @Retryable
+    //@Retryable
     public List<ConceptResponse> generateCustomFairyTaleSynopsis(URL imageUrl, MimeType mimeType, int age) {
         String synopsisPrompt = OpenAIPromptUtil.makeStorySynopsisPrompt(age);
 
@@ -77,6 +78,7 @@ public class OpenAIService {
     /**
      * 등장인물 정보 추출
      * */
+    //@Retryable
     public String extractCharacterGuide(URL imageUrl, MimeType mimeType) {
         String characterGuidePrompt = OpenAIPromptUtil.makeCharacterInfoPrompt();
 
@@ -96,8 +98,9 @@ public class OpenAIService {
     /**
      * 사용자 그림 기반 7페이지 분량 대본 생성
      * */
-    public List<MakeCustomFairyTaleDto> generateCustomFairyTaleScript(URL imageUrl, MimeType mimeType) {
-        String contentPrompt = OpenAIPromptUtil.makeCustomFairyTaleScriptPrompt(5);
+    //@Retryable
+    public MakeCustomFairyTaleDto generateCustomFairyTaleScript(URL imageUrl, MimeType mimeType, int age, String concept) {
+        String contentPrompt = OpenAIPromptUtil.makeCustomFairyTaleScriptPrompt(age, concept);
 
         try {
             ChatResponse chatResponse = chatClient.prompt()
@@ -111,8 +114,10 @@ public class OpenAIService {
 
             String resultJson = chatResponse.getResult().getOutput().getText();
 
+            System.out.println("대본 생성 결과: " + resultJson);
+
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(resultJson, new TypeReference<List<MakeCustomFairyTaleDto>>() {});
+            return objectMapper.readValue(resultJson, new TypeReference<MakeCustomFairyTaleDto>() {});
 
         } catch (JsonProcessingException e) {
             throw new RestApiException(GlobalErrorCode.JSON_PROCESSING_FAIL);
@@ -123,13 +128,14 @@ public class OpenAIService {
     /**
      * 동화 이미지 생성
      * */
-    public List<MakeCustomFairyTaleDto> generateCustomFairyTaleImage(List<MakeCustomFairyTaleDto> pages, String characterGuide) {
+    //@Retryable
+    public List<MakeCustomFairyTaleContentDto> generateCustomFairyTaleImage(List<MakeCustomFairyTaleContentDto> pages, String characterGuide) {
 
-        for (MakeCustomFairyTaleDto page : pages) {
+        for (MakeCustomFairyTaleContentDto page : pages) {
 
             String imagePrompt = OpenAIPromptUtil.makeCustomFairyTaleImagePrompt(
                     characterGuide,
-                    page.getContent_en(),
+                    page.getContentEn(),
                     page.getSceneType(),
                     page.getEmotion()
             );

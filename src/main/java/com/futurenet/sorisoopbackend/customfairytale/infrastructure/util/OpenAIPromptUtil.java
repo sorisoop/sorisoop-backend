@@ -39,63 +39,73 @@ public class OpenAIPromptUtil {
     public static String makeCharacterInfoPrompt() {
         return """
             You are a professional children’s book illustrator.
-            
-            Analyze the following image and extract a detailed, creative character guide in English.
-            For each main and side character (including animals, insects, etc.),
-            write a separate paragraph describing ONLY their physical and visual features.
-            
+    
+            You will be given an image drawn by a child. Analyze the visual content of this image carefully and extract a detailed, creative character guide in English.
+    
+            Identify all visually distinct characters in the image (including humans, animals, insects, or fantasy creatures).
+            For each character, write a separate paragraph describing ONLY their physical and visual features:
+    
             - Gender/Age group (e.g., a young girl around 6-7)
             - Face (e.g., big round eyes, small nose, freckles, bright smile)
             - Hair (e.g., short light brown bob, bangs to the left)
             - Clothing/Accessories (e.g., blue and white striped shirt, overalls, red sneakers, holding a teddy bear)
             - Unique features (e.g., yellow star pattern on shirt, net for collecting bugs, wings, tail, etc.)
-            
+    
             * DO NOT describe art style, color tone, background, or overall mood.
-            * If visual info is missing, supplement with creative, fairy-tale appropriate details.
-            * Write naturally, one paragraph per character/animal/insect.
-            * Keep the language friendly, imaginative, and suitable for a children’s storybook.
-            """;
+            * If any visual detail is unclear or missing, add a whimsical and imaginative element that fits a children’s fantasy storybook.
+            * Write naturally, one paragraph per character.
+            * Keep the language friendly, imaginative, and suitable for a children’s picture book.
+        """;
     }
 
 
-    public static String makeCustomFairyTaleScriptPrompt(int age) {
+    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
         return String.format("""
-            You are a professional children's book author.
-            
-            Create a complete fairy tale for children aged %d, based on the provided image.
-            
-            - The story must have 7 scenes, each as a separate story beat.
-            - Each scene must be described in a narrative style (no direct speech or dialogue!).
-            - The flow must follow a classic story arc: introduction – development – climax – resolution – ending.
-            - Each scene must include: who is present, what they are doing, their emotional state, and key visual/background details.
-            - Emphasize positive, creative, and warm messages.
-            - If conflict occurs, resolve it peacefully and creatively.
-            - Do not violate OpenAI content policy.
-            
-            Output format (JSON, English + Korean):
-            
-            [
-              {
-                "page": 1,
-                "content_kr": "장면 설명 (서술체, 감정 포함)",
-                "content_en": "Scene description in English (narrative, focus on actions, emotions, and background)",
-                "scene_type": "introduction", // e.g., introduction, development, climax, resolution, ending
-                "emotion": "hope" // e.g., happy, curious, scared, surprised, relieved
-              },
-              ...
-              {
-                "page": 7,
-                "content_kr": "...",
-                "content_en": "...",
-                "scene_type": "...",
-                "emotion": "..."
-              }
-            ]
-            
-            * Output ONLY valid JSON. No explanations, comments, or code blocks.
-            * For each page, always include scene_type and emotion for later use.
-            * Use imaginative, child-appropriate language.
-            """, age);
+    You are a professional children's book author.
+
+    Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
+
+    "%s"
+
+    Requirements:
+    - The story must have 7 scenes, each as a separate story beat.
+    - Each scene must be described in a narrative style (no direct speech or dialogue!).
+    - The flow must follow a classic story arc: introduction – development – climax – resolution – ending.
+    - Each scene must include: who is present, what they are doing, their emotional state, and key visual/background details.
+    - Emphasize positive, creative, and warm messages.
+    - If conflict occurs, resolve it peacefully and creatively.
+
+    Categorize the story using one of the following categories, and output the corresponding number:
+    1 - Science
+    2 - Animals
+    3 - Adventure
+    4 - Daily Life
+    5 - History
+    6 - Food
+    7 - Nature
+
+    Output format (JSON, title in Korean, other fields in English and Korean):
+
+    {
+      "title": "동화 제목 (한글로)",
+      "categoryId": 3,
+      "pages": [
+        {
+          "page": 1,
+          "contentKr": "...",
+          "contentEn": "...",
+          "sceneType": "introduction",
+          "emotion": "curious"
+        },
+        ...
+      ]
+    }
+
+    * Output ONLY valid JSON.
+    * Use imaginative, child-appropriate language.
+    * Do not include explanations or extra text.
+    * Do not wrap the output with any Markdown formatting such as ```json or ``` — output only plain JSON.
+    """, age, concept);
     }
 
 
