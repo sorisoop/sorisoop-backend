@@ -19,7 +19,8 @@ public enum SubscriptionErrorCode implements ErrorCode {
     UNKNOWN_ERROR("SU009", "브랜드페이 처리 중 알 수 없는 오류", HttpStatus.INTERNAL_SERVER_ERROR),
     ALREADY_ACTIVE("SU010", "이미 활성화된 구독이 존재합니다.", HttpStatus.CONFLICT),
     CANCEL_FAIL("SU011", "구독 해지 처리에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    UPDATE_STATUS_FAIL("SU012", "구독 상태 변경에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    UPDATE_STATUS_FAIL("SU012", "구독 상태 변경에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    INACTIVE_SUBSCRIPTION("SU013", "구독이 필요한 기능입니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
