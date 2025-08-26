@@ -14,7 +14,7 @@
     </insert>
 
     <select id="getAllCustomFairyTaleByCategoryIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleResponse">
-        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, fc.name AS categoryName
+        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, fc.name AS categoryName, cft.page_count as pageCount
         FROM custom_fairy_tale cft JOIN fairy_tale_category fc ON cft.category_id = fc.id
         WHERE cft.profile_id = #{profileId}
         <if test="categoryId != 0">
