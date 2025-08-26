@@ -15,4 +15,5 @@ public class FindCustomFairyTaleResponse {
     private String thumbnailImage;
     private String categoryName;
     private int pageCount;
+    private String author;
 }
