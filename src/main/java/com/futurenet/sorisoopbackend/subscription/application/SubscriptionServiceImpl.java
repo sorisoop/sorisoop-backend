@@ -188,4 +188,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new SubscriptionException(SubscriptionErrorCode.CANCEL_FAIL);
         }
     }
+
+    @Override
+    public boolean isSubscribed(Long memberId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByMemberId(memberId);
+
+        if (subscription == null) {
+            return false;
+        }
+
+        LocalDate nextBillingAt = subscription.getNextBillingAt();
+        return nextBillingAt.isAfter(LocalDate.now());
+    }
 }

@@ -16,6 +16,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseUtil.setResponse(response, "AU001", "access token 오류", HttpStatus.UNAUTHORIZED);
+        ResponseUtil.setResponse(response, "AU010", "access token 오류", HttpStatus.UNAUTHORIZED);
     }
 }

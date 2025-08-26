@@ -7,6 +7,7 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairy
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.*;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.service.CustomFairyTaleProducer;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
+import com.futurenet.sorisoopbackend.subscription.aop.CheckSubscription;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,12 +26,14 @@ public class CustomFairyTaleController {
     private final CustomFairyTaleProducer customFairyTaleProducer;
     private final CustomFairyTaleService customFairyTaleService;
 
+    @CheckSubscription
     @PostMapping("/synopsis")
     public ResponseEntity<?> makeCustomFairyTaleSynopsis(@RequestParam("image") MultipartFile image, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         MakeCustomFairyTaleConceptResponse result = makeFairyTaleService.makeSynopsis(image, userPrincipal.getProfileId());
         return ResponseEntity.ok(new ApiResponse<>("CF100", "동화 시놉시스 생성 완료", result));
     }
 
+    @CheckSubscription
     @PostMapping
     public ResponseEntity<?> makeCustomFairyTale(@RequestBody MakeCustomFairyTaleRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         request.setProfileId(userPrincipal.getProfileId());

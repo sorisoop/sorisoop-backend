@@ -23,8 +23,8 @@
     </select>
 
     <select id="getCustomFairyTaleDetailByCustomFairyTaleIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleDetailResponse">
-        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, cft.page_count AS pageCount, ftc.name AS categoryName
-        FROM custom_fairy_tale cft JOIN fairy_tale_category ftc ON cft.category_id = ftc.id
+        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, cft.page_count AS pageCount, ftc.name AS categoryName, p.nickname as author
+        FROM custom_fairy_tale cft JOIN fairy_tale_category ftc ON cft.category_id = ftc.id Join profile p ON cft.profile_id = p.id
         WHERE cft.id = #{customFairyTaleId} AND cft.profile_id = #{profileId}
     </select>
 </mapper>

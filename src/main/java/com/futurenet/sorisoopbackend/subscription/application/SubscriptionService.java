@@ -15,4 +15,5 @@ public interface SubscriptionService {
     SubscriptionStartResponse startSubscription(Long memberId, SubscriptionStartRequest request);
     SubscriptionStartResponse restartSubscription(Long memberId);
     void cancelSubscription(Long memberId);
+    boolean isSubscribed(Long memberId);
 }
