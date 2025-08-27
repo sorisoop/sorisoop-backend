@@ -43,4 +43,27 @@
         WHERE id = #{profileId}
     </select>
 
+    <update id="updateProfile" parameterType="com.futurenet.sorisoopbackend.profile.dto.UpdateProfileDto">
+        UPDATE profile
+        <set>
+            <if test="request.nickname != null">
+                nickname = #{request.nickname},
+            </if>
+            <if test="request.role != null">
+                role = #{request.role},
+            </if>
+            <if test="request.age != null">
+                age = #{request.age},
+            </if>
+            <if test="request.gender != null">
+                gender = #{request.gender},
+            </if>
+            <if test="request.profileImage != null">
+                profile_image = #{request.profileImage},
+            </if>
+            updated_at = SYSDATE
+        </set>
+        WHERE id = #{request.id}
+    </update>
+
 </mapper>
