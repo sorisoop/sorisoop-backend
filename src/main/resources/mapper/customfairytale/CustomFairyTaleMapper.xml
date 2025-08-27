@@ -13,19 +13,38 @@
         VALUES ( #{request.categoryId}, #{request.profileId}, #{request.title}, #{request.thumbnailImage}, #{request.pageCount}, #{request.profileId} )
     </insert>
 
-    <select id="getAllCustomFairyTaleByCategoryIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleResponse">
-        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, fc.name AS categoryName, cft.page_count as pageCount, p.nickname as author
-        FROM custom_fairy_tale cft JOIN fairy_tale_category fc ON cft.category_id = fc.id JOIN profile p ON cft.profile_id = p.id
+    <select id="getAllCustomFairyTaleByCategoryIdAndProfileId"
+            resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleResponse">
+        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage,
+        fc.name AS categoryName, cft.page_count as pageCount, p.nickname as author
+        FROM custom_fairy_tale cft
+        JOIN fairy_tale_category fc ON cft.category_id = fc.id
+        JOIN profile p ON cft.profile_id = p.id
         WHERE cft.profile_id = #{profileId}
+        AND cft.is_delete = 'F'
         <if test="categoryId != 0">
             AND cft.category_id = #{categoryId}
         </if>
+        ORDER BY cft.id DESC
     </select>
 
-    <select id="getCustomFairyTaleDetailByCustomFairyTaleIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleDetailResponse">
-        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage, cft.page_count AS pageCount, ftc.name AS categoryName, p.nickname as author
-        FROM custom_fairy_tale cft JOIN fairy_tale_category ftc ON cft.category_id = ftc.id Join profile p ON cft.profile_id = p.id
-        WHERE cft.id = #{customFairyTaleId} AND cft.profile_id = #{profileId}
+    <select id="getCustomFairyTaleDetailByCustomFairyTaleIdAndProfileId"
+            resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleDetailResponse">
+        SELECT cft.id, cft.title, cft.thumbnail_image AS thumbnailImage,
+        cft.page_count AS pageCount, ftc.name AS categoryName, p.nickname as author
+        FROM custom_fairy_tale cft
+        JOIN fairy_tale_category ftc ON cft.category_id = ftc.id
+        JOIN profile p ON cft.profile_id = p.id
+        WHERE cft.id = #{customFairyTaleId}
+        AND cft.profile_id = #{profileId}
+        AND cft.is_delete = 'F'
     </select>
+
+    <update id="deleteCustomFairyTale">
+        UPDATE custom_fairy_tale
+        SET is_delete = 'T'
+        WHERE id = #{customFairyTaleId}
+        AND profile_id = #{profileId}
+    </update>
 </mapper>
 

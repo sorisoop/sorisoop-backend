@@ -21,11 +21,18 @@
         </foreach>
     </insert>
 
-    <select id="getAllCustomFairyTaleContentsByCustomFairyTaleIdAndProfileId" resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleContentResponse">
-        SELECT cfc.id AS id, cft.title AS title, cfc.page AS page, cfc.image_url AS imageUrl, cfc.script AS script
-        FROM custom_fairy_tale_content cfc JOIN custom_fairy_tale cft ON cfc.custom_fairy_tale_id = cft.id
+    <select id="getAllCustomFairyTaleContentsByCustomFairyTaleIdAndProfileId"
+            resultType="com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleContentResponse">
+        SELECT cfc.id AS id,
+        cft.title AS title,
+        cfc.page AS page,
+        cfc.image_url AS imageUrl,
+        cfc.script AS script
+        FROM custom_fairy_tale_content cfc
+        JOIN custom_fairy_tale cft ON cfc.custom_fairy_tale_id = cft.id
         WHERE cfc.custom_fairy_tale_id = #{customFairyTaleId}
         AND cft.profile_id = #{profileId}
+        AND cft.is_delete = 'F'
         ORDER BY cfc.page ASC
     </select>
 </mapper>

@@ -17,7 +17,8 @@ public enum CustomFairyTaleErrorCode implements ErrorCode {
     SAVE_CUSTOM_FAIRY_TALE_FAIL("CF005", "생성 동화 저장을 실패했습니다.", HttpStatus.BAD_REQUEST),
     SAVE_CUSTOM_FAIRY_TALE_CONTENT_FAIL("CF006", "생성 동화 내용 저장을 실패했습니다.", HttpStatus.BAD_REQUEST),
     FIND_CUSTOM_FAIRY_TALE_CONTENT_FAIL("CF007", "생성 동화 내용 조회를 실패했습니다.", HttpStatus.BAD_REQUEST),
-    FIND_CUSTOM_FAIRY_TALE_DETAIL_FAIL("CF008", "생성 동화 상세 조회를 실패했습니다.", HttpStatus.BAD_REQUEST);
+    FIND_CUSTOM_FAIRY_TALE_DETAIL_FAIL("CF008", "생성 동화 상세 조회를 실패했습니다.", HttpStatus.BAD_REQUEST),
+    DELETE_CUSTOM_FAIRY_TALE_FAIL("CF009", "생성 동화 삭제를 실패했습니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

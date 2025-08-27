@@ -10,4 +10,5 @@ public interface CustomFairyTaleService {
     List<FindCustomFairyTaleResponse> getAllCustomFairyTaleByCategoryId(int categoryId, Long profileId);
     List<FindCustomFairyTaleContentResponse> getCustomFairyTaleContents(Long customFairyTaleId, Long profileId);
     FindCustomFairyTaleDetailResponse getCustomFairyTaleDetail(Long customFairyTaleId, Long profileId);
+    void deleteCustomFairyTale(Long customFairyTaleId, Long profileId);
 }

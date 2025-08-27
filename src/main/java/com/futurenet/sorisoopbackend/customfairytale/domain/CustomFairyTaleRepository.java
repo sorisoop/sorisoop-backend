@@ -13,4 +13,5 @@ public interface CustomFairyTaleRepository {
     int saveCustomFairyTale(@Param("request") SaveCustomFairyTaleRequest request);
     List<FindCustomFairyTaleResponse> getAllCustomFairyTaleByCategoryIdAndProfileId(@Param("categoryId") int categoryId, @Param("profileId") Long profileId);
     FindCustomFairyTaleDetailResponse getCustomFairyTaleDetailByCustomFairyTaleIdAndProfileId(Long customFairyTaleId, Long profileId);
+    int deleteCustomFairyTale(@Param("customFairyTaleId") Long customFairyTaleId, @Param("profileId") Long profileId);
 }

@@ -58,4 +58,10 @@ public class CustomFairyTaleController {
         FindCustomFairyTaleDetailResponse result = customFairyTaleService.getCustomFairyTaleDetail(customFairyTaleId, userPrincipal.getProfileId());
         return ResponseEntity.ok(new ApiResponse<>("CF104", "생성 동화 상세 조회 성공", result));
     }
+
+    @DeleteMapping("/{customFairyTaleId}")
+    public ResponseEntity<?> deleteCustomFairyTale(@PathVariable Long customFairyTaleId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        customFairyTaleService.deleteCustomFairyTale(customFairyTaleId, userPrincipal.getProfileId());
+        return ResponseEntity.ok(new ApiResponse<>("CF105", "생성 동화 삭제 성공", null));
+    }
 }
