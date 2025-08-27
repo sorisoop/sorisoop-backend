@@ -50,7 +50,7 @@ public class ProfileController {
 
     @PatchMapping
     public ResponseEntity<?> updateProfile(@ModelAttribute UpdateProfileRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        profileService.updateProfile(request, userPrincipal.getProfileId());
+        profileService.updateProfile(request, userPrincipal.getId());
         return ResponseEntity.ok(new ApiResponse<>("PR104", "프로필 수정 성공", null));
     }
 

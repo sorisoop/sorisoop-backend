@@ -92,7 +92,13 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void updateProfile(UpdateProfileRequest request, Long profileId) {
+    public void updateProfile(UpdateProfileRequest request, Long memberId) {
+
+        boolean exists = profileRepository.existsProfileByMemberIdAndProfileId(memberId, request.getProfileId());
+
+        if (!exists) {
+            throw new ProfileException(ProfileErrorCode.MISMATCH_PROFILE_ID_AND_MEMBER_ID);
+        }
 
         String profileImage = null;
 
@@ -100,7 +106,7 @@ public class ProfileServiceImpl implements ProfileService {
             profileImage = amazonS3Service.uploadImage(request.getProfileImage(), FolderNameConstant.PROFILE_IMAGE);
         }
 
-        int result = profileRepository.updateProfile(request.toDto(profileId, profileImage));
+        int result = profileRepository.updateProfile(request.toDto(profileImage));
 
         if (result == 0) {
             throw new ProfileException(ProfileErrorCode.UPDATE_PROFILE_FAIL);
