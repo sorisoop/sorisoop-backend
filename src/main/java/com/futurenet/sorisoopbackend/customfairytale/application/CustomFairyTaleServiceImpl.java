@@ -9,6 +9,7 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFair
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.FindCustomFairyTaleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,5 +43,15 @@ public class CustomFairyTaleServiceImpl implements CustomFairyTaleService {
             throw new CustomFairyTaleException(CustomFairyTaleErrorCode.FIND_CUSTOM_FAIRY_TALE_DETAIL_FAIL);
         }
         return result;
+    }
+
+    @Override
+    @Transactional
+    public void deleteCustomFairyTale(Long customFairyTaleId, Long profileId) {
+        int result = customFairyTaleRepository.deleteCustomFairyTale(customFairyTaleId, profileId);
+
+        if (result == 0) {
+            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.DELETE_CUSTOM_FAIRY_TALE_FAIL);
+        }
     }
 }
