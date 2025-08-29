@@ -7,8 +7,8 @@ import com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse;
 import java.util.List;
 
 public interface VoiceService {
-    List<GetVoiceResponse> getVoiceList(Long profileId);
-    void addVoice(AddVoiceRequest request, String voiceUrl);
+    List<GetVoiceResponse> getVoiceList(Long memberId);
+    void addVoice(AddVoiceRequest request, String voiceUrl, Long memberId);
     void updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request);
     void delectVoice(Long voiceId);
 }

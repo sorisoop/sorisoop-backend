@@ -25,16 +25,16 @@ public class VoiceController {
 
     @GetMapping
     public ResponseEntity<?> getVoices(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        return ResponseEntity.ok(new ApiResponse<>("VO100", "목소리 리스트 조회 완료", voiceService.getVoiceList(userPrincipal.getProfileId())));
+        return ResponseEntity.ok(new ApiResponse<>("VO100", "목소리 리스트 조회 완료", voiceService.getVoiceList(userPrincipal.getId())));
     }
 
     @PostMapping
-    public ResponseEntity<?> addVoice(@RequestPart("voice") MultipartFile voiceFile, @RequestParam("request") String requestJson) throws JsonProcessingException {
+    public ResponseEntity<?> addVoice(@RequestPart("voice") MultipartFile voiceFile, @RequestParam("request") String requestJson, @AuthenticationPrincipal UserPrincipal userPrincipal) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         AddVoiceRequest request = mapper.readValue(requestJson, AddVoiceRequest.class);
 
         String voiceUrl = amazonS3Service.uploadAudio(voiceFile, FolderNameConstant.VOICE);
-        voiceService.addVoice(request, voiceUrl);
+        voiceService.addVoice(request, voiceUrl, userPrincipal.getId());
         return ResponseEntity.ok(new ApiResponse<>("VO101", "목소리 등록 완료", null));
     }
 

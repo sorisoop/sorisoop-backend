@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.futurenet.sorisoopbackend.voice.domain.VoiceRepository">
     <insert id="saveVoice">
-        INSERT INTO voice (profile_id, title, image_url, tts_url, created_at, created_by)
-        VALUES (#{profileId}, #{title}, #{imageUrl}, #{ttsUrl}, SYSDATE, #{profileId})
+        INSERT INTO voice (member_id, title, image_url, tts_url, created_at, created_by)
+        VALUES (#{memberId}, #{request.title}, #{request.imageUrl}, #{request.ttsUrl}, SYSDATE, #{memberId})
     </insert>
 
     <update id="updateVoiceInfo">
@@ -16,15 +16,15 @@
                 image_url = #{request.imageUrl},
             </if>
             updated_at = SYSDATE,
-            updated_by = #{request.profileId}
+            updated_by = #{request.memberId}
         </set>
         WHERE id = #{voiceId}
     </update>
 
     <select id="getVoiceList" resultType="com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse">
-        SELECT id, profile_id AS profileId, image_url AS imageUrl, title
+        SELECT id, member_id AS memberId, image_url AS imageUrl, title
         FROM voice
-        WHERE profile_id = #{profileId}
+        WHERE member_id = #{memberId}
     </select>
 
     <select id="getVoiceForDelete" resultType="com.futurenet.sorisoopbackend.voice.dto.response.DeleteVoiceResponse">
