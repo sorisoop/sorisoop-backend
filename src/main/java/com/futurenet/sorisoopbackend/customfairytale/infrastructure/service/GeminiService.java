@@ -1,5 +1,7 @@
 package com.futurenet.sorisoopbackend.customfairytale.infrastructure.service;
 
+import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
+import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
 import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleContentDto;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.AIPromptUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
@@ -52,7 +54,7 @@ public class GeminiService {
             try {
                 List<?> candidates = (List<?>) response.getBody().get("candidates");
                 if (candidates == null || candidates.isEmpty()) {
-                    throw new IllegalStateException("No candidates returned from Gemini API");
+                    throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
                 }
 
                 Map<?, ?> firstCandidate = (Map<?, ?>) candidates.get(0);
@@ -65,7 +67,7 @@ public class GeminiService {
                         .findFirst();
 
                 if (imagePartOpt.isEmpty()) {
-                    throw new IllegalStateException("No inlineData found in parts");
+                    throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
                 }
 
                 Map<String, Object> inlineData = (Map<String, Object>) imagePartOpt.get().get("inlineData");
@@ -83,7 +85,7 @@ public class GeminiService {
                 page.setImageUrl(s3Url);
 
             } catch (Exception e) {
-                throw new RuntimeException("Gemini 이미지 생성 실패", e);
+                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
             }
         }
 
