@@ -12,6 +12,7 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.request.SaveCustomFairy
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleConceptResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptResponse;
+import com.futurenet.sorisoopbackend.customfairytale.infrastructure.service.GeminiService;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.service.OpenAIService;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.exception.GlobalErrorCode;
@@ -42,6 +43,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
     private final ProfileRepository profileRepository;
     private final CustomFairyTaleRepository customFairyTaleRepository;
     private final CustomFairyTaleContentRepository customFairyTaleContentRepository;
+    private final GeminiService geminiService;
 
     /**
      * 동화 컨셉 샏성
@@ -90,6 +92,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
             characterGuide = openAIService.extractCharacterGuide(imageUrl, mimeType);
             log.info("characterGuide1: {}", characterGuide);
+
             dto = openAIService.generateCustomFairyTaleScript(imageUrl, mimeType, profileResponse.getAge(), request.getConcept());
 
             SaveCustomFairyTaleRequest saveCustomFairyTaleRequest = SaveCustomFairyTaleRequest.of(dto, request.getProfileId(), request.getImageUrl());
@@ -105,7 +108,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
             throw new RestApiException(GlobalErrorCode.INVALID_URL);
         }
 
-        List<MakeCustomFairyTaleContentDto> completedPages = openAIService.generateCustomFairyTaleImage(dto.getPages(), characterGuide);
+        List<MakeCustomFairyTaleContentDto> completedPages = geminiService.generateImages(dto.getPages(), characterGuide);
 
         List<SaveCustomFairyTaleContentRequest> contentRequests = completedPages.stream()
                 .map(page -> new SaveCustomFairyTaleContentRequest(
