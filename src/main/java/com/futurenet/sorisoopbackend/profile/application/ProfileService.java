@@ -13,6 +13,6 @@ public interface ProfileService {
     void saveProfile(SaveProfileRequest request, Long memberId);
     void selectProfile(Long profileId, Long memberId, HttpServletRequest request, HttpServletResponse response);
     void deleteProfile(Long profileId, Long memberId);
-    void updateProfile(UpdateProfileRequest request, Long profileId);
+    void updateProfile(UpdateProfileRequest request, Long memberId);
     FindProfileResponse getProfileById(Long profileId);
 }

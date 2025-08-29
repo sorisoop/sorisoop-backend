@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetVoiceResponse {
     private Long id;
-    private Long profileId;
+    private Long memberId;
     private String imageUrl;
     private String title;
 }

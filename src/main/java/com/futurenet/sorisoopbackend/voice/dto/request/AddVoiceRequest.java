@@ -9,7 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddVoiceRequest {
-    private Long profileId;
     private String title;
     private String imageUrl;
     @Setter

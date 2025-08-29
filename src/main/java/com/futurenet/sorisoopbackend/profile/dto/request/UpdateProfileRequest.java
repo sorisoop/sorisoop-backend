@@ -15,12 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class UpdateProfileRequest {
     private MultipartFile profileImage;
+    private Long profileId;
     private String nickname;
     private Role role;
     private Integer age;
     private Gender gender;
 
-    public UpdateProfileDto toDto(Long profileId, String profileImage) {
+    public UpdateProfileDto toDto(String profileImage) {
         return UpdateProfileDto.builder()
                 .id(profileId)
                 .nickname(nickname)
