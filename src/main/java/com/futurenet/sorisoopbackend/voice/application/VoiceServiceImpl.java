@@ -24,22 +24,19 @@ public class VoiceServiceImpl implements VoiceService{
 
     @Transactional
     @Override
-    public List<GetVoiceResponse> getVoiceList(Long profileId) {
-        List<GetVoiceResponse> voices = voiceRepository.getVoiceList(profileId);
+    public List<GetVoiceResponse> getVoiceList(Long memberId) {
+        List<GetVoiceResponse> voices = voiceRepository.getVoiceList(memberId);
         return voices != null ? voices : Collections.emptyList();
     }
 
     @Transactional
     @Override
-    public void addVoice(AddVoiceRequest request, String voiceUrl) {
-        try {
-            request.setTtsUrl(voiceUrl);
-            int result = voiceRepository.saveVoice(request);
-            if (result == 0) {
-                throw new VoiceException(VoiceErrorCode.VOICE_SAVE_FAIL);
-            }
-        } catch (Exception e) {
-            throw new VoiceException(VoiceErrorCode.S3_FILE_UPLOAD_FAIL);
+    public void addVoice(AddVoiceRequest request, String voiceUrl, Long memberId) {
+        request.setTtsUrl(voiceUrl);
+        int result = voiceRepository.saveVoice(request, memberId);
+
+        if (result == 0) {
+            throw new VoiceException(VoiceErrorCode.VOICE_SAVE_FAIL);
         }
     }
 
@@ -77,5 +74,4 @@ public class VoiceServiceImpl implements VoiceService{
             throw new VoiceException(VoiceErrorCode.VOICE_DELETE_FAIL);
         }
     }
-
 }

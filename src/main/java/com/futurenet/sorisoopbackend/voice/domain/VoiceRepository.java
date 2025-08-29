@@ -10,8 +10,8 @@ import java.util.List;
 
 @Mapper
 public interface VoiceRepository {
-    List<GetVoiceResponse> getVoiceList(Long profileId);
-    int saveVoice(AddVoiceRequest request);
+    List<GetVoiceResponse> getVoiceList(Long memberId);
+    int saveVoice(AddVoiceRequest request, Long memberId);
     int updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request);
     DeleteVoiceResponse getVoiceForDelete(Long voiceId);
     int deleteVoice(Long voiceId);

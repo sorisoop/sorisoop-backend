@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateVoiceInfoRequest {
-    private String profileId;
+    private String memberId;
     private String title;
     private String imageUrl;
 }

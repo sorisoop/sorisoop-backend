@@ -101,9 +101,7 @@ public class AmazonS3Service {
         String host = fileUrl.split("\\.s3")[0];
         return host.substring(host.lastIndexOf("/") + 1);
     }
-
     private String extractKey(String fileUrl) {
         return fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + 15);
     }
-
 }
