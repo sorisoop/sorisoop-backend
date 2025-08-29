@@ -1,8 +1,8 @@
 package com.futurenet.sorisoopbackend.customfairytale.infrastructure.util;
 
-public class OpenAIPromptUtil {
+public class AIPromptUtil {
 
-    private OpenAIPromptUtil() {}
+    private AIPromptUtil() {}
 
 
     public static String makeStorySynopsisPrompt(int age) {
@@ -68,12 +68,27 @@ public class OpenAIPromptUtil {
     "%s"
 
     Requirements:
-    - The story must have 7 scenes, each as a separate story beat.
-    - Each scene must be described in a narrative style (no direct speech or dialogue!).
-    - The flow must follow a classic story arc: introduction – development – climax – resolution – ending.
-    - Each scene must include: who is present, what they are doing, their emotional state, and key visual/background details.
-    - Emphasize positive, creative, and warm messages.
-    - If conflict occurs, resolve it peacefully and creatively.
+    - The story must have 7 scenes (pages), each as a **distinct story beat** with clear progress or change.
+    - Each scene must be described in a narrative style (NO dialogue or direct speech).
+    - Follow a classic story arc:
+      1. Introduction (setting, character intro)
+      2. Inciting Incident (something unexpected happens)
+      3. Rising Action (challenge or decision emerges)
+      4. Climax (most intense or magical moment)
+      5. Falling Action (consequences or solution unfold)
+      6. Resolution (things settle, emotional closure)
+      7. Final Scene (positive ending or imaginative twist)
+
+    Each scene must describe:
+    - Who is present
+    - What is happening
+    - Emotional state of the character(s)
+    - Visual/background elements for illustration
+
+    Emphasize:
+    - Strong sense of change or progress between each page
+    - Creative, child-friendly language and ideas
+    - Positive and peaceful resolutions to any conflict
 
     Categorize the story using one of the following categories, and output the corresponding number:
     1 - Science
@@ -104,38 +119,27 @@ public class OpenAIPromptUtil {
     * Output ONLY valid JSON.
     * Use imaginative, child-appropriate language.
     * Do not include explanations or extra text.
-    * Do not wrap the output with any Markdown formatting such as ```json or ``` — output only plain JSON.
+    * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
     """, age, concept);
     }
 
 
-    public static String makeCustomFairyTaleImagePrompt(
-            String characterGuide, String pageContent, String sceneType, String emotion
-    ) {
+    public static String makeCustomFairyTaleImagePrompt(String characterGuide, String sceneType, String emotion, String content) {
         return String.format("""
-            You are a professional illustrator for children’s picture books.
-            
-            Context:
-            - This is one page of a 7-page fairy tale for young children.
-            - All images in the book must look as if they belong together (same character style, same background atmosphere).
-            - The main character’s appearance, clothing, accessories, and the background should remain exactly the same throughout the book, unless explicitly changed.
-            
-            Character Guide:
-            %s
-            
-            Scene Description (for page, type: %s, main emotion: %s):
-            %s
-            
-            Instructions:
-            - Create a single illustration for this scene in a gentle watercolor or pastel style.
-            - The image must feel warm, soft, and dreamy, suitable for a children’s storybook.
-            - Do NOT include any text, logos, or letters in the image.
-            - Focus on the main character(s) and the scene, maintaining absolute consistency with previous pages.
-            
-            Reminder:
-            If any visual information is unclear, use your creativity but always keep the fairy tale mood and match the character guide.
-            """, characterGuide, sceneType, emotion, pageContent);
-    }
+        You are a professional illustrator for children’s storybooks.
 
+        Character Guide:
+        %s
+
+        Scene Description (type: %s, emotion: %s):
+        %s
+
+        Instructions:
+        - The illustration must use a warm, pastel watercolor style.
+        - Focus on consistency of characters and background across all pages.
+        - No text, no watermark, no logo in the image.
+        - Center the main character(s) visually.
+        """, characterGuide, sceneType, emotion, content);
+    }
 
 }

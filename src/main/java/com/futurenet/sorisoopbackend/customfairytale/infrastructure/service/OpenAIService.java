@@ -5,27 +5,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleErrorCode;
 import com.futurenet.sorisoopbackend.customfairytale.application.exception.CustomFairyTaleException;
-import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleContentDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleDto;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptResponse;
-import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.OpenAIPromptUtil;
-import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
+import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.AIPromptUtil;
 import com.futurenet.sorisoopbackend.global.exception.GlobalErrorCode;
 import com.futurenet.sorisoopbackend.global.exception.RestApiException;
-import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.image.ImagePrompt;
-import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.openai.OpenAiImageModel;
-import org.springframework.ai.openai.OpenAiImageOptions;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -33,13 +23,9 @@ import java.util.List;
 public class OpenAIService {
 
     private final ChatClient chatClient;
-    private final OpenAiImageModel openAiImageModel;
-    private final AmazonS3Service amazonS3Service;
 
-    public OpenAIService(ChatClient.Builder chatClientBuilder, OpenAiImageModel openAiImageModel, AmazonS3Service amazonS3Service) {
+    public OpenAIService(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
-        this.openAiImageModel = openAiImageModel;
-        this.amazonS3Service = amazonS3Service;
     }
 
     /**
@@ -47,7 +33,7 @@ public class OpenAIService {
      * */
     //@Retryable
     public List<ConceptResponse> generateCustomFairyTaleSynopsis(URL imageUrl, MimeType mimeType, int age) {
-        String synopsisPrompt = OpenAIPromptUtil.makeStorySynopsisPrompt(age);
+        String synopsisPrompt = AIPromptUtil.makeStorySynopsisPrompt(age);
 
         OpenAiChatOptions options = OpenAiChatOptions.builder()
                 .model("gpt-4o")
@@ -80,7 +66,7 @@ public class OpenAIService {
      * */
     //@Retryable
     public String extractCharacterGuide(URL imageUrl, MimeType mimeType) {
-        String characterGuidePrompt = OpenAIPromptUtil.makeCharacterInfoPrompt();
+        String characterGuidePrompt = AIPromptUtil.makeCharacterInfoPrompt();
 
         ChatResponse characterResponse = chatClient.prompt()
                 .user(u -> u.text(characterGuidePrompt).media(mimeType, imageUrl))
@@ -100,7 +86,7 @@ public class OpenAIService {
      * */
     //@Retryable
     public MakeCustomFairyTaleDto generateCustomFairyTaleScript(URL imageUrl, MimeType mimeType, int age, String concept) {
-        String contentPrompt = OpenAIPromptUtil.makeCustomFairyTaleScriptPrompt(age, concept);
+        String contentPrompt = AIPromptUtil.makeCustomFairyTaleScriptPrompt(age, concept);
 
         try {
             ChatResponse chatResponse = chatClient.prompt()
@@ -122,48 +108,4 @@ public class OpenAIService {
         }
     }
 
-
-    /**
-     * 동화 이미지 생성
-     * */
-    //@Retryable
-    public List<MakeCustomFairyTaleContentDto> generateCustomFairyTaleImage(List<MakeCustomFairyTaleContentDto> pages, String characterGuide) {
-
-        for (MakeCustomFairyTaleContentDto page : pages) {
-
-            String imagePrompt = OpenAIPromptUtil.makeCustomFairyTaleImagePrompt(
-                    characterGuide,
-                    page.getContentEn(),
-                    page.getSceneType(),
-                    page.getEmotion()
-            );
-
-            try {
-                ImageResponse imageResponse = openAiImageModel.call(
-                        new ImagePrompt(imagePrompt, OpenAiImageOptions.builder()
-                                .quality("standard")
-                                .N(1)
-                                .width(1024)
-                                .height(1024)
-                                .build()
-                        )
-                );
-
-                String imageUrlFromOpenAI = imageResponse.getResult().getOutput().getUrl();
-
-                try (InputStream openAiImageStream = URI.create(imageUrlFromOpenAI).toURL().openStream()) {
-                    String s3Url = amazonS3Service.uploadImage(
-                            openAiImageStream,
-                            FolderNameConstant.CUSTOM_FAIRY_TALE,
-                            "png"
-                    );
-                    page.setImageUrl(s3Url);
-                }
-            } catch (Exception e) {
-                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.OPENAI_IMAGE_GENERATE_FAIL);
-            }
-        }
-
-        return pages;
-    }
 }
