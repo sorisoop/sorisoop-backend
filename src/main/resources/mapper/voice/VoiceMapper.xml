@@ -17,7 +17,7 @@
             </if>
             updated_at = SYSDATE,
             updated_by = #{memberId}
-        </set>s
+        </set>
         WHERE id = #{voiceId}
     </update>
 
