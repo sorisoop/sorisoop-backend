@@ -42,9 +42,9 @@ public class VoiceServiceImpl implements VoiceService{
 
     @Transactional
     @Override
-    public void updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request) {
+    public void updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request, Long memberId) {
         try {
-            int result = voiceRepository.updateVoiceInfo(voiceId, request);
+            int result = voiceRepository.updateVoiceInfo(voiceId, request, memberId);
             if (result == 0) {
                 throw new VoiceException(VoiceErrorCode.VOICE_NOT_FOUND);
             }

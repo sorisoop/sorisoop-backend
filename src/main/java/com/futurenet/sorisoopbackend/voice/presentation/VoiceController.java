@@ -39,8 +39,8 @@ public class VoiceController {
     }
 
     @PatchMapping("/{voiceId}")
-    public ResponseEntity<?> updateVoiceInfo(@PathVariable Long voiceId, @RequestBody UpdateVoiceInfoRequest request){
-        voiceService.updateVoiceInfo(voiceId, request);
+    public ResponseEntity<?> updateVoiceInfo(@PathVariable Long voiceId, @RequestBody UpdateVoiceInfoRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        voiceService.updateVoiceInfo(voiceId, request, userPrincipal.getId());
         return ResponseEntity.ok(new ApiResponse<>("VO102", "목소리 정보 수정 완료", null));
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 public interface VoiceRepository {
     List<GetVoiceResponse> getVoiceList(Long memberId);
     int saveVoice(AddVoiceRequest request, Long memberId);
-    int updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request);
+    int updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request, Long memberId);
     DeleteVoiceResponse getVoiceForDelete(Long voiceId);
     int deleteVoice(Long voiceId);
 }

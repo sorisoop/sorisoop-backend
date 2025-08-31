@@ -16,7 +16,7 @@
                 image_url = #{request.imageUrl},
             </if>
             updated_at = SYSDATE,
-            updated_by = #{request.memberId}
+            updated_by = #{memberId}
         </set>
         WHERE id = #{voiceId}
     </update>
