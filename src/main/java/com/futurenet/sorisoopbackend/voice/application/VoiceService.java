@@ -9,6 +9,6 @@ import java.util.List;
 public interface VoiceService {
     List<GetVoiceResponse> getVoiceList(Long memberId);
     void addVoice(AddVoiceRequest request, String voiceUrl, Long memberId);
-    void updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request);
+    void updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request, Long memberId);
     void delectVoice(Long voiceId);
 }
