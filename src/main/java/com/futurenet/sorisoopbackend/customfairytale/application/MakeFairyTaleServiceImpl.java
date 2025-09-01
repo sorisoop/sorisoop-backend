@@ -12,6 +12,7 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.request.SaveCustomFairy
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleConceptResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptResponse;
+import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResult;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.service.GeminiService;
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.service.OpenAIService;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
@@ -75,7 +76,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
      * */
     @Override
     @Transactional
-    public List<MakeCustomFairyTaleContentResponse> createCustomFairyTale(MakeCustomFairyTaleRequest request) {
+    public MakeCustomFairyTaleResult createCustomFairyTale(MakeCustomFairyTaleRequest request) {
 
         log.info("서비스 시작");
         FindProfileResponse profileResponse = profileRepository.getProfileByProfileId(request.getProfileId());
@@ -125,13 +126,16 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
             throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SAVE_CUSTOM_FAIRY_TALE_CONTENT_FAIL);
         }
 
-        return completedPages.stream()
-                .map(page -> new MakeCustomFairyTaleContentResponse(
-                        page.getPage(),
-                        dto.getTitle(),
-                        page.getImageUrl(),
-                        page.getContentKr()
-                ))
-                .toList();
+        return new MakeCustomFairyTaleResult(
+                customFairyTaleId,
+                completedPages.stream()
+                        .map(page -> new MakeCustomFairyTaleContentResponse(
+                                page.getPage(),
+                                dto.getTitle(),
+                                page.getImageUrl(),
+                                page.getContentKr()
+                        ))
+                        .toList()
+        );
     }
 }

@@ -18,8 +18,8 @@
     <update id="updateNotificationStatus">
         UPDATE notification_status
         SET is_active = CASE
-                            WHEN is_active = 'Y' THEN 'N'
-                            ELSE 'Y'
+                            WHEN is_active = 'T' THEN 'F'
+                            ELSE 'T'
             END
         WHERE profile_id = #{profileId}
     </update>
