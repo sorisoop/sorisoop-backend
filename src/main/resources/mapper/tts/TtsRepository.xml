@@ -6,4 +6,9 @@
         FROM voice
         WHERE id = #{voiceId}
     </select>
+    <select id="getFairyTaleList" resultType="com.futurenet.sorisoopbackend.tts.dto.TtsDto">
+        SELECT page, script
+        FROM fairy_tale_content
+        where fairy_tale_id = #{fairyTaleId}
+    </select>
 </mapper>
