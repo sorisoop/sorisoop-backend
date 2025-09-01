@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.futurenet.sorisoopbackend.profile.domain.ProfileRepository">
 
@@ -11,7 +11,10 @@
         WHERE member_id = #{memberId}
     </select>
 
-    <insert id="saveProfile" parameterType="com.futurenet.sorisoopbackend.profile.dto.SaveProfileDto">
+    <insert id="saveProfile" parameterType="com.futurenet.sorisoopbackend.profile.dto.SaveProfileDto"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
         INSERT INTO profile (member_id, nickname, profile_image, role, age, gender, created_by)
         VALUES (
         #{request.memberId},

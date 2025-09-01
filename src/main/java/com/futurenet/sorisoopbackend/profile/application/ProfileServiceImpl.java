@@ -11,9 +11,11 @@ import com.futurenet.sorisoopbackend.auth.util.ResponseUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
 import com.futurenet.sorisoopbackend.member.domain.MemberRepository;
+import com.futurenet.sorisoopbackend.notification.domain.NotificationStatusRepository;
 import com.futurenet.sorisoopbackend.profile.application.exception.ProfileErrorCode;
 import com.futurenet.sorisoopbackend.profile.application.exception.ProfileException;
 import com.futurenet.sorisoopbackend.profile.domain.ProfileRepository;
+import com.futurenet.sorisoopbackend.profile.dto.SaveProfileDto;
 import com.futurenet.sorisoopbackend.profile.dto.request.SaveProfileRequest;
 import com.futurenet.sorisoopbackend.profile.dto.request.UpdateProfileRequest;
 import com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse;
@@ -33,7 +35,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AmazonS3Service amazonS3Service;
     private final JwtUtil jwtUtil;
-    private final MemberRepository memberRepository;
+    private final NotificationStatusRepository notificationStatusRepository;
 
     @Override
     public List<FindProfileResponse> getAllProfilesByMemberId(Long memberId) {
@@ -50,11 +52,20 @@ public class ProfileServiceImpl implements ProfileService {
             profileImage = amazonS3Service.uploadImage(request.getProfileImage(), FolderNameConstant.PROFILE_IMAGE);
         }
 
-        int result = profileRepository.saveProfile(request.toDto(profileImage, memberId));
+        SaveProfileDto saveDto = request.toDto(profileImage, memberId);
+
+        int result = profileRepository.saveProfile(saveDto);
 
         if (result == 0) {
             throw new ProfileException(ProfileErrorCode.SAVE_PROFILE_FAIL);
         }
+
+        int saveNotificationStatusResult = notificationStatusRepository.saveNotificationStatus(saveDto.getId());
+
+        if (saveNotificationStatusResult == 0) {
+            throw new ProfileException(ProfileErrorCode.SAVE_PROFILE_FAIL);
+        }
+
     }
 
     @Override

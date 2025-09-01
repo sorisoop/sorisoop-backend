@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveProfileDto {
+    private Long id;
     private String profileImage;
     private Long memberId;
     private String nickname;
