@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.notification.domain.NotificationStatusRepository">
+   <insert id="saveNotificationStatus">
+       INSERT INTO notification_status (profile_id)
+       VALUES (#{profileId})
+   </insert>
+
+    <select id="getNotificationStatus">
+        SELECT IS_ACTIVE
+        FROM NOTIFICATION_STATUS
+        WHERE PROFILE_ID = #{profileId}
+    </select>
+
+    <update id="updateNotificationStatus">
+        UPDATE notification_status
+        SET is_active = CASE
+                            WHEN is_active = 'T' THEN 'F'
+                            ELSE 'T'
+            END
+        WHERE profile_id = #{profileId}
+    </update>
+</mapper>

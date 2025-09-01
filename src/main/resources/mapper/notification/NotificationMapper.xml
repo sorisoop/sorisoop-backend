@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.notification.domain.NotificationRepository">
+    <select id="getAllNotifications" resultType="com.futurenet.sorisoopbackend.notification.dto.response.GetNotificationResponse">
+        SELECT
+            id,
+            custom_fairy_tale_id AS customFairyTaleId,
+            content,
+            created_at AS createdAt,
+            is_read AS isRead
+        FROM notification
+        WHERE profile_id = #{profileId}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="checkUnreadNotifications" resultType="boolean">
+        SELECT CASE
+                   WHEN COUNT(*) > 0 THEN 1
+                   ELSE 0
+                   END
+        FROM notification
+        WHERE profile_id = #{profileId}
+          AND is_read = 'F'
+    </select>
+
+    <update id="readNotification">
+        UPDATE notification
+        SET is_read = 'T'
+        WHERE id = #{notificationId}
+          AND profile_id = #{profileId}
+    </update>
+
+    <insert id="saveNotification">
+        INSERT INTO notification (
+            profile_id,
+            custom_fairy_tale_id,
+            content
+        )
+        VALUES (
+                   #{profileId},
+                   #{customFairyTaleId},
+                   #{content}
+               )
+    </insert>
+</mapper>
