@@ -1,7 +1,7 @@
 package com.futurenet.sorisoopbackend.subscription.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
+import com.futurenet.sorisoopbackend.brandpaytoken.dto.response.CustomerTokenResponse;
 import com.futurenet.sorisoopbackend.member.domain.MemberRepository;
 import com.futurenet.sorisoopbackend.paymenthistory.application.exception.PaymentHistoryErrorCode;
 import com.futurenet.sorisoopbackend.paymenthistory.application.exception.PaymentHistoryException;

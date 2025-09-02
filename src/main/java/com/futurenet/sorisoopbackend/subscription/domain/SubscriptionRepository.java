@@ -1,7 +1,6 @@
 package com.futurenet.sorisoopbackend.subscription.domain;
 
-import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
-import com.futurenet.sorisoopbackend.subscription.dto.response.SubscriptionResponse;
+import com.futurenet.sorisoopbackend.brandpaytoken.dto.response.CustomerTokenResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
