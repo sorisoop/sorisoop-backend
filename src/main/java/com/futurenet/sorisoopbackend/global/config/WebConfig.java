@@ -25,16 +25,4 @@ public class WebConfig {
             }
         };
     }
-
-    //파이썬 서버
-    @Bean
-    public WebClient webClient(WebClient.Builder builder) {
-        return builder
-                .codecs(configurer -> configurer
-                        .defaultCodecs()
-                        .maxInMemorySize(20 * 1024 * 1024))
-                .baseUrl("https://legible-kind-dingo.ngrok-free.app")      // colab 서버
-                //.baseUrl("http://1.208.108.242:61569")                  //gpu 서버
-                .build();
-    }
 }

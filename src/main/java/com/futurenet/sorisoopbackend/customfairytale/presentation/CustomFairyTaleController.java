@@ -37,8 +37,9 @@ public class CustomFairyTaleController {
     @PostMapping
     public ResponseEntity<?> makeCustomFairyTale(@RequestBody MakeCustomFairyTaleRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         request.setProfileId(userPrincipal.getProfileId());
-        customFairyTaleProducer.sendMakeFairyTaleRequest(request);
-        return ResponseEntity.ok(new ApiResponse<>("CF101", "커스텀 동화 생성 완료", null));
+        //customFairyTaleProducer.sendMakeFairyTaleRequest(request);
+        MakeCustomFairyTaleResult result = makeFairyTaleService.createCustomFairyTale(request);
+        return ResponseEntity.ok(new ApiResponse<>("CF101", "커스텀 동화 생성 완료", result));
     }
 
     @GetMapping
