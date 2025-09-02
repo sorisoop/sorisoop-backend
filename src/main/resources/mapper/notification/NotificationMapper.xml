@@ -6,14 +6,17 @@
 <mapper namespace="com.futurenet.sorisoopbackend.notification.domain.NotificationRepository">
     <select id="getAllNotifications" resultType="com.futurenet.sorisoopbackend.notification.dto.response.GetNotificationResponse">
         SELECT
-            id,
-            custom_fairy_tale_id AS customFairyTaleId,
-            content,
-            created_at AS createdAt,
-            is_read AS isRead
-        FROM notification
-        WHERE profile_id = #{profileId}
-        ORDER BY created_at DESC
+            n.id,
+            n.custom_fairy_tale_id AS customFairyTaleId,
+            n.content,
+            cft.thumbnail_image AS thumbnailImage,
+            cft.title AS title,
+            n.created_at AS createdAt,
+            n.is_read AS isRead
+        FROM notification n
+                 JOIN custom_fairy_tale cft ON n.custom_fairy_tale_id = cft.id
+        WHERE n.profile_id = #{profileId}
+        ORDER BY n.created_at DESC
     </select>
 
     <select id="checkUnreadNotifications" resultType="boolean">
