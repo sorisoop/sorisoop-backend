@@ -54,6 +54,8 @@ public class RabbitConfig {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setMessageConverter(jsonMessageConverter());
+        factory.setConcurrentConsumers(3);
+        factory.setMaxConcurrentConsumers(10);
         return factory;
     }
 

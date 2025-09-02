@@ -2,7 +2,6 @@ package com.futurenet.sorisoopbackend.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -24,17 +23,5 @@ public class WebConfig {
                         .allowCredentials(true);
             }
         };
-    }
-
-    //파이썬 서버
-    @Bean
-    public WebClient webClient(WebClient.Builder builder) {
-        return builder
-                .codecs(configurer -> configurer
-                        .defaultCodecs()
-                        .maxInMemorySize(20 * 1024 * 1024))
-//                .baseUrl("https://legible-kind-dingo.ngrok-free.app")      // colab 서버
-                .baseUrl("http://1.208.108.242:61569")                  //gpu 서버
-                .build();
     }
 }

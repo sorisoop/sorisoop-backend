@@ -34,7 +34,7 @@ public class AmazonS3Service {
         }
 
         try {
-            String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String fileName = folder + "/" + UUID.randomUUID() + "." + getExtension(file.getOriginalFilename());
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
@@ -103,5 +103,10 @@ public class AmazonS3Service {
     }
     private String extractKey(String fileUrl) {
         return fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + 15);
+    }
+
+    private String getExtension(String originalFilename) {
+        int lastDot = originalFilename.lastIndexOf(".");
+        return (lastDot != -1) ? originalFilename.substring(lastDot + 1) : "jpg";
     }
 }
