@@ -1,4 +1,4 @@
-package com.futurenet.sorisoopbackend.brandPayToken.dto.response;
+package com.futurenet.sorisoopbackend.brandpaytoken.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.futurenet.sorisoopbackend.brandPayToken.application.exception;
+package com.futurenet.sorisoopbackend.brandpaytoken.application.exception;
 
 import com.futurenet.sorisoopbackend.global.exception.ErrorCode;
 import com.futurenet.sorisoopbackend.global.exception.RestApiException;

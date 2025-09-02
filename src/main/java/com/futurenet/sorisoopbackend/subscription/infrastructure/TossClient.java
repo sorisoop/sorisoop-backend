@@ -2,9 +2,9 @@ package com.futurenet.sorisoopbackend.subscription.infrastructure;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.futurenet.sorisoopbackend.brandPayToken.application.exception.BrandPayTokenErrorCode;
-import com.futurenet.sorisoopbackend.brandPayToken.application.exception.BrandPayTokenException;
-import com.futurenet.sorisoopbackend.brandPayToken.dto.response.CustomerTokenResponse;
+import com.futurenet.sorisoopbackend.brandpaytoken.application.exception.BrandPayTokenErrorCode;
+import com.futurenet.sorisoopbackend.brandpaytoken.application.exception.BrandPayTokenException;
+import com.futurenet.sorisoopbackend.brandpaytoken.dto.response.CustomerTokenResponse;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionErrorCode;
 import com.futurenet.sorisoopbackend.subscription.application.exception.SubscriptionException;
 import lombok.RequiredArgsConstructor;

@@ -15,6 +15,8 @@ public class GetNotificationResponse {
     private Long id;
     private Long customFairyTaleId;
     private String content;
+    private String thumbnailImage;
+    private String title;
     private LocalDateTime createdAt;
     private String isRead;
 }
