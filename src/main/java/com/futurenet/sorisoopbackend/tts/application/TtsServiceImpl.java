@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.futurenet.sorisoopbackend.tts.domain.TtsRepository;
 import com.futurenet.sorisoopbackend.tts.dto.TtsDto;
+import com.futurenet.sorisoopbackend.tts.dto.request.GetCustomTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.request.GetTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetTtsResponse;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetVoiceUuidResponse;
@@ -79,6 +80,7 @@ public class TtsServiceImpl implements TtsService {
     }
 
     @Override
+    @Transactional
     public GetTtsResponse getTts(String voiceUuid, int page) {
         ResponseEntity<byte[]> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -94,9 +96,36 @@ public class TtsServiceImpl implements TtsService {
         if (response == null || response.getBody() == null) {
             throw new RuntimeException("Python 서버 응답 없음"); // TODO: 커스텀 예외로 변경
         }
-
         return new GetTtsResponse(page, response.getBody());
     }
 
+    @Override
+    @Transactional
+    public GetTtsResponse createCustomTts(GetCustomTtsRequest request) {
 
+        List<TtsDto> result = ttsRepository.getCustomFairyTaleList(request.getCustomFairyTaleId());
+
+        String contentsJson;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            contentsJson = objectMapper.writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 변환 실패", e); //todo: 커스텀 예외로 변경
+        }
+
+        ResponseEntity<byte[]> response = webClient.post()
+                .uri("/tts")
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("contents", contentsJson)
+                        .with("speaker_key", request.getVoiceUuid())
+                        .with("current_page", "1"))
+                .retrieve()
+                .toEntity(byte[].class)
+                .block();
+
+        if (response == null || response.getBody() == null) {
+            throw new RuntimeException("Python 서버 응답 없음"); //todo: 커스텀 예외로 변경
+        }
+        return new GetTtsResponse(1, response.getBody());
+    }
 }

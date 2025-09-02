@@ -11,4 +11,9 @@
         FROM fairy_tale_content
         where fairy_tale_id = #{fairyTaleId}
     </select>
+    <select id="getCustomFairyTaleList" resultType="com.futurenet.sorisoopbackend.tts.dto.TtsDto">
+        SELECT page, script
+        FROM custom_fairy_tale_content
+        where custom_fairy_tale_id = #{customFairyTaleId}
+    </select>
 </mapper>

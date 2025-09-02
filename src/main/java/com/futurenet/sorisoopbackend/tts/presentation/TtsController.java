@@ -2,6 +2,7 @@ package com.futurenet.sorisoopbackend.tts.presentation;
 
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.tts.application.TtsService;
+import com.futurenet.sorisoopbackend.tts.dto.request.GetCustomTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.request.GetTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetTtsResponse;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetVoiceUuidResponse;
@@ -25,6 +26,12 @@ public class TtsController {
     @PostMapping
     public ResponseEntity<?> createTts(@RequestBody GetTtsRequest request) {
         GetTtsResponse result = ttsService.createTts(request);
+        return ResponseEntity.ok(new ApiResponse<>("TS101", "TTS 초기 요청 완료", result));
+    }
+
+    @PostMapping("/custom")
+    public ResponseEntity<?> createCustomTts(@RequestBody GetCustomTtsRequest request) {
+        GetTtsResponse result = ttsService.createCustomTts(request);
         return ResponseEntity.ok(new ApiResponse<>("TS101", "TTS 초기 요청 완료", result));
     }
 
