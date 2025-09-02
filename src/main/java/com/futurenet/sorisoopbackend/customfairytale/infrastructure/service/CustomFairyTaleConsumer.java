@@ -3,7 +3,6 @@ package com.futurenet.sorisoopbackend.customfairytale.infrastructure.service;
 import com.futurenet.sorisoopbackend.customfairytale.application.MakeFairyTaleService;
 import com.futurenet.sorisoopbackend.customfairytale.domain.NotificationContent;
 import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairyTaleRequest;
-import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleContentResponse;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResult;
 import com.futurenet.sorisoopbackend.global.infrastructure.config.RabbitConfig;
 import com.futurenet.sorisoopbackend.notification.application.NotificationService;
@@ -30,7 +29,10 @@ public class CustomFairyTaleConsumer {
             log.info("결과: {}:", result.getPages().toString());
             // 알림 전송 및 저장
             notificationService.saveNotification(request.getProfileId(), result.getCustomFairyTaleId(), NotificationContent.MAKE_FAIRY_TALE_COMPLETE.getMessage());
-            notificationService.sendToUser(request.getProfileId(), "동화 생성을 완료했습니다.");
+
+            if (notificationService.getNotificationStatus(request.getProfileId()).equals("T")) {
+                notificationService.sendToUser(request.getProfileId(), "동화 생성을 완료했습니다.");
+            }
 
         } catch (Exception e) {
             log.error(e.getMessage());
