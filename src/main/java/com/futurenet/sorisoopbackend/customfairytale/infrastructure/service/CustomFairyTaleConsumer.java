@@ -31,7 +31,6 @@ public class CustomFairyTaleConsumer {
             notificationService.saveNotification(request.getProfileId(), result.getCustomFairyTaleId(), NotificationContent.MAKE_FAIRY_TALE_COMPLETE.getMessage());
 
             if (notificationService.getNotificationStatus(request.getProfileId()).equals("T")) {
-                System.out.println("알림 보냈음!!!!!: " + request.getProfileId());
                 notificationService.sendToUser(request.getProfileId(), "동화 생성을 완료했습니다.");
             }
 
