@@ -5,7 +5,6 @@ import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.notification.application.NotificationService;
 import com.futurenet.sorisoopbackend.notification.dto.response.GetNotificationResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +33,6 @@ public class NotificationController {
 
     @GetMapping(value = "/subscribe", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        System.out.println("SSE 접근함??");
-        System.out.println("SSE 접근하는지 체크:" + userPrincipal.getProfileId());
         return notificationService.subscribe(userPrincipal.getProfileId());
     }
 
