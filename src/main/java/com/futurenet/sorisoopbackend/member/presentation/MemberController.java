@@ -1,14 +1,15 @@
 package com.futurenet.sorisoopbackend.member.presentation;
 
+import com.futurenet.sorisoopbackend.auth.dto.UserPrincipal;
 import com.futurenet.sorisoopbackend.member.dto.response.CustomerKeyResponse;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.member.application.MemberAuthService;
 import com.futurenet.sorisoopbackend.member.application.MemberService;
 import com.futurenet.sorisoopbackend.member.dto.request.SignupRequest;
-import com.futurenet.sorisoopbackend.member.dto.response.FindMemberResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,9 +33,8 @@ public class MemberController {
     }
 
     @PostMapping("/customer-key")
-    public ResponseEntity<?> getCustomerKey() {
-        Long memberId = 1L; // TODO: 시큐리티 적용
-        CustomerKeyResponse result = memberService.getCustomerKeyByMemberId(memberId);
+    public ResponseEntity<?> getCustomerKey(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        CustomerKeyResponse result = memberService.getCustomerKeyByMemberId(userPrincipal.getId());
         return ResponseEntity.ok(new ApiResponse<>("ME102", "정상적으로 처리되었습니다.", result));
     }
 
