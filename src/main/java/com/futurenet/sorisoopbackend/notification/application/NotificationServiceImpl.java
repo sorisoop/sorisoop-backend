@@ -50,6 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 
         if (emitter != null) {
+            System.out.println("알림있음!!!!!!!!ㅣ :" + profileId);
             try {
                 emitter.send(SseEmitter.event()
                         .name("make-fairy-tale-complete")
