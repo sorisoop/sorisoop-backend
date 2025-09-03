@@ -34,6 +34,8 @@ public class NotificationController {
 
     @GetMapping(value = "/subscribe", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        System.out.println("SSE 접근함??");
+        System.out.println("SSE 접근하는지 체크:" + userPrincipal.getProfileId());
         return notificationService.subscribe(userPrincipal.getProfileId());
     }
 
