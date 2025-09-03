@@ -32,7 +32,7 @@ public class NotificationController {
         return ResponseEntity.ok(new ApiResponse<>("NF101", "알림 허용 상태 변경 성공", null));
     }
 
-    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe", produces = "text/event-stream")
     public SseEmitter subscribe(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return notificationService.subscribe(userPrincipal.getProfileId());
     }
