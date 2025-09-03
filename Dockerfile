@@ -6,4 +6,4 @@ ARG JAR_FILE=build/libs/sorisoop-backend-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} ourClass.jar
 
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "/ourClass.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=dev", "-Duser.timezone=Asia/Seoul", "/ourClass.jar"]
