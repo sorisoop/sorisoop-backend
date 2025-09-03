@@ -91,7 +91,7 @@ public class SecurityConfig {
                         .failureHandler(customOAuth2FailureHandler));
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/members/**","/auth/refresh-token").permitAll()
+                        .requestMatchers("/members/**","/auth/refresh-token", "/notifications/subscribe").permitAll()
                         .anyRequest().authenticated());
 
         http
