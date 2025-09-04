@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.mission.domain.MissionRepository">
+    <insert id="insertCreateFairyTaleMission"
+            parameterType="com.futurenet.sorisoopbackend.mission.dto.request.MissionCreateRequest">
+
+        INSERT INTO MISSION
+            (PROFILE_ID, MISSION_TYPE, START_DATE, END_DATE)
+        VALUES (#{request.profileId}, #{request.missionType}, #{request.startDate}, #{request.endDate})
+    </insert>
+
+    <insert id="insertReadCategoryMission"
+            parameterType="com.futurenet.sorisoopbackend.mission.dto.request.MissionCreateRequest">
+        INSERT INTO MISSION
+            (PROFILE_ID, MISSION_TYPE, START_DATE, END_DATE, CATEGORY_ID, BOOK_COUNT)
+        VALUES
+            (#{request.profileId}, #{request.missionType}, #{request.startDate}, #{request.endDate},
+                #{request.categoryId}, #{request.bookCount})
+    </insert>
+
+    <insert id="insertReadFairyTaleMission"
+            parameterType="com.futurenet.sorisoopbackend.mission.dto.request.MissionCreateRequest">
+        INSERT INTO MISSION
+            (PROFILE_ID, MISSION_TYPE, START_DATE, END_DATE, FAIRY_TALE_ID)
+        VALUES
+            (#{request.profileId}, #{request.missionType}, #{request.startDate}, #{request.endDate},
+                #{request.fairyTaleId})
+    </insert>
+</mapper>
