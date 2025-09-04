@@ -19,4 +19,5 @@ public class GetNotificationResponse {
     private String title;
     private LocalDateTime createdAt;
     private String isRead;
+    private String customFairyTaleIsDelete;
 }

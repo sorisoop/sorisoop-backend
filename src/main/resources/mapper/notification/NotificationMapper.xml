@@ -12,7 +12,8 @@
             cft.thumbnail_image AS thumbnailImage,
             cft.title AS title,
             n.created_at AS createdAt,
-            n.is_read AS isRead
+            n.is_read AS isRead,
+            cft.is_delete AS customFairyTaleIsDelete
         FROM notification n
                  JOIN custom_fairy_tale cft ON n.custom_fairy_tale_id = cft.id
         WHERE n.profile_id = #{profileId}
