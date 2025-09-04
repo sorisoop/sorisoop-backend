@@ -15,13 +15,16 @@ import com.futurenet.sorisoopbackend.notification.domain.NotificationStatusRepos
 import com.futurenet.sorisoopbackend.profile.application.exception.ProfileErrorCode;
 import com.futurenet.sorisoopbackend.profile.application.exception.ProfileException;
 import com.futurenet.sorisoopbackend.profile.domain.ProfileRepository;
+import com.futurenet.sorisoopbackend.profile.domain.Role;
 import com.futurenet.sorisoopbackend.profile.dto.SaveProfileDto;
 import com.futurenet.sorisoopbackend.profile.dto.request.SaveProfileRequest;
+import com.futurenet.sorisoopbackend.profile.dto.request.SelectProfileRequest;
 import com.futurenet.sorisoopbackend.profile.dto.request.UpdateProfileRequest;
 import com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +39,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final AmazonS3Service amazonS3Service;
     private final JwtUtil jwtUtil;
     private final NotificationStatusRepository notificationStatusRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public List<FindProfileResponse> getAllProfilesByMemberId(Long memberId) {
@@ -52,7 +56,13 @@ public class ProfileServiceImpl implements ProfileService {
             profileImage = amazonS3Service.uploadImage(request.getProfileImage(), FolderNameConstant.PROFILE_IMAGE);
         }
 
-        SaveProfileDto saveDto = request.toDto(profileImage, memberId);
+        if (request.getRole() == Role.PARENT) {
+            if (request.getPassword() == null || request.getPassword().isEmpty()) {
+                throw new ProfileException(ProfileErrorCode.SAVE_PROFILE_FAIL);
+            }
+        }
+
+        SaveProfileDto saveDto = request.toDto(profileImage, memberId, bCryptPasswordEncoder);
 
         int result = profileRepository.saveProfile(saveDto);
 
@@ -70,11 +80,19 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Transactional
-    public void selectProfile(Long profileId, Long memberId, HttpServletRequest request, HttpServletResponse response) {
+    public void selectProfile(Long profileId, SelectProfileRequest selectProfileRequest, Long memberId, HttpServletRequest request, HttpServletResponse response) {
         boolean exists = profileRepository.existsProfileByMemberIdAndProfileId(memberId, profileId);
 
         if (!exists) {
             throw new ProfileException(ProfileErrorCode.MISMATCH_PROFILE_ID_AND_MEMBER_ID);
+        }
+
+        FindProfileResponse profile = profileRepository.getProfileByProfileId(profileId);
+        if (profile.getRole() == Role.PARENT) {
+            String inputPassword = selectProfileRequest.getPassword();
+            if (inputPassword == null || !bCryptPasswordEncoder.matches(inputPassword, profile.getPassword())) {
+                throw new ProfileException(ProfileErrorCode.INVALID_PASSWORD);
+            }
         }
 
         String deviceId = RequestUtil.getDeviceId(request);

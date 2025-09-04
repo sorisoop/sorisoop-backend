@@ -15,7 +15,7 @@
             useGeneratedKeys="true"
             keyProperty="id"
             keyColumn="id">
-        INSERT INTO profile (member_id, nickname, profile_image, role, age, gender, created_by)
+        INSERT INTO profile (member_id, nickname, profile_image, role, age, gender, password, created_by)
         VALUES (
         #{request.memberId},
         #{request.nickname},
@@ -23,6 +23,7 @@
         #{request.role, jdbcType=VARCHAR},
         #{request.age, jdbcType=INTEGER},
         #{request.gender, jdbcType=VARCHAR},
+        #{request.password, jdbcType=VARCHAR},
         #{request.memberId}
         )
     </insert>
@@ -41,7 +42,7 @@
     </delete>
 
     <select id="getProfileByProfileId" resultType="com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse">
-        SELECT id, nickname, profile_image AS profileImage, role, age, gender
+        SELECT id, nickname, profile_image AS profileImage, role, age, gender, password
         FROM profile
         WHERE id = #{profileId}
     </select>

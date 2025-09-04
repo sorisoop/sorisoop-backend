@@ -4,6 +4,7 @@ import com.futurenet.sorisoopbackend.auth.dto.UserPrincipal;
 import com.futurenet.sorisoopbackend.global.response.ApiResponse;
 import com.futurenet.sorisoopbackend.profile.application.ProfileService;
 import com.futurenet.sorisoopbackend.profile.dto.request.SaveProfileRequest;
+import com.futurenet.sorisoopbackend.profile.dto.request.SelectProfileRequest;
 import com.futurenet.sorisoopbackend.profile.dto.request.UpdateProfileRequest;
 import com.futurenet.sorisoopbackend.profile.dto.response.FindProfileResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +37,10 @@ public class ProfileController {
     }
 
     @PostMapping("/{profileId}")
-    public ResponseEntity<?> selectProfile(@PathVariable Long profileId, @AuthenticationPrincipal UserPrincipal userPrincipal,
+    public ResponseEntity<?> selectProfile(@PathVariable Long profileId, @RequestBody SelectProfileRequest selectProfileRequest,
+                                           @AuthenticationPrincipal UserPrincipal userPrincipal,
                                            HttpServletRequest request, HttpServletResponse response) {
-        profileService.selectProfile(profileId, userPrincipal.getId(), request, response);
+        profileService.selectProfile(profileId, selectProfileRequest, userPrincipal.getId(), request, response);
         return ResponseEntity.ok(new ApiResponse<>("PR102", "프로필 선택 성공", null));
     }
 
