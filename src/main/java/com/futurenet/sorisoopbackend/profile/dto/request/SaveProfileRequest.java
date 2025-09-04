@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
@@ -22,8 +23,15 @@ public class SaveProfileRequest {
     private Role role;
     private Integer age;
     private Gender gender;
+    private String password;
 
-    public SaveProfileDto toDto(String profileImage, Long memberId) {
+    public SaveProfileDto toDto(String profileImage, Long memberId, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        String encodedPassword = null;
+
+        if (role == Role.PARENT) {
+            encodedPassword = bCryptPasswordEncoder.encode(password);
+        }
+
         return SaveProfileDto.builder()
                 .profileImage(profileImage)
                 .memberId(memberId)
@@ -31,6 +39,7 @@ public class SaveProfileRequest {
                 .role(role)
                 .age(age)
                 .gender(gender)
+                .password(encodedPassword)
                 .build();
     }
 }
