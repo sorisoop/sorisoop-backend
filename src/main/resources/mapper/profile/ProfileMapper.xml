@@ -70,4 +70,10 @@
         WHERE id = #{request.id}
     </update>
 
+    <select id="findMemberIdByProfileId">
+        SELECT member_id
+        FROM profile
+        WHERE id = #{profileId}
+    </select>
+
 </mapper>

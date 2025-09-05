@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.mission.domain.MissionContentRepository">
+    <insert id="saveReadBookMission"
+            parameterType="com.futurenet.sorisoopbackend.mission.dto.SaveMissionContentDto">
+        INSERT INTO mission_content (
+        mission_id,
+        target_fairy_tale_id
+        )
+        VALUES
+        <foreach collection="request.targetFairyTaleIds" item="fairyTaleId" separator=",">
+            (
+            #{request.missionId},
+            #{fairyTaleId}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="saveMissionContent"
+            parameterType="com.futurenet.sorisoopbackend.mission.dto.SaveMissionContentDto">
+        INSERT INTO mission_content (
+        mission_id,
+        target_count
+        <if test="request.targetCategoryId != null">, target_category_id</if>
+        )
+        VALUES (
+        #{request.missionId},
+        #{request.targetCount}
+        <if test="request.targetCategoryId != null">, #{request.targetCategoryId}</if>
+        )
+    </insert>
+</mapper>
