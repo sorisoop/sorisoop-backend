@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.log.domain.ReadLogRepository">
+    <insert id="saveReadLog" parameterType="com.futurenet.sorisoopbackend.log.dto.SaveReadLogDto">
+        INSERT INTO member_log (type, book_id, profile_id, page)
+        VALUES (#{request.fairyTaleType}, #{request.bookId}, #{request.profileId}, #{request.page})
+    </insert>
+</mapper>
