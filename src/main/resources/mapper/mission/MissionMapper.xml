@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.futurenet.sorisoopbackend.mission.domain.MissionRepository">
+    <insert id="saveMission" parameterType="com.futurenet.sorisoopbackend.mission.dto.SaveMissionDto"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id">
+        INSERT INTO mission (title,child_profile_id,parents_profile_id,start_date,end_date,type,status,created_by)
+        VALUES (
+        #{request.title},
+        #{request.childProfileId},
+        #{request.parentProfileId},
+        #{request.startDate},
+        #{request.endDate},
+        #{request.missionType},
+        #{request.missionStatus},
+        #{request.parentProfileId}
+        )
+    </insert>
+</mapper>

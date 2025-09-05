@@ -17,4 +17,5 @@ public interface ProfileRepository {
     int deleteProfileByMemberIdAndProfileId(Long memberId, Long profileId);
     FindProfileResponse getProfileByProfileId(Long profileId);
     int updateProfile(@Param("request") UpdateProfileDto request);
+    Long findMemberIdByProfileId(Long profileId);
 }
