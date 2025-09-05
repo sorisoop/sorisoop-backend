@@ -8,7 +8,6 @@ import com.futurenet.sorisoopbackend.tts.dto.request.GetCustomTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.request.GetTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetTtsResponse;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetVoiceUuidResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class TtsServiceImpl implements TtsService {
-
 
     private final TtsRepository ttsRepository;
     private final WebClient webClient;
@@ -37,7 +34,7 @@ public class TtsServiceImpl implements TtsService {
 
     @Override
     @Transactional
-    public GetVoiceUuidResponse addSpeakers(Long voiceId) {
+    public GetVoiceUuidResponse addSpeakers(Long voiceId, Long profileId) {
         String fileUrl = ttsRepository.getVoiceUrlById(voiceId);
 
         return webClient.post()
@@ -46,12 +43,12 @@ public class TtsServiceImpl implements TtsService {
                 .bodyValue(Map.of("fileUrl", fileUrl))
                 .retrieve()
                 .bodyToMono(GetVoiceUuidResponse.class)
-                .block(Duration.ofSeconds(30));
+                .block();
     }
 
     @Override
     @Transactional
-    public GetTtsResponse createTts(GetTtsRequest request) {
+    public GetTtsResponse createTts(GetTtsRequest request, Long profileId) {
 
         List<TtsDto> result = ttsRepository.getFairyTaleList(request.getFairyTaleId());
 
@@ -68,7 +65,8 @@ public class TtsServiceImpl implements TtsService {
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData("contents", contentsJson)
                         .with("speaker_key", request.getVoiceUuid())
-                        .with("current_page", "1"))
+                        .with("current_page", "1")
+                        .with("profile_id", profileId))
                 .retrieve()
                 .toEntity(byte[].class)
                 .block();
@@ -81,12 +79,13 @@ public class TtsServiceImpl implements TtsService {
 
     @Override
     @Transactional
-    public GetTtsResponse getTts(String voiceUuid, int page) {
+    public GetTtsResponse getTts(String voiceUuid, int page, Long profileId) {
         ResponseEntity<byte[]> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/tts/page")
                         .queryParam("speaker_key", voiceUuid)
                         .queryParam("page", page)
+                        .queryParam("profile_id", profileId)
                         .build())
                 .accept(MediaType.APPLICATION_OCTET_STREAM) // 오디오 바이너리 받기
                 .retrieve()
@@ -101,7 +100,7 @@ public class TtsServiceImpl implements TtsService {
 
     @Override
     @Transactional
-    public GetTtsResponse createCustomTts(GetCustomTtsRequest request) {
+    public GetTtsResponse createCustomTts(GetCustomTtsRequest request, Long profileId) {
 
         List<TtsDto> result = ttsRepository.getCustomFairyTaleList(request.getCustomFairyTaleId());
 
@@ -118,7 +117,8 @@ public class TtsServiceImpl implements TtsService {
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData("contents", contentsJson)
                         .with("speaker_key", request.getVoiceUuid())
-                        .with("current_page", "1"))
+                        .with("current_page", "1")
+                        .with("profile_id", profileId))
                 .retrieve()
                 .toEntity(byte[].class)
                 .block();

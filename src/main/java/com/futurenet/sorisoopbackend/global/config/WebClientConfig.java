@@ -23,9 +23,9 @@ public class WebClientConfig {
                 .codecs(configurer -> configurer
                         .defaultCodecs()
                         .maxInMemorySize(20 * 1024 * 1024))
-//                .baseUrl("https://legible-kind-dingo.ngrok-free.app")      // colab 서버
+                .baseUrl("https://legible-kind-dingo.ngrok-free.app")      // colab 서버
                 //.baseUrl("http://1.208.108.242:61569")                  //gpu 서버 구형
-                .baseUrl("http://211.105.112.143:61084")                  //gpu 서버 신형
+//                .baseUrl("http://211.105.112.143:61084")                  //gpu 서버 신형
                 .build();
     }
 }
