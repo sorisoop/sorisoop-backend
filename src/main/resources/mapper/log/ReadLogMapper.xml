@@ -5,7 +5,7 @@
 
 <mapper namespace="com.futurenet.sorisoopbackend.log.domain.ReadLogRepository">
     <insert id="saveReadLog" parameterType="com.futurenet.sorisoopbackend.log.dto.SaveReadLogDto">
-        INSERT INTO read_log (type, book_id, profile_id, page
+        INSERT INTO member_log (type, book_id, profile_id, page
         <if test="request.logType != null">, log_type</if>)
         VALUES (#{request.fairyTaleType}, #{request.bookId}, #{request.profileId}, #{request.page}
         <if test="request.logType != null">, #{request.logType}</if>)
