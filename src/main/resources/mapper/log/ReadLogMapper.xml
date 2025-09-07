@@ -5,7 +5,26 @@
 
 <mapper namespace="com.futurenet.sorisoopbackend.log.domain.ReadLogRepository">
     <insert id="saveReadLog" parameterType="com.futurenet.sorisoopbackend.log.dto.SaveReadLogDto">
-        INSERT INTO member_log (type, book_id, profile_id, page)
-        VALUES (#{request.fairyTaleType}, #{request.bookId}, #{request.profileId}, #{request.page})
+        INSERT INTO read_log (type, book_id, profile_id, page
+        <if test="request.logType != null">, log_type</if>)
+        VALUES (#{request.fairyTaleType}, #{request.bookId}, #{request.profileId}, #{request.page}
+        <if test="request.logType != null">, #{request.logType}</if>)
     </insert>
+
+    <select id="getReadPages" resultType="int">
+        SELECT DISTINCT page
+        FROM member_log
+        WHERE profile_id = #{profileId}
+          AND book_id = #{bookId}
+          AND TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="getReadBookIdsByCategoryAndDate">
+        SELECT DISTINCT rl.BOOK_ID
+        FROM member_log rl
+                 JOIN fairy_tale ft ON rl.BOOK_ID = ft.id
+        WHERE rl.profile_id = #{childProfileId}
+          AND ft.category_id = #{categoryId}
+          AND TRUNC(rl.created_at) BETWEEN #{startDate} AND #{endDate}
+    </select>
 </mapper>

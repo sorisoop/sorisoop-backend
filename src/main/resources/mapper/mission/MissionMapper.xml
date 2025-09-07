@@ -20,4 +20,38 @@
         #{request.parentProfileId}
         )
     </insert>
+
+    <select id="getAllGivenMission" resultType="com.futurenet.sorisoopbackend.mission.dto.response.GetGivenMissionResponse">
+        SELECT
+            m.id AS missionId,
+            m.title AS title,
+            p.nickname AS childName,
+            m.type AS missionType,
+            m.start_date AS startDate,
+            m.end_date AS endDate,
+            m.status AS missionStatus
+        FROM mission m
+                 JOIN profile p ON m.child_profile_id = p.id
+        WHERE m.parents_profile_id = #{profileId} AND m.CHILD_PROFILE_ID = #{childProfileId}
+        ORDER BY m.id desc
+    </select>
+
+    <select id="getAllAssignedMission" resultType="com.futurenet.sorisoopbackend.mission.dto.response.GetAssignedMissionResponse">
+        SELECT
+            m.id AS missionId,
+            m.title AS title,
+            m.type AS missionType,
+            m.start_date AS startDate,
+            m.end_date AS endDate,
+            m.status AS missionStatus
+        FROM mission m
+        WHERE m.CHILD_PROFILE_ID = #{profileId}
+        ORDER BY m.id desc
+    </select>
+
+    <select id="getMissionByMissionId" resultType="com.futurenet.sorisoopbackend.mission.dto.GetMissionDto">
+        SELECT id AS missionId, type AS missionType, child_profile_id AS childProfileId, start_date AS startDate, end_date AS endDate
+        FROM mission
+        WHERE id = #{missionId}
+    </select>
 </mapper>
