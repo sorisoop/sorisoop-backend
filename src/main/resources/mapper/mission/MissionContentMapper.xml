@@ -32,4 +32,25 @@
         <if test="request.targetCategoryId != null">, #{request.targetCategoryId}</if>
         )
     </insert>
+
+    <select id="getTargetFairyTaleIdsByMissionId">
+        SELECT target_fairy_tale_id
+        FROM mission_content
+        WHERE mission_id = #{missionId}
+          AND target_fairy_tale_id IS NOT NULL
+    </select>
+
+    <select id="getReadCategoryMissionInfo" resultType="com.futurenet.sorisoopbackend.mission.dto.ReadCategoryMissionInfoDto">
+        SELECT
+            target_count AS targetCount,
+            target_category_id AS targetCategoryId
+        FROM mission_content
+        WHERE mission_id = #{missionId}
+    </select>
+
+    <select id="getTargetCountByMissionId">
+        SELECT target_count AS targetCount
+        FROM MISSION_CONTENT
+        WHERE MISSION_ID = #{missionId}
+    </select>
 </mapper>

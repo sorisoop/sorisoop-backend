@@ -16,4 +16,6 @@ public interface FairyTaleRepository {
     List<FindFairyTaleResponse> getFairyTaleListByKeyword(String keyword, int start, int size, Long profileId) ;
     FindFairyTaleResponse getFairyTaleDetailByFairyTaleId(Long fairyTaleId, Long profileId);
     List<FindFairyTaleResponse> getFairyTalesRandom(Long profileId);
+    int getPageCountByBookId(Long bookId);
+    String getFairyTaleCategoryName(Long categoryId);
 }

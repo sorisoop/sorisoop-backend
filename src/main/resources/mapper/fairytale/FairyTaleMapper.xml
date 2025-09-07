@@ -79,4 +79,16 @@
         ORDER BY DBMS_RANDOM.VALUE
         FETCH FIRST 20 ROWS ONLY
     </select>
+
+    <select id="getPageCountByBookId">
+        SELECT page_count
+        FROM fairy_tale
+        WHERE id = #{bookId}
+    </select>
+
+    <select id="getFairyTaleCategoryName">
+        SELECT NAME
+        FROM FAIRY_TALE_CATEGORY
+        WHERE ID = #{categoryId}
+    </select>
 </mapper>
