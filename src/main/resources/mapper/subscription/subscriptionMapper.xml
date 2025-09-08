@@ -103,5 +103,11 @@
         WHERE MEMBER_ID = #{memberId}
     </update>
 
+    <select id="existsCustomerToken" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM BRAND_PAY_TOKEN
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
 </mapper>
 

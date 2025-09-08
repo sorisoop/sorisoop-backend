@@ -19,4 +19,5 @@ public interface SubscriptionRepository {
                                  @Param("updatedBy") Long updatedBy);
     int insertCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
     int updateCustomerToken(@Param("memberId") Long memberId, @Param("token") CustomerTokenResponse token);
+    boolean existsCustomerToken(@Param("memberId") Long memberId);
 }

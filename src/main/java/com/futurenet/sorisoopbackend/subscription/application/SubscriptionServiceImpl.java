@@ -40,12 +40,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         CustomerTokenResponse response = tossClient.issueCustomerToken(customerKey, code);
         response.setExpiresAt(LocalDateTime.now().plusSeconds(response.getExpiresIn()));
+        boolean exists = subscriptionRepository.existsCustomerToken(memberId);
 
-        String existingKey = memberRepository.getCustomerKeyByMemberId(memberId);
-
-        int affectedRows = (existingKey == null)
-                ? subscriptionRepository.insertCustomerToken(memberId, response)
-                : subscriptionRepository.updateCustomerToken(memberId, response);
+        int affectedRows = exists
+                ? subscriptionRepository.updateCustomerToken(memberId, response)
+                : subscriptionRepository.insertCustomerToken(memberId, response);
 
         if (affectedRows <= 0) {
             throw new SubscriptionException(SubscriptionErrorCode.CUSTOMER_TOKEN_SAVE_FAIL);
