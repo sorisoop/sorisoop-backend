@@ -7,6 +7,7 @@ import com.futurenet.sorisoopbackend.mission.dto.response.GetGivenMissionRespons
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -16,4 +17,7 @@ public interface MissionRepository {
     List<GetAssignedMissionResponse> getAllAssignedMission(Long profileId);
     GetMissionDto getMissionByMissionId(Long missionId);
     int deleteMissionByMissionIdAndProfileId(Long missionId, Long profileId);
+    void updateMissionStatus(Long missionId, MissionStatus missionStatus);
+    void updateMissionStatusOngoing(LocalDate today);
+    List<GetMissionDto> findNotCompletedMissionBeforeEndDate(LocalDate today);
 }
