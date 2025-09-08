@@ -13,4 +13,5 @@ public interface ReadLogRepository {
     List<Integer> getReadPages(Long profileId, Long bookId, int pageCount, LocalDate startDate, LocalDate endDate);
     List<Long> getReadBookIdsByCategoryAndDate(Long profileId, Long categoryId, LocalDate startDate, LocalDate endDate);
     int countCreatedFairyTales(Long profileId, LocalDate startDate, LocalDate endDate);
+    List<Long> getAllReadBookIds(Long profileId, LocalDate startDate, LocalDate endDate);
 }

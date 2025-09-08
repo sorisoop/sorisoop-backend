@@ -1,6 +1,8 @@
 package com.futurenet.sorisoopbackend.mission.application;
 
 import com.futurenet.sorisoopbackend.fairytale.domain.FairyTaleRepository;
+import com.futurenet.sorisoopbackend.fairytale.dto.GetFairyTaleInfoDto;
+import com.futurenet.sorisoopbackend.log.application.ReadLogUtil;
 import com.futurenet.sorisoopbackend.log.domain.ReadLogRepository;
 import com.futurenet.sorisoopbackend.mission.application.exception.MissionErrorCode;
 import com.futurenet.sorisoopbackend.mission.application.exception.MissionException;
@@ -33,6 +35,7 @@ public class MissionServiceImpl implements MissionService {
     private final MissionContentRepository missionContentRepository;
     private final FairyTaleRepository fairyTaleRepository;
     private final ReadLogRepository readLogRepository;
+    private final ReadLogUtil readLogUtil;
 
     @Override
     @Transactional
@@ -161,7 +164,7 @@ public class MissionServiceImpl implements MissionService {
         int successCount = 0;
         for (Long bookId : bookIds) {
             int pageCount = fairyTaleRepository.getPageCountByBookId(bookId);
-            boolean isComplete = isFullyRead(childProfileId, bookId, pageCount, startDate, endDate);
+            boolean isComplete = readLogUtil.isFullyRead(childProfileId, bookId, pageCount, startDate, endDate);
 
             if (isComplete) successCount++;
         }
@@ -182,7 +185,7 @@ public class MissionServiceImpl implements MissionService {
         int fullyReadCount = 0;
         for (Long bookId : candidateBookIds) {
             int pageCount = fairyTaleRepository.getPageCountByBookId(bookId);
-            boolean isFullyRead = isFullyRead(childProfileId, bookId, pageCount, mission.getStartDate(), mission.getEndDate());
+            boolean isFullyRead = readLogUtil.isFullyRead(childProfileId, bookId, pageCount, mission.getStartDate(), mission.getEndDate());
 
             if (isFullyRead) fullyReadCount++;
         }
@@ -206,20 +209,6 @@ public class MissionServiceImpl implements MissionService {
         return Math.min(progressRate, 100);
     }
 
-    /**
-     * 일반 동화 읽기
-     * */
-    public boolean isFullyRead(Long profileId, Long bookId, int pageCount, LocalDate startDate, LocalDate endDate) {
-        List<Integer> readPages = readLogRepository.getReadPages(profileId, bookId, pageCount, startDate, endDate);
-
-        Set<Integer> readPageSet = new HashSet<>(readPages);
-        for (int page = 1; page <= pageCount; page++) {
-            if (!readPageSet.contains(page)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * 특정 책 읽기 미션 상세조회
@@ -228,9 +217,9 @@ public class MissionServiceImpl implements MissionService {
         List<Long> bookIds = missionContentRepository.getTargetFairyTaleIdsByMissionId(mission.getMissionId());
 
         List<ReadBookMissionInfoDto> readBookMissionInfoDtos = bookIds.stream().map(bookId -> {
-            int pageCount = fairyTaleRepository.getPageCountByBookId(bookId);
-            boolean isRead = isFullyRead(mission.getChildProfileId(), bookId, pageCount, mission.getStartDate(), mission.getEndDate());
-            return new ReadBookMissionInfoDto(bookId, isRead);
+            GetFairyTaleInfoDto fairyTaleInfo = fairyTaleRepository.getFairyTaleInfo(bookId);
+            boolean isRead = readLogUtil.isFullyRead(mission.getChildProfileId(), bookId, fairyTaleInfo.getPageCount(), mission.getStartDate(), mission.getEndDate());
+            return new ReadBookMissionInfoDto(bookId, fairyTaleInfo.getTitle(), fairyTaleInfo.getThumbnailImage(), isRead);
         }).toList();
 
         return new GetMissionDetailResponse(mission.getMissionType(), 0, 0, null, readBookMissionInfoDtos);
@@ -251,7 +240,7 @@ public class MissionServiceImpl implements MissionService {
         int completedCount = 0;
         for (Long bookId : candidateBookIds) {
             int pageCount = fairyTaleRepository.getPageCountByBookId(bookId);
-            if (isFullyRead(mission.getChildProfileId(), bookId, pageCount, mission.getStartDate(), mission.getEndDate())) {
+            if (readLogUtil.isFullyRead(mission.getChildProfileId(), bookId, pageCount, mission.getStartDate(), mission.getEndDate())) {
                 completedCount++;
             }
         }
