@@ -34,6 +34,4 @@ public class StatisticsController {
         return ResponseEntity.ok(new ApiResponse<>("ST101", "완독 비율 통계 조회 성공", result));
     }
 
-    @GetMapping("/{childProfileId}/")
-
 }
