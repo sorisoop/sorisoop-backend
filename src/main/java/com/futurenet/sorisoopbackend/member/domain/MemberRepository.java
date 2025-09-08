@@ -13,5 +13,6 @@ public interface MemberRepository {
     int saveMember(@Param("request") SignupRequest request);
     FindMemberResponse getMemberByEmail(@Param("email") String email);
     String getCustomerKeyByMemberId(@Param("memberId") Long memberId);
-    int updateCustomerKey(@Param("memberId") Long memberId, @Param("customerKey") String customerKey);
+    int updateCustomerKey(@Param("customerKey") String customerKey,
+                          @Param("memberId") Long memberId);
 }
