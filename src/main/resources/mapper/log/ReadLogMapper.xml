@@ -27,4 +27,12 @@
           AND ft.category_id = #{categoryId}
           AND TRUNC(rl.created_at) BETWEEN #{startDate} AND #{endDate}
     </select>
+
+    <select id="countCreatedFairyTales">
+        SELECT COUNT(id)
+        FROM member_log
+        WHERE profile_id = #{profileId}
+          AND log_type = 'CREATE'
+          AND TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
+    </select>
 </mapper>
