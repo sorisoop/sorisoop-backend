@@ -91,4 +91,10 @@
         FROM FAIRY_TALE_CATEGORY
         WHERE ID = #{categoryId}
     </select>
+
+    <select id="getFairyTaleInfo" resultType="com.futurenet.sorisoopbackend.fairytale.dto.GetFairyTaleInfoDto">
+        SELECT title, thumbnail_image AS thumbnailImage, page_count AS pageCount
+        FROM FAIRY_TALE
+        WHERE ID = #{fairyTaleId}
+    </select>
 </mapper>

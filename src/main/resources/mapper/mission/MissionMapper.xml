@@ -22,17 +22,9 @@
     </insert>
 
     <select id="getAllGivenMission" resultType="com.futurenet.sorisoopbackend.mission.dto.response.GetGivenMissionResponse">
-        SELECT
-            m.id AS missionId,
-            m.title AS title,
-            p.nickname AS childName,
-            m.type AS missionType,
-            m.start_date AS startDate,
-            m.end_date AS endDate,
-            m.status AS missionStatus
-        FROM mission m
-                 JOIN profile p ON m.child_profile_id = p.id
-        WHERE m.parents_profile_id = #{profileId} AND m.CHILD_PROFILE_ID = #{childProfileId}
+        SELECT m.id AS missionId, m.title AS title, p.nickname AS childName, m.type AS missionType, m.start_date AS startDate, m.end_date AS endDate, m.status AS missionStatus
+        FROM mission m JOIN profile p ON m.child_profile_id = p.id
+        WHERE m.parents_profile_id = #{profileId} AND m.child_profile_id = #{childProfileId}
         ORDER BY m.id desc
     </select>
 

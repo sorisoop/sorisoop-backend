@@ -6,10 +6,7 @@
 <mapper namespace="com.futurenet.sorisoopbackend.mission.domain.MissionContentRepository">
     <insert id="saveReadBookMission"
             parameterType="com.futurenet.sorisoopbackend.mission.dto.SaveMissionContentDto">
-        INSERT INTO mission_content (
-        mission_id,
-        target_fairy_tale_id
-        )
+        INSERT INTO mission_content (mission_id,target_fairy_tale_id)
         VALUES
         <foreach collection="request.targetFairyTaleIds" item="fairyTaleId" separator=",">
             (

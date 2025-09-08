@@ -1,4 +1,4 @@
-package com.futurenet.sorisoopbackend.mission.dto;
+package com.futurenet.sorisoopbackend.fairytale.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,11 +7,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ReadBookMissionInfoDto {
-    private Long fairyTaleId;
+@NoArgsConstructor
+public class GetFairyTaleInfoDto {
+    private int pageCount;
     private String title;
     private String thumbnailImage;
-    private boolean isRead;
 }

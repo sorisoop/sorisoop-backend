@@ -1,6 +1,7 @@
 package com.futurenet.sorisoopbackend.fairytale.domain;
 
 
+import com.futurenet.sorisoopbackend.fairytale.dto.GetFairyTaleInfoDto;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleCategoryResponse;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleContentResponse;
@@ -18,4 +19,5 @@ public interface FairyTaleRepository {
     List<FindFairyTaleResponse> getFairyTalesRandom(Long profileId);
     int getPageCountByBookId(Long bookId);
     String getFairyTaleCategoryName(Long categoryId);
+    GetFairyTaleInfoDto getFairyTaleInfo(Long fairyTaleId);
 }

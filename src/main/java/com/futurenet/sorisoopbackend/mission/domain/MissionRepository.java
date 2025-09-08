@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface MissionRepository {
     int saveMission(@Param("request") SaveMissionDto request);
-    List<GetGivenMissionResponse> getAllGivenMission(Long childProfileId, Long profileId);
+    List<GetGivenMissionResponse> getAllGivenMission(@Param("childProfileId") Long childProfileId, @Param("profileId") Long profileId);
     List<GetAssignedMissionResponse> getAllAssignedMission(Long profileId);
     GetMissionDto getMissionByMissionId(Long missionId);
     int deleteMissionByMissionIdAndProfileId(Long missionId, Long profileId);
