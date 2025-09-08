@@ -53,7 +53,7 @@ public class MissionController {
 
     @DeleteMapping("/{missionId}")
     public ResponseEntity<?> deleteMission(@PathVariable Long missionId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        missionService.deleteMission(userPrincipal.getProfileId(), missionId);
+        missionService.deleteMission(missionId, userPrincipal.getProfileId());
         return ResponseEntity.ok(new ApiResponse<>("MI104", "미션 삭제 성공", null));
     }
 }
