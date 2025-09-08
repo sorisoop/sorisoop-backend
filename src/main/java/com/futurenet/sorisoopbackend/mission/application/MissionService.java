@@ -13,4 +13,6 @@ public interface MissionService {
     List<GetAssignedMissionResponse> getAllAssignedMission(Long profileId);
     GetMissionDetailResponse getMissionDetail(Long missionId);
     void deleteMission(Long missionId, Long profileId);
+    void updateMissionStatusOngoing();
+    void updateMissionStatusFailed();
 }

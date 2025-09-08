@@ -8,6 +8,7 @@ import com.futurenet.sorisoopbackend.mission.application.exception.MissionErrorC
 import com.futurenet.sorisoopbackend.mission.application.exception.MissionException;
 import com.futurenet.sorisoopbackend.mission.domain.MissionContentRepository;
 import com.futurenet.sorisoopbackend.mission.domain.MissionRepository;
+import com.futurenet.sorisoopbackend.mission.domain.MissionStatus;
 import com.futurenet.sorisoopbackend.mission.domain.MissionType;
 import com.futurenet.sorisoopbackend.mission.dto.*;
 import com.futurenet.sorisoopbackend.mission.dto.request.SaveMissionRequest;
@@ -22,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -94,19 +93,30 @@ public class MissionServiceImpl implements MissionService {
 
         List<GetGivenMissionResponse> missions =  missionRepository.getAllGivenMission(childProfileId, profileId);
         for (GetGivenMissionResponse mission : missions) {
-            int progressRate = calculateProgressRate(mission, childProfileId);
-            mission.setProgressRate(progressRate);
+            if (mission.getMissionStatus() == MissionStatus.COMPLETED) {
+                mission.setProgressRate(100);
+            } else {
+                int progressRate = calculateProgressRate(mission, childProfileId);
+                mission.setProgressRate(progressRate);
+                updateMissionStateIfCompleted(mission, progressRate);
+            }
         }
 
         return missions;
     }
 
     @Override
+    @Transactional
     public List<GetAssignedMissionResponse> getAllAssignedMission(Long profileId) {
         List<GetAssignedMissionResponse> missions = missionRepository.getAllAssignedMission(profileId);
         for (GetAssignedMissionResponse mission : missions) {
-            int progressRate = calculateProgressRate(mission, profileId);
-            mission.setProgressRate(progressRate);
+            if (mission.getMissionStatus() == MissionStatus.COMPLETED) {
+                mission.setProgressRate(100);
+            } else {
+                int progressRate = calculateProgressRate(mission, profileId);
+                mission.setProgressRate(progressRate);
+                updateMissionStateIfCompleted(mission, progressRate);
+            }
         }
         return missions;
     }
@@ -133,6 +143,38 @@ public class MissionServiceImpl implements MissionService {
 
         if (result == 0) {
             throw new MissionException(MissionErrorCode.DELETE_MISSION_FAIL);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateMissionStatusOngoing() {
+        LocalDate today = LocalDate.now();
+        missionRepository.updateMissionStatusOngoing(today);
+    }
+
+    @Override
+    @Transactional
+    public void updateMissionStatusFailed() {
+        LocalDate today = LocalDate.now();
+
+        List<GetMissionDto> candidates = missionRepository.findNotCompletedMissionBeforeEndDate(today);
+
+        for (GetMissionDto mission : candidates) {
+            int progressRate = calculateProgressRate(mission, mission.getChildProfileId());
+
+            if (progressRate < 100) {
+                missionRepository.updateMissionStatus(mission.getMissionId(), MissionStatus.FAILED);
+            } else {
+                missionRepository.updateMissionStatus(mission.getMissionId(), MissionStatus.COMPLETED);
+            }
+        }
+    }
+
+    private void updateMissionStateIfCompleted(GetMissionResponse mission, int progressRate) {
+        if (progressRate == 100 && mission.getMissionStatus() == MissionStatus.ONGOING) {
+            missionRepository.updateMissionStatus(mission.getMissionId(), MissionStatus.COMPLETED);
+            mission.setMissionStatus(MissionStatus.COMPLETED);
         }
     }
 
@@ -218,7 +260,13 @@ public class MissionServiceImpl implements MissionService {
 
         List<ReadBookMissionInfoDto> readBookMissionInfoDtos = bookIds.stream().map(bookId -> {
             GetFairyTaleInfoDto fairyTaleInfo = fairyTaleRepository.getFairyTaleInfo(bookId);
-            boolean isRead = readLogUtil.isFullyRead(mission.getChildProfileId(), bookId, fairyTaleInfo.getPageCount(), mission.getStartDate(), mission.getEndDate());
+            boolean isRead = false;
+            if (mission.getMissionStatus() == MissionStatus.COMPLETED) {
+                isRead = true;
+            } else if (mission.getMissionStatus() == MissionStatus.ONGOING) {
+                isRead = readLogUtil.isFullyRead(mission.getChildProfileId(), bookId, fairyTaleInfo.getPageCount(), mission.getStartDate(), mission.getEndDate());
+            }
+
             return new ReadBookMissionInfoDto(bookId, fairyTaleInfo.getTitle(), fairyTaleInfo.getThumbnailImage(), isRead);
         }).toList();
 
@@ -234,6 +282,14 @@ public class MissionServiceImpl implements MissionService {
         int targetCount = content.getTargetCount();
         Long categoryId = content.getTargetCategoryId();
         String categoryName = fairyTaleRepository.getFairyTaleCategoryName(categoryId);
+
+        if (mission.getMissionStatus() == MissionStatus.COMPLETED) {
+            return new GetMissionDetailResponse(mission.getMissionType(), targetCount, targetCount, categoryName, null);
+        }
+
+        if (mission.getMissionStatus() == MissionStatus.NOT_STARTED) {
+            return new GetMissionDetailResponse(mission.getMissionType(), targetCount, 0, categoryName, null);
+        }
 
         List<Long> candidateBookIds = readLogRepository.getReadBookIdsByCategoryAndDate(mission.getChildProfileId(), categoryId, mission.getStartDate(), mission.getEndDate());
 
@@ -253,6 +309,14 @@ public class MissionServiceImpl implements MissionService {
      * */
     private GetMissionDetailResponse getCreateFairyTaleMissionDetail(GetMissionDto mission) {
         int targetCount = missionContentRepository.getTargetCountByMissionId(mission.getMissionId());
+
+        if (mission.getMissionStatus() == MissionStatus.COMPLETED) {
+            return new GetMissionDetailResponse(mission.getMissionType(), targetCount, targetCount, null, null);
+        }
+
+        if (mission.getMissionStatus() == MissionStatus.NOT_STARTED) {
+            return new GetMissionDetailResponse(mission.getMissionType(), targetCount, 0, null, null);
+        }
 
         int completedCount = readLogRepository.countCreatedFairyTales(mission.getChildProfileId(), mission.getStartDate(), mission.getEndDate());
 

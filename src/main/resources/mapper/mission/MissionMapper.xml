@@ -42,7 +42,7 @@
     </select>
 
     <select id="getMissionByMissionId" resultType="com.futurenet.sorisoopbackend.mission.dto.GetMissionDto">
-        SELECT id AS missionId, type AS missionType, child_profile_id AS childProfileId, start_date AS startDate, end_date AS endDate
+        SELECT id AS missionId, type AS missionType, status AS missionStatus, child_profile_id AS childProfileId, start_date AS startDate, end_date AS endDate
         FROM mission
         WHERE id = #{missionId}
     </select>
@@ -51,4 +51,24 @@
         DELETE FROM mission
         WHERE id = #{missionId} AND parents_profile_id = #{profileId}
     </delete>
+    
+    <update id="updateMissionStatus">
+        UPDATE MISSION
+        SET STATUS = #{missionStatus}
+        WHERE id = #{missionId}
+    </update>
+
+    <update id="updateMissionStatusOngoing">
+        UPDATE mission
+        SET status = 'ONGOING'
+        WHERE start_date = #{today}
+          AND status = 'NOT_STARTED'
+    </update>
+
+    <select id="findNotCompletedMissionBeforeEndDate" resultType="com.futurenet.sorisoopbackend.mission.dto.GetMissionDto">
+        SELECT id AS missionId, type AS missionType, status AS missionStatus, child_profile_id AS childProfileId, start_date AS startDate, end_date AS endDate
+        FROM mission
+        WHERE status = 'ONGOING'
+          AND end_date &lt; #{today}
+    </select>
 </mapper>
