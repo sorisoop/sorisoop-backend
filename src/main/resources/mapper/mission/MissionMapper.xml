@@ -54,4 +54,9 @@
         FROM mission
         WHERE id = #{missionId}
     </select>
+
+    <delete id="deleteMissionByMissionIdAndProfileId">
+        DELETE FROM mission
+        WHERE id = #{missionId} AND parents_profile_id = #{profileId}
+    </delete>
 </mapper>

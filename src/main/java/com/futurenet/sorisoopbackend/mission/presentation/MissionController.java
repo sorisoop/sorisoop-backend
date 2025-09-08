@@ -50,4 +50,10 @@ public class MissionController {
         GetMissionDetailResponse result = missionService.getMissionDetail(missionId);
         return ResponseEntity.ok(new ApiResponse<>("MI103", "미션 상세 조회 성공", result));
     }
+
+    @DeleteMapping("/{missionId}")
+    public ResponseEntity<?> deleteMission(@PathVariable Long missionId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        missionService.deleteMission(userPrincipal.getProfileId(), missionId);
+        return ResponseEntity.ok(new ApiResponse<>("MI104", "미션 삭제 성공", null));
+    }
 }

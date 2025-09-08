@@ -15,4 +15,5 @@ public interface MissionRepository {
     List<GetGivenMissionResponse> getAllGivenMission(Long childProfileId, Long profileId);
     List<GetAssignedMissionResponse> getAllAssignedMission(Long profileId);
     GetMissionDto getMissionByMissionId(Long missionId);
+    int deleteMissionByMissionIdAndProfileId(Long missionId, Long profileId);
 }

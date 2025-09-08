@@ -123,6 +123,16 @@ public class MissionServiceImpl implements MissionService {
         };
     }
 
+    @Override
+    @Transactional
+    public void deleteMission(Long missionId, Long profileId) {
+        int result = missionRepository.deleteMissionByMissionIdAndProfileId(missionId, profileId);
+
+        if (result == 0) {
+            throw new MissionException(MissionErrorCode.DELETE_MISSION_FAIL);
+        }
+    }
+
     /**
      * 미션 달성률 계산 타입별 분기처리
      * */
