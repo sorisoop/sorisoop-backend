@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GetCustomTtsRequest {
-    private String voiceUuid;
+    private String speakerId;
     private Long customFairyTaleId;
 }

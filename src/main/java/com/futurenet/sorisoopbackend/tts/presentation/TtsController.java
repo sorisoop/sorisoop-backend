@@ -20,19 +20,25 @@ public class TtsController {
 
     @PostMapping
     public ResponseEntity<?> createTts(@RequestBody GetTtsRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        GetTtsResponse result = ttsService.createTts(request, userPrincipal.getProfileId());
-        return ResponseEntity.ok(new ApiResponse<>("TS101", "TTS 초기 요청 완료", result));
+        ttsService.createTts(request, userPrincipal.getProfileId());
+        return ResponseEntity.ok(new ApiResponse<>("TS101", "일반 동화 TTS 초기 요청 완료", null));
     }
 
-//    @GetMapping("/{voiceId}/{fairyTaleId}")
-//    public ResponseEntity<?> getTts(@PathVariable String voiceId, @PathVariable Long fairyTaleId, @RequestParam int page, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-//        GetTtsResponse result = ttsService.getTts(voiceId, fairyTaleId, page, userPrincipal.getProfileId());
-//        return ResponseEntity.ok(new ApiResponse<>("TS102", "페이지별 TTS 조회 완료", result));
-//    }
+    @GetMapping("/{speakerId}/{fairyTaleId}")
+    public ResponseEntity<?> getTts(@PathVariable String speakerId, @PathVariable Long fairyTaleId, @RequestParam int page, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        GetTtsResponse result = ttsService.getTts(speakerId, fairyTaleId, page, userPrincipal.getProfileId());
+        return ResponseEntity.ok(new ApiResponse<>("TS102", "페이지별 일반 동화 TTS 조회 완료", result));
+    }
 
-//    @PostMapping("/custom")
-//    public ResponseEntity<?> createCustomTts(@RequestBody GetCustomTtsRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-//        GetTtsResponse result = ttsService.createCustomTts(request, userPrincipal.getProfileId());
-//        return ResponseEntity.ok(new ApiResponse<>("TS102", "TTS 커스텀 동화 초기 요청 완료", result));
-//    }
+    @PostMapping("/custom")
+    public ResponseEntity<?> createCustomTts(@RequestBody GetCustomTtsRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        ttsService.createCustomTts(request, userPrincipal.getProfileId());
+        return ResponseEntity.ok(new ApiResponse<>("TS103", "TTS 커스텀 동화 초기 요청 완료", null));
+    }
+
+    @GetMapping("/custom/{speakerId}/{customFairyTaleId}")
+    public ResponseEntity<?> getCustomTts(@PathVariable String speakerId, @PathVariable Long customFairyTaleId, @RequestParam int page, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        GetTtsResponse result = ttsService.getCustomTts(speakerId, customFairyTaleId, page, userPrincipal.getProfileId());
+        return ResponseEntity.ok(new ApiResponse<>("TS104", "커스텀 동화 페이지별 TTS 조회 완료", result));
+    }
 }

@@ -2,6 +2,7 @@ package com.futurenet.sorisoopbackend.tts.application;
 
 import com.futurenet.sorisoopbackend.tts.domain.TtsRepository;
 import com.futurenet.sorisoopbackend.tts.dto.TtsDto;
+import com.futurenet.sorisoopbackend.tts.dto.request.GetCustomTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.request.GetTtsRequest;
 import com.futurenet.sorisoopbackend.tts.dto.response.GetTtsResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +28,9 @@ public class  TtsServiceImpl implements TtsService {
         this.webClient = webClient;
     }
 
-    //todo: tts 초기 요청
     @Override
     @Transactional
-    public GetTtsResponse createTts(GetTtsRequest request, Long profileId) {
+    public void createTts(GetTtsRequest request, Long profileId) {
 
         List<TtsDto> result = ttsRepository.getFairyTaleList(request.getFairyTaleId());
 
@@ -58,50 +57,84 @@ public class  TtsServiceImpl implements TtsService {
                 .block();
 
         if (response == null || response.getBody() == null) {
-            throw new RuntimeException("Python 서버 응답 없음");
+            throw new RuntimeException("Python 서버 응답 없음"); //todo: 사용자 예외로 변경
         }
+    }
 
-        GetTtsResponse body = response.getBody();
+    @Override
+    public GetTtsResponse getTts(String speakerId, Long fairyTaleId, int page, Long profileId) {
 
-        for (GetTtsResponse.TtsResult r : body.getResults()) {
-            byte[] audioBytes = Base64.getDecoder().decode(r.getAudio_base64());
-            System.out.println("Page " + r.getPage()
-                    + " audio size=" + audioBytes.length);
+        ResponseEntity<byte[]> result = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/tts")
+                        .queryParam("fairy_tale_id", fairyTaleId)
+                        .queryParam("profile_id", profileId)
+                        .queryParam("voice_id", speakerId)
+                        .queryParam("page", page)
+                        .build())
+                .accept(MediaType.APPLICATION_OCTET_STREAM)
+                .retrieve()
+                .toEntity(byte[].class)
+                .block();
+
+        if (result == null || result.getBody() == null) {
+            throw new RuntimeException("Python 서버 응답 없음"); // TODO: 커스텀 예외로 변경
         }
-        return body;
+        return new GetTtsResponse(page, result.getBody());
     }
 
 
-    
-//    //todo: 생성 동화 읽기 수정
-//    @Override
-//    @Transactional
-//    public GetTtsResponse createCustomTts(GetCustomTtsRequest request, Long profileId) {
-//
-//        List<TtsDto> result = ttsRepository.getCustomFairyTaleList(request.getCustomFairyTaleId());
-//
-//        String contentsJson;
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            contentsJson = objectMapper.writeValueAsString(result);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException("JSON 변환 실패", e); //todo: 커스텀 예외로 변경
-//        }
-//
-//        ResponseEntity<byte[]> response = webClient.post()
-//                .uri("/tts")
-//                .contentType(MediaType.MULTIPART_FORM_DATA)
-//                .body(BodyInserters.fromMultipartData("contents", contentsJson)
-//                        .with("speaker_key", request.getVoiceUuid())
-//                        .with("current_page", "1")
-//                        .with("profile_id", profileId))
-//                .retrieve()
-//                .toEntity(byte[].class)
-//                .block();
-//
-//        if (response == null || response.getBody() == null) {
-//            throw new RuntimeException("Python 서버 응답 없음"); //todo: 커스텀 예외로 변경
-//        }
-//        return new GetTtsResponse(1, response.getBody());
-//    }
+    @Override
+    @Transactional
+    public void createCustomTts(GetCustomTtsRequest request, Long profileId) {
+
+        List<TtsDto> result = ttsRepository.getCustomFairyTaleList(request.getCustomFairyTaleId());
+
+        List<Map<String, Object>> pages = result.stream()
+                .map(dto -> Map.<String, Object>of(
+                        "page", dto.getPage(),
+                        "script", dto.getScript()
+                ))
+                .toList();
+
+        Map<String, Object> requestBody = Map.of(
+                "fairy_tale_id", request.getCustomFairyTaleId(),
+                "profile_id", profileId,
+                "voice_id", request.getSpeakerId(),
+                "pages", pages
+        );
+
+        ResponseEntity<GetTtsResponse> response = webClient.post()
+                .uri("/tts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .toEntity(GetTtsResponse.class)
+                .block();
+
+        if (response == null || response.getBody() == null) {
+            throw new RuntimeException("Python 서버 응답 없음"); //todo: 사용자 예외로 변경
+        }
+    }
+
+    @Override
+    public GetTtsResponse getCustomTts(String speakerId, Long customFairyTaleId, int page, Long profileId) {
+        ResponseEntity<byte[]> result = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/tts")
+                        .queryParam("fairy_tale_id", customFairyTaleId)
+                        .queryParam("profile_id", profileId)
+                        .queryParam("voice_id", speakerId)
+                        .queryParam("page", page)
+                        .build())
+                .accept(MediaType.APPLICATION_OCTET_STREAM)
+                .retrieve()
+                .toEntity(byte[].class)
+                .block();
+
+        if (result == null || result.getBody() == null) {
+            throw new RuntimeException("Python 서버 응답 없음"); // TODO: 커스텀 예외로 변경
+        }
+        return new GetTtsResponse(page, result.getBody());
+    }
 }
