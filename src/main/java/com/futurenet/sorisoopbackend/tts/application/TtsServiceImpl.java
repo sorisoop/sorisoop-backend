@@ -78,7 +78,7 @@ public class  TtsServiceImpl implements TtsService {
 
     @Override
     public GetTtsResponse getTts(String speakerId, Long fairyTaleId, int page, Long profileId) {
-        if (page <= 0) {
+        if (page <= -1) {
             throw new TtsException(TtsErrorCode.INVALID_PAGE_REQUEST);
         }
         if (speakerId == null || fairyTaleId == null || profileId == null) {
