@@ -12,4 +12,5 @@ public class GetVoiceResponse {
     private Long memberId;
     private String imageUrl;
     private String title;
+    private String speakerId;
 }
