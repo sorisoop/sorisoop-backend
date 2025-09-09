@@ -26,5 +26,5 @@ spring:
 
 rabbit:
   queue: fairytale.queue.dev
-  exchange: fairytale.exchange
-  routing-key: fairytale.create
+  exchange: fairytale.exchange.dev
+  routing-key: fairytale.create.dev
