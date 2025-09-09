@@ -18,6 +18,7 @@ public class AIPromptUtil {
 
                     Output ONLY the following JSON array.
                     No comments, no extra text, no code blocks.
+                    Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
 
             Output format:
             [

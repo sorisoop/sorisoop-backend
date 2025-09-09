@@ -10,6 +10,7 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.response.ConceptRespons
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.AIPromptUtil;
 import com.futurenet.sorisoopbackend.global.exception.GlobalErrorCode;
 import com.futurenet.sorisoopbackend.global.exception.RestApiException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -19,6 +20,7 @@ import org.springframework.util.MimeType;
 import java.net.URL;
 import java.util.List;
 
+@Slf4j
 @Service
 public class OpenAIService {
 
