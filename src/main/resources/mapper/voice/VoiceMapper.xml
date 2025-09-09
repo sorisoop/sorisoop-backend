@@ -3,7 +3,7 @@
 <mapper namespace="com.futurenet.sorisoopbackend.voice.domain.VoiceRepository">
     <insert id="saveVoice">
         INSERT INTO voice (member_id, title, image_url, tts_url, speaker_id, created_at, created_by)
-        VALUES (#{memberId}, #{request.title}, #{request.imageUrl}, #{request.ttsUrl}, #{speakeId}, SYSDATE, #{memberId})
+        VALUES (#{memberId}, #{request.title}, #{request.imageUrl}, #{request.ttsUrl}, #{speakerId}, SYSDATE, #{memberId})
     </insert>
 
     <update id="updateVoiceInfo">
