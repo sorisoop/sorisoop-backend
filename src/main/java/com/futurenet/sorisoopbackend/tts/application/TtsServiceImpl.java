@@ -1,5 +1,7 @@
 package com.futurenet.sorisoopbackend.tts.application;
 
+import com.futurenet.sorisoopbackend.tts.application.exception.TtsErrorCode;
+import com.futurenet.sorisoopbackend.tts.application.exception.TtsException;
 import com.futurenet.sorisoopbackend.tts.domain.TtsRepository;
 import com.futurenet.sorisoopbackend.tts.dto.TtsDto;
 import com.futurenet.sorisoopbackend.tts.dto.request.GetCustomTtsRequest;
@@ -33,6 +35,13 @@ public class  TtsServiceImpl implements TtsService {
     public void createTts(GetTtsRequest request, Long profileId) {
 
         List<TtsDto> result = ttsRepository.getFairyTaleList(request.getFairyTaleId());
+        if (result == null || result.isEmpty()) {
+            throw new TtsException(TtsErrorCode.FAIRY_TALE_NOT_FOUND);
+        }
+
+        if (request.getSpeakerId() == null || profileId == null) {
+            throw new TtsException(TtsErrorCode.INVALID_REQUEST);
+        }
 
         List<Map<String, Object>> pages = result.stream()
                 .map(dto -> Map.<String, Object>of(
@@ -48,38 +57,61 @@ public class  TtsServiceImpl implements TtsService {
                 "pages", pages
         );
 
-        ResponseEntity<GetTtsResponse> response = webClient.post()
-                .uri("/tts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(requestBody))
-                .retrieve()
-                .toEntity(GetTtsResponse.class)
-                .block();
+        ResponseEntity<GetTtsResponse> response;
+
+        try{
+            response = webClient.post()
+                    .uri("/tts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(requestBody))
+                    .retrieve()
+                    .toEntity(GetTtsResponse.class)
+                    .block();
+        } catch (Exception e) {
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_ERROR);
+        }
 
         if (response == null || response.getBody() == null) {
-            throw new RuntimeException("Python 서버 응답 없음"); //todo: 사용자 예외로 변경
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_NO_RESPONSE);
         }
     }
 
     @Override
     public GetTtsResponse getTts(String speakerId, Long fairyTaleId, int page, Long profileId) {
+        if (page <= 0) {
+            throw new TtsException(TtsErrorCode.INVALID_PAGE_REQUEST);
+        }
+        if (speakerId == null || fairyTaleId == null || profileId == null) {
+            throw new TtsException(TtsErrorCode.INVALID_REQUEST);
+        }
 
-        ResponseEntity<byte[]> result = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/tts")
-                        .queryParam("fairy_tale_id", fairyTaleId)
-                        .queryParam("profile_id", profileId)
-                        .queryParam("voice_id", speakerId)
-                        .queryParam("page", page)
-                        .build())
-                .accept(MediaType.APPLICATION_OCTET_STREAM)
-                .retrieve()
-                .toEntity(byte[].class)
-                .block();
+        ResponseEntity<byte[]> result;
+
+        try{
+            result = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/tts")
+                            .queryParam("fairy_tale_id", fairyTaleId)
+                            .queryParam("profile_id", profileId)
+                            .queryParam("voice_id", speakerId)
+                            .queryParam("page", page)
+                            .build())
+                    .accept(MediaType.APPLICATION_OCTET_STREAM)
+                    .retrieve()
+                    .toEntity(byte[].class)
+                    .block();
+        } catch (Exception e) {
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_ERROR);
+        }
 
         if (result == null || result.getBody() == null) {
-            throw new RuntimeException("Python 서버 응답 없음"); // TODO: 커스텀 예외로 변경
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_NO_RESPONSE);
         }
+
+        if (result.getBody().length == 0) {
+            throw new TtsException(TtsErrorCode.TTS_FETCH_FAIL);
+        }
+
         return new GetTtsResponse(page, result.getBody());
     }
 
@@ -89,6 +121,13 @@ public class  TtsServiceImpl implements TtsService {
     public void createCustomTts(GetCustomTtsRequest request, Long profileId) {
 
         List<TtsDto> result = ttsRepository.getCustomFairyTaleList(request.getCustomFairyTaleId());
+        if (result == null || result.isEmpty()) {
+            throw new TtsException(TtsErrorCode.FAIRY_TALE_NOT_FOUND);
+        }
+
+        if (request.getSpeakerId() == null || profileId == null) {
+            throw new TtsException(TtsErrorCode.INVALID_REQUEST);
+        }
 
         List<Map<String, Object>> pages = result.stream()
                 .map(dto -> Map.<String, Object>of(
@@ -104,36 +143,58 @@ public class  TtsServiceImpl implements TtsService {
                 "pages", pages
         );
 
-        ResponseEntity<GetTtsResponse> response = webClient.post()
-                .uri("/tts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(requestBody))
-                .retrieve()
-                .toEntity(GetTtsResponse.class)
-                .block();
+        ResponseEntity<GetTtsResponse> response;
+
+        try{
+            response = webClient.post()
+                    .uri("/tts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(requestBody))
+                    .retrieve()
+                    .toEntity(GetTtsResponse.class)
+                    .block();
+        } catch (Exception e) {
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_ERROR);
+        }
 
         if (response == null || response.getBody() == null) {
-            throw new RuntimeException("Python 서버 응답 없음"); //todo: 사용자 예외로 변경
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_NO_RESPONSE);
         }
     }
 
     @Override
     public GetTtsResponse getCustomTts(String speakerId, Long customFairyTaleId, int page, Long profileId) {
-        ResponseEntity<byte[]> result = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/tts")
-                        .queryParam("fairy_tale_id", customFairyTaleId)
-                        .queryParam("profile_id", profileId)
-                        .queryParam("voice_id", speakerId)
-                        .queryParam("page", page)
-                        .build())
-                .accept(MediaType.APPLICATION_OCTET_STREAM)
-                .retrieve()
-                .toEntity(byte[].class)
-                .block();
+        if (page <= 0) {
+            throw new TtsException(TtsErrorCode.INVALID_PAGE_REQUEST);
+        }
+        if (speakerId == null || customFairyTaleId == null || profileId == null) {
+            throw new TtsException(TtsErrorCode.INVALID_REQUEST);
+        }
+
+        ResponseEntity<byte[]> result;
+        try{
+            result = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/tts")
+                            .queryParam("fairy_tale_id", customFairyTaleId)
+                            .queryParam("profile_id", profileId)
+                            .queryParam("voice_id", speakerId)
+                            .queryParam("page", page)
+                            .build())
+                    .accept(MediaType.APPLICATION_OCTET_STREAM)
+                    .retrieve()
+                    .toEntity(byte[].class)
+                    .block();
+        } catch (Exception e) {
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_ERROR);
+        }
 
         if (result == null || result.getBody() == null) {
-            throw new RuntimeException("Python 서버 응답 없음"); // TODO: 커스텀 예외로 변경
+            throw new TtsException(TtsErrorCode.PYTHON_SERVER_NO_RESPONSE);
+        }
+
+        if (result.getBody().length == 0) {
+            throw new TtsException(TtsErrorCode.TTS_FETCH_FAIL);
         }
         return new GetTtsResponse(page, result.getBody());
     }
