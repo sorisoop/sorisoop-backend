@@ -9,24 +9,31 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
 
-    public static final String FAIRYTALE_QUEUE = "fairytale.queue";
-    public static final String FAIRYTALE_EXCHANGE = "fairytale.exchange";
-    public static final String FAIRYTALE_ROUTING_KEY = "fairytale.create";
+    @Value("${rabbit.queue}")
+    private String queueName;
+
+    @Value("${rabbit.exchange}")
+    private String exchangeName;
+
+    @Value("${rabbit.routing-key}")
+    private String routingKey;
+
 
     @Bean
     public Queue fairyTaleQueue() {
-        return new Queue(FAIRYTALE_QUEUE, true);
+        return new Queue(queueName, true);
     }
 
     @Bean
     public TopicExchange fairyTaleExchange() {
-        return new TopicExchange(FAIRYTALE_EXCHANGE);
+        return new TopicExchange(exchangeName);
     }
 
     @Bean
@@ -34,7 +41,7 @@ public class RabbitConfig {
         return BindingBuilder
                 .bind(fairyTaleQueue())
                 .to(fairyTaleExchange())
-                .with(FAIRYTALE_ROUTING_KEY);
+                .with(routingKey);
     }
 
     @Bean

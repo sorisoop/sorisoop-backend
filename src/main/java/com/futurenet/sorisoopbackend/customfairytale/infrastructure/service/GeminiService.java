@@ -6,7 +6,6 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleCont
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.AIPromptUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
-import com.futurenet.sorisoopbackend.global.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -37,34 +36,30 @@ public class GeminiService {
         this.webClient = webClient;
     }
 
-
-    public List<MakeCustomFairyTaleContentDto> generateImages(List<MakeCustomFairyTaleContentDto> pages, String characterGuide, String characterGuideImageUrl) {
+    public List<MakeCustomFairyTaleContentDto> generateImages(List<MakeCustomFairyTaleContentDto> pages, String characterGuide, String characterReferenceImage) {
         return Flux.fromIterable(pages)
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
-                .flatMap(page -> generateImageMono(page, characterGuide, characterGuideImageUrl))
+                .flatMap(page -> generateImageMono(page, characterGuide, characterReferenceImage))
                 .sequential()
                 .collectList()
                 .block();
     }
 
-    private Mono<MakeCustomFairyTaleContentDto> generateImageMono(MakeCustomFairyTaleContentDto page, String characterGuide, String characterGuideImageUrl) {
-        String prompt = AIPromptUtil.makeCustomFairyTaleImagePrompt(characterGuide, page.getSceneType(),
-                page.getEmotion(), page.getContentEn(), page.getAction());
 
-        String base64Image = ImageUtil.downloadImageAsBase64(characterGuideImageUrl);
+    private Mono<MakeCustomFairyTaleContentDto> generateImageMono(MakeCustomFairyTaleContentDto page, String characterGuide, String characterReferenceImage) {
+        String prompt = AIPromptUtil.makeCustomFairyTaleImagePrompt(characterGuide, page.getSceneType(), page.getEmotion(), page.getContentEn(), page.getAction());
 
-        Map<String, Object> body = Map.of(
-                "contents", List.of(Map.of(
-                        "parts", List.of(
-                                Map.of("text", prompt),
-                                Map.of("inlineData", Map.of(
-                                        "mimeType", "image/png",
-                                        "data", base64Image
-                                ))
-                        )
-                ))
-        );
+        List<Map<String, Object>> parts = new ArrayList<>();
+        parts.add(Map.of("text", prompt));
+        if (characterReferenceImage != null) {
+            parts.add(Map.of("inlineData", Map.of(
+                    "mimeType", "image/png",
+                    "data", characterReferenceImage
+            )));
+        }
+
+        Map<String, Object> body = Map.of("contents", List.of(Map.of("parts", parts)));
 
         return webClient.post()
                 .uri(GEMINI_API_URL + apiKey)
@@ -72,12 +67,18 @@ public class GeminiService {
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .flatMap(response -> extractAndUploadImage(response, FolderNameConstant.CUSTOM_FAIRY_TALE))
-                .map(s3Url -> {page.setImageUrl(s3Url); return page;});
+                .map(this::extractBase64FromResponse)
+                .flatMap(base64 -> {
+                    byte[] imageBytes = Base64.getDecoder().decode(base64);
+                    ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+                    String s3Url = amazonS3Service.uploadImage(inputStream, FolderNameConstant.CUSTOM_FAIRY_TALE, "png");
+                    page.setImageUrl(s3Url);
+                    return Mono.just(page);
+                });
     }
 
-    public String generateCharacterImage(String characterGuide, String theme) {
-        String prompt = AIPromptUtil.makeCharacterGuideImagePrompt(characterGuide, theme);
+    public String generateReferenceImageBase64(String characterGuide) {
+        String prompt = AIPromptUtil.makeReferenceImagePrompt(characterGuide);
 
         Map<String, Object> body = Map.of(
                 "contents", List.of(Map.of(
@@ -91,19 +92,15 @@ public class GeminiService {
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .flatMap(response -> extractAndUploadImage(response, FolderNameConstant.CHARACTER_GUIDE))
+                .map(this::extractBase64FromResponse)
                 .block();
     }
 
-
-    /**
-     * gemini API 응답 데이터 파싱
-     * */
-    private Mono<String> extractAndUploadImage(Map<String, Object> response, String folderName) {
+    private String extractBase64FromResponse(Map<String, Object> response) {
         try {
             List<?> candidates = (List<?>) response.get("candidates");
             if (candidates == null || candidates.isEmpty()) {
-                return Mono.error(new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL));
+                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
             }
 
             Map<?, ?> firstCandidate = (Map<?, ?>) candidates.get(0);
@@ -116,26 +113,14 @@ public class GeminiService {
                     .findFirst();
 
             if (imagePartOpt.isEmpty()) {
-                return Mono.error(new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL));
+                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
             }
 
             Map<String, Object> inlineData = (Map<String, Object>) imagePartOpt.get().get("inlineData");
-            String base64 = (String) inlineData.get("data");
-
-            byte[] imageBytes = Base64.getDecoder().decode(base64);
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
-
-            // S3 업로드
-            String s3Url = amazonS3Service.uploadImage(
-                    inputStream,
-                    folderName,
-                    "png"
-            );
-
-            return Mono.just(s3Url);
+            return (String) inlineData.get("data");
 
         } catch (Exception e) {
-            return Mono.error(new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL));
+            throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
         }
     }
 }

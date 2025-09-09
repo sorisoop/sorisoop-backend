@@ -73,11 +73,6 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
     /**
      * 동화 생성
-     * flow:
-     * 1. 사용자 입력 데이터(아이 그림, 선택한 주제)를 바탕으로 캐릭터 특징 추출
-     * 2. 캐릭터 특징과 입력 데이터를 바탕으로 가이드 이미지 생성
-     * 3. 가이드 이미지, 주제를 바탕으로 7페이지 분량 대본 생성 (한글 버전, 영어 버전, 동작, 감정 제목 등)
-     * 4. 가이드 이미지, 대본을 바탕으로 동화 이미지 생성
      * */
     @Override
     @Transactional
@@ -89,7 +84,6 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         String characterGuide;
         MakeCustomFairyTaleDto dto;
         Long customFairyTaleId;
-        String characterGuideImageUrl;
 
         try {
             URL imageUrl = URI.create(request.getImageUrl()).toURL();
@@ -97,18 +91,12 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
                     .map(MimeType::valueOf)
                     .orElseThrow(() -> new RestApiException(GlobalErrorCode.INVALID_CONTENT_TYPE));
 
-            // 사용자 입력 데이터(아이 그림, 선택한 주제)를 바탕으로 캐릭터 특징 추출
-            characterGuide = openAIService.extractCharacterGuide(request.getConcept(), imageUrl, mimeType);
-            log.info("인물 가이드: {}", characterGuide);
+            characterGuide = openAIService.extractCharacterGuide(imageUrl, mimeType);
+            log.info("등장인물 가이드: {}", characterGuide);
 
-            // 캐릭터 가이드와 선택한 테마를 바탕으로 가이드 이미지 생성
-            characterGuideImageUrl = geminiService.generateCharacterImage(characterGuide, request.getConcept());
+            dto = openAIService.generateCustomFairyTaleScript(imageUrl, mimeType, profileResponse.getAge(), request.getConcept());
 
-            log.info("가이드 이미지 url: {}", characterGuideImageUrl);
-
-            dto = openAIService.generateCustomFairyTaleScript(characterGuideImageUrl, profileResponse.getAge(), request.getConcept());
-
-            log.info("대본 생성 완료");
+            log.info("동화 대본 생성 완료");
 
             SaveCustomFairyTaleRequest saveCustomFairyTaleRequest = SaveCustomFairyTaleRequest.of(dto, request.getProfileId(), request.getImageUrl());
             int result = customFairyTaleRepository.saveCustomFairyTale(saveCustomFairyTaleRequest);
@@ -116,13 +104,16 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
             if (result == 0) {
                 throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SAVE_CUSTOM_FAIRY_TALE_FAIL);
             }
+
             customFairyTaleId = saveCustomFairyTaleRequest.getId();
 
         } catch (MalformedURLException e) {
             throw new RestApiException(GlobalErrorCode.INVALID_URL);
         }
 
-        List<MakeCustomFairyTaleContentDto> completedPages = geminiService.generateImages(dto.getPages(), characterGuide, characterGuideImageUrl);
+        String characterReferenceImage = geminiService.generateReferenceImageBase64(characterGuide);
+
+        List<MakeCustomFairyTaleContentDto> completedPages = geminiService.generateImages(dto.getPages(), characterGuide, characterReferenceImage);
 
         List<SaveCustomFairyTaleContentRequest> contentRequests = completedPages.stream()
                 .map(page -> new SaveCustomFairyTaleContentRequest(

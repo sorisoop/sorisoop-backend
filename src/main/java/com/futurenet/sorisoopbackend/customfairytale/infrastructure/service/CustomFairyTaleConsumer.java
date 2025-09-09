@@ -4,14 +4,12 @@ import com.futurenet.sorisoopbackend.customfairytale.application.MakeFairyTaleSe
 import com.futurenet.sorisoopbackend.customfairytale.domain.NotificationContent;
 import com.futurenet.sorisoopbackend.customfairytale.dto.request.MakeCustomFairyTaleRequest;
 import com.futurenet.sorisoopbackend.customfairytale.dto.response.MakeCustomFairyTaleResult;
-import com.futurenet.sorisoopbackend.global.infrastructure.config.RabbitConfig;
 import com.futurenet.sorisoopbackend.notification.application.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 
 @Slf4j
@@ -22,7 +20,7 @@ public class CustomFairyTaleConsumer {
     private final MakeFairyTaleService makeFairyTaleService;
     private final NotificationService notificationService;
 
-    @RabbitListener(queues = RabbitConfig.FAIRYTALE_QUEUE)
+    @RabbitListener(queues = "${rabbit.queue}")
     public void receiveMakeFairyTaleRequest(MakeCustomFairyTaleRequest request) {
         try {
             MakeCustomFairyTaleResult result = makeFairyTaleService.createCustomFairyTale(request);
@@ -36,6 +34,7 @@ public class CustomFairyTaleConsumer {
 
         } catch (Exception e) {
             log.error(e.getMessage());
+            notificationService.sendToUser(request.getProfileId(), "죄송합니다. 동화 생성을 실패했습니다.");
         }
     }
 }
