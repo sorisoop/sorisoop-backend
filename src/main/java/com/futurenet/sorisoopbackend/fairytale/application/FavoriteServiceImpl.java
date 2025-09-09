@@ -1,5 +1,7 @@
 package com.futurenet.sorisoopbackend.fairytale.application;
 
+import com.futurenet.sorisoopbackend.fairytale.application.exception.FavoriteErrorCode;
+import com.futurenet.sorisoopbackend.fairytale.application.exception.FavoriteException;
 import com.futurenet.sorisoopbackend.fairytale.domain.FavoriteRepository;
 import com.futurenet.sorisoopbackend.fairytale.dto.response.FindFairyTaleResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @Transactional
     public List<FindFairyTaleResponse> getFavoriteFairyTales(Long profileId, int page) {
+        if (page <= 0) {
+            throw new FavoriteException(FavoriteErrorCode.INVALID_PAGE_REQUEST);
+        }
         int start = (page -1) * PAGE_SIZE;
         return favoriteRepository.getFavoriteFairyTalesByProfileId(profileId, start, PAGE_SIZE);
     }

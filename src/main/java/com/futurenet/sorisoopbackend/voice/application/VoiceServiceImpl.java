@@ -80,7 +80,7 @@ public class VoiceServiceImpl implements VoiceService{
                 throw new VoiceException(VoiceErrorCode.VOICE_SAVE_FAIL);
             }
         } catch (IOException e) {
-            throw new RuntimeException("음성 파일 읽기 실패", e); //todo: 커스텀 예외로 변경
+            throw new VoiceException(VoiceErrorCode.S3_FILE_UPLOAD_FAIL);
         }
     }
 
@@ -111,7 +111,7 @@ public class VoiceServiceImpl implements VoiceService{
             amazonS3Service.deleteFile(response.getTtsUrl());
         }
         catch (Exception e){
-            throw new VoiceException(VoiceErrorCode.S3_FILE_DELECT_FAIL);
+            throw new VoiceException(VoiceErrorCode.S3_FILE_DELETE_FAIL);
         }
 
         int result = voiceRepository.deleteVoice(voiceId);

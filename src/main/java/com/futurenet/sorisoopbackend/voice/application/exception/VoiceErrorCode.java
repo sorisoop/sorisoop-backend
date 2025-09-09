@@ -14,8 +14,8 @@ public enum VoiceErrorCode implements ErrorCode {
     VOICE_UPDATE_FAIL("VO002", "목소리 정보 수정 실패", HttpStatus.BAD_REQUEST),
     VOICE_NOT_FOUND("VO003", "존재하지 않는 목소리입니다.", HttpStatus.NOT_FOUND),
     VOICE_SAVE_FAIL("VO004", "목소리 등록 실패", HttpStatus.BAD_REQUEST),
-    S3_FILE_DELECT_FAIL("VO005", "S3 목소리 파일 삭제 실패", HttpStatus.BAD_REQUEST),
-    VOICE_DELETE_FAIL("VO006", "DB 목소리 삭제 실패", HttpStatus.BAD_REQUEST),;
+    S3_FILE_DELETE_FAIL("VO005", "S3 목소리 파일 삭제 실패", HttpStatus.BAD_REQUEST),
+    VOICE_DELETE_FAIL("VO006", "DB 목소리 삭제 실패", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;
