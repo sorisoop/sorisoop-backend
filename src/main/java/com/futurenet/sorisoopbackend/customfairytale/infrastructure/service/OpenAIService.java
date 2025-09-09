@@ -15,7 +15,10 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -65,8 +68,8 @@ public class OpenAIService {
      * 등장인물 정보 추출
      * */
     //@Retryable
-    public String extractCharacterGuide(URL imageUrl, MimeType mimeType) {
-        String characterGuidePrompt = AIPromptUtil.makeCharacterInfoPrompt();
+    public String extractCharacterGuide(String theme, URL imageUrl, MimeType mimeType) {
+        String characterGuidePrompt = AIPromptUtil.makeCharacterInfoPrompt(theme);
 
         ChatResponse characterResponse = chatClient.prompt()
                 .user(u -> u.text(characterGuidePrompt).media(mimeType, imageUrl))
@@ -85,12 +88,14 @@ public class OpenAIService {
      * 사용자 그림 기반 7페이지 분량 대본 생성
      * */
     //@Retryable
-    public MakeCustomFairyTaleDto generateCustomFairyTaleScript(URL imageUrl, MimeType mimeType, int age, String concept) {
+    public MakeCustomFairyTaleDto generateCustomFairyTaleScript(String characterGuideImageUrl, int age, String concept) {
         String contentPrompt = AIPromptUtil.makeCustomFairyTaleScriptPrompt(age, concept);
 
         try {
+            URL imageUrl = URI.create(characterGuideImageUrl).toURL();
+
             ChatResponse chatResponse = chatClient.prompt()
-                    .user(u -> u.text(contentPrompt).media(mimeType, imageUrl))
+                    .user(u -> u.text(contentPrompt).media(MimeTypeUtils.IMAGE_PNG, imageUrl))
                     .call()
                     .chatResponse();
 
@@ -105,6 +110,8 @@ public class OpenAIService {
 
         } catch (JsonProcessingException e) {
             throw new RestApiException(GlobalErrorCode.JSON_PROCESSING_FAIL);
+        } catch (MalformedURLException e) {
+            throw new RestApiException(GlobalErrorCode.INVALID_URL);
         }
     }
 

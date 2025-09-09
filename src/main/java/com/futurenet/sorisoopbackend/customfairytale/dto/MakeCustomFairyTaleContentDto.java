@@ -16,4 +16,5 @@ public class MakeCustomFairyTaleContentDto {
     private String contentEn;
     private String sceneType;
     private String emotion;
+    private String action;
 }
