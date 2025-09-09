@@ -99,11 +99,16 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
             // 사용자 입력 데이터(아이 그림, 선택한 주제)를 바탕으로 캐릭터 특징 추출
             characterGuide = openAIService.extractCharacterGuide(request.getConcept(), imageUrl, mimeType);
+            log.info("인물 가이드: {}", characterGuide);
 
             // 캐릭터 가이드와 선택한 테마를 바탕으로 가이드 이미지 생성
             characterGuideImageUrl = geminiService.generateCharacterImage(characterGuide, request.getConcept());
 
+            log.info("가이드 이미지 url: {}", characterGuideImageUrl);
+
             dto = openAIService.generateCustomFairyTaleScript(characterGuideImageUrl, profileResponse.getAge(), request.getConcept());
+
+            log.info("대본 생성 완료");
 
             SaveCustomFairyTaleRequest saveCustomFairyTaleRequest = SaveCustomFairyTaleRequest.of(dto, request.getProfileId(), request.getImageUrl());
             int result = customFairyTaleRepository.saveCustomFairyTale(saveCustomFairyTaleRequest);
