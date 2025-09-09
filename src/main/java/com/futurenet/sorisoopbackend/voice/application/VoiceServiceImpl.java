@@ -1,6 +1,7 @@
 package com.futurenet.sorisoopbackend.voice.application;
 
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
+import com.futurenet.sorisoopbackend.tts.dto.response.GetSpeakerIdResponse;
 import com.futurenet.sorisoopbackend.voice.application.exception.VoiceErrorCode;
 import com.futurenet.sorisoopbackend.voice.application.exception.VoiceException;
 import com.futurenet.sorisoopbackend.voice.domain.VoiceRepository;
@@ -8,19 +9,32 @@ import com.futurenet.sorisoopbackend.voice.dto.request.AddVoiceRequest;
 import com.futurenet.sorisoopbackend.voice.dto.request.UpdateVoiceInfoRequest;
 import com.futurenet.sorisoopbackend.voice.dto.response.DeleteVoiceResponse;
 import com.futurenet.sorisoopbackend.voice.dto.response.GetVoiceResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class VoiceServiceImpl implements VoiceService{
 
     private final VoiceRepository voiceRepository;
     private final AmazonS3Service amazonS3Service;
+    private final WebClient webClient;
+
+    public VoiceServiceImpl(VoiceRepository voiceRepository, AmazonS3Service amazonS3Service, @Qualifier("ttsWebClient") WebClient webClient) {
+        this.voiceRepository = voiceRepository;
+        this.amazonS3Service = amazonS3Service;
+        this.webClient = webClient;
+    }
 
     @Transactional
     @Override
@@ -31,14 +45,45 @@ public class VoiceServiceImpl implements VoiceService{
 
     @Transactional
     @Override
-    public void addVoice(AddVoiceRequest request, String voiceUrl, Long memberId) {
+    public void addVoice(MultipartFile voiceFile , AddVoiceRequest  request, String voiceUrl, Long memberId) {
         request.setTtsUrl(voiceUrl);
-        int result = voiceRepository.saveVoice(request, memberId);
 
-        if (result == 0) {
-            throw new VoiceException(VoiceErrorCode.VOICE_SAVE_FAIL);
+        try {
+            byte[] fileBytes = voiceFile.getBytes();
+
+            MultipartBodyBuilder builder = new MultipartBodyBuilder();
+            builder.part("member_id", memberId);
+            builder.part("name", request.getTitle());
+            builder.part("file", new ByteArrayResource(fileBytes) {
+                @Override
+                public String getFilename() {
+                    return voiceFile.getOriginalFilename();
+                }
+            });
+
+            GetSpeakerIdResponse response = webClient.post()
+                    .uri("/tts/voices")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve()
+                    .bodyToMono(GetSpeakerIdResponse.class)
+                    .block();
+
+            if (response == null || response.getSpeakerId() == null) {
+                throw new VoiceException(VoiceErrorCode.VOICE_SAVE_FAIL);
+            }
+
+            String speakerId = response.getSpeakerId();
+            int result = voiceRepository.saveVoice(request, memberId, speakerId);
+
+            if (result == 0) {
+                throw new VoiceException(VoiceErrorCode.VOICE_SAVE_FAIL);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("음성 파일 읽기 실패", e); //todo: 커스텀 예외로 변경
         }
     }
+
 
     @Transactional
     @Override

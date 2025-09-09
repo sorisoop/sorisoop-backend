@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface VoiceRepository {
     List<GetVoiceResponse> getVoiceList(Long memberId);
-    int saveVoice(AddVoiceRequest request, Long memberId);
+    int saveVoice(AddVoiceRequest request, Long memberId, String speakerId);
     int updateVoiceInfo(Long voiceId, UpdateVoiceInfoRequest request, Long memberId);
     DeleteVoiceResponse getVoiceForDelete(Long voiceId);
     int deleteVoice(Long voiceId);

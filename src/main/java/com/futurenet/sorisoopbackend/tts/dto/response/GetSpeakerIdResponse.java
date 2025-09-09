@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetVoiceUuidResponse {
-    private String voiceUuid;
+public class GetSpeakerIdResponse {
+    private Long memberId;
+    private String speakerId;
 }

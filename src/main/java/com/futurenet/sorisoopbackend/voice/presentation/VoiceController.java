@@ -34,7 +34,7 @@ public class VoiceController {
         AddVoiceRequest request = mapper.readValue(requestJson, AddVoiceRequest.class);
 
         String voiceUrl = amazonS3Service.uploadAudio(voiceFile, FolderNameConstant.VOICE);
-        voiceService.addVoice(request, voiceUrl, userPrincipal.getId());
+        voiceService.addVoice(voiceFile, request, voiceUrl, userPrincipal.getId());
         return ResponseEntity.ok(new ApiResponse<>("VO101", "목소리 등록 완료", null));
     }
 

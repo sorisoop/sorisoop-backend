@@ -10,4 +10,5 @@ public interface TtsRepository {
     String getVoiceUrlById(Long voiceId);
     List<TtsDto> getFairyTaleList(Long fairyTaleId);
     List<TtsDto> getCustomFairyTaleList(Long customFairyTaleId);
+    String getFairyTaleScript(Long fairyTaleId, int page);
 }
