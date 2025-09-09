@@ -16,4 +16,9 @@
         FROM custom_fairy_tale_content
         where custom_fairy_tale_id = #{customFairyTaleId}
     </select>
+    <select id="getFairyTaleScript" resultType="java.lang.String">
+        SELECT script
+        FROM fairy_tale_content
+        where fairy_tale_id = #{fairyTaleId} and page = #{page}
+    </select>
 </mapper>
