@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.futurenet.sorisoopbackend.voice.domain.VoiceRepository">
     <insert id="saveVoice">
-        INSERT INTO voice (member_id, title, image_url, tts_url, speakerId, created_at, created_by)
+        INSERT INTO voice (member_id, title, image_url, tts_url, speaker_id, created_at, created_by)
         VALUES (#{memberId}, #{request.title}, #{request.imageUrl}, #{request.ttsUrl}, #{speaker_id}, SYSDATE, #{memberId})
     </insert>
 
