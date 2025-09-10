@@ -9,16 +9,18 @@
     <select id="getFairyTaleList" resultType="com.futurenet.sorisoopbackend.tts.dto.TtsDto">
         SELECT page, script
         FROM fairy_tale_content
-        where fairy_tale_id = #{fairyTaleId}
+        WHERE fairy_tale_id = #{fairyTaleId}
+        ORDER BY page ASC
     </select>
     <select id="getCustomFairyTaleList" resultType="com.futurenet.sorisoopbackend.tts.dto.TtsDto">
         SELECT page, script
         FROM custom_fairy_tale_content
-        where custom_fairy_tale_id = #{customFairyTaleId}
+        WHERE custom_fairy_tale_id = #{customFairyTaleId}
+        ORDER BY page ASC
     </select>
     <select id="getFairyTaleScript" resultType="java.lang.String">
         SELECT script
         FROM fairy_tale_content
-        where fairy_tale_id = #{fairyTaleId} and page = #{page}
+        WHERE fairy_tale_id = #{fairyTaleId} and page = #{page}
     </select>
 </mapper>
