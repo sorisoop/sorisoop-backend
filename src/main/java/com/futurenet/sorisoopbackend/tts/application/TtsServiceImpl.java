@@ -45,7 +45,7 @@ public class  TtsServiceImpl implements TtsService {
 
         List<Map<String, Object>> pages = result.stream()
                 .map(dto -> Map.<String, Object>of(
-                        "page", dto.getPage() + 1,
+                        "page", dto.getPage(),
                         "script", dto.getScript()
                 ))
                 .toList();
