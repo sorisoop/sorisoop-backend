@@ -25,7 +25,7 @@ public class WebClientConfig {
                         .maxInMemorySize(20 * 1024 * 1024))
 //                .baseUrl("https://legible-kind-dingo.ngrok-free.app")      // ngrok
                 //.baseUrl("http://1.208.108.242:61569")                  //gpu 서버 구형
-                .baseUrl("https://sorisoop.n-e.kr:8000/")
+                .baseUrl("http://sorisoop-ai:8000")
                 .build();
     }
 }
