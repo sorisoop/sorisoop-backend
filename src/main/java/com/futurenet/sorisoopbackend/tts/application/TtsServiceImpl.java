@@ -137,7 +137,7 @@ public class  TtsServiceImpl implements TtsService {
                 .toList();
 
         Map<String, Object> requestBody = Map.of(
-                "fairy_tale_id", request.getCustomFairyTaleId(),
+                "custom_fairy_tale_id", request.getCustomFairyTaleId(),
                 "profile_id", profileId,
                 "voice_id", request.getSpeakerId(),
                 "pages", pages
@@ -147,7 +147,7 @@ public class  TtsServiceImpl implements TtsService {
 
         try{
             response = webClient.post()
-                    .uri("/tts")
+                    .uri("/tts/custom")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(requestBody))
                     .retrieve()
@@ -175,8 +175,8 @@ public class  TtsServiceImpl implements TtsService {
         try{
             result = webClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/tts")
-                            .queryParam("fairy_tale_id", customFairyTaleId)
+                            .path("/tts/custom")
+                            .queryParam("custom_fairy_tale_id", customFairyTaleId)
                             .queryParam("profile_id", profileId)
                             .queryParam("voice_id", speakerId)
                             .queryParam("page", page)
