@@ -209,4 +209,8 @@ $RECYCLE.BIN/
 *.json
 sorisoop-4e390ba74992.json
 
+*.log
+logs/
+logs/*
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,netbeans,intellij,visualstudiocode
