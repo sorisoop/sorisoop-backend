@@ -19,6 +19,8 @@
                S.UPDATED_BY           AS updatedBy
         FROM SUBSCRIPTION S
         WHERE S.MEMBER_ID = #{memberId}
+        ORDER BY S.STARTED_AT DESC, S.CREATED_AT DESC
+        FETCH FIRST 1 ROWS ONLY
     </select>
 
 
