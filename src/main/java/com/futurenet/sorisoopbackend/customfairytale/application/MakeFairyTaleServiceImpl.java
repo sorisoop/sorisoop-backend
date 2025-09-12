@@ -52,7 +52,9 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
     @Override
     public MakeCustomFairyTaleConceptResponse makeSynopsis(MultipartFile image, Long profileId) {
 
-        String savedImageUrl = amazonS3Service.uploadImage(image, FolderNameConstant.USER_DRAWING);
+        String savedImageUrl = amazonS3Service.uploadImageAndGeneratePresignedUrl(image, FolderNameConstant.USER_DRAWING)
+                .get("presignedUrl");
+
         FindProfileResponse profileResponse = profileRepository.getProfileByProfileId(profileId);
 
         URL imageUrl;
@@ -67,7 +69,9 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
             throw new RestApiException(GlobalErrorCode.INVALID_URL);
         }
 
-        List<ConceptResponse> conceptResponse = openAIService.generateCustomFairyTaleSynopsis(imageUrl, mimeType, profileResponse.getAge());
+        List<ConceptResponse> conceptResponse = openAIService.generateCustomFairyTaleSynopsis(
+                imageUrl, mimeType, profileResponse.getAge());
+
         return new MakeCustomFairyTaleConceptResponse(savedImageUrl, image.getContentType(), conceptResponse);
     }
 

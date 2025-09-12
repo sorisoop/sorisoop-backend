@@ -1,6 +1,7 @@
 package com.futurenet.sorisoopbackend.global.infrastructure.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.exception.InfrastructureErrorCode;
@@ -12,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -58,6 +62,44 @@ public class AmazonS3Service {
 
             return amazonS3.getUrl(bucket, fileName).toString();
         } catch (Exception e) {
+            throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_UPLOAD_FAIL);
+        }
+    }
+
+    public Map<String, String> uploadImageAndGeneratePresignedUrl(MultipartFile file, String folder) {
+        if (file == null || file.isEmpty()) {
+            throw new InfrastructureException(InfrastructureErrorCode.IMAGE_FILE_NULL);
+        }
+
+        if (!isImage(file)) {
+            throw new IllegalArgumentException("파일 형식 불일치");
+        }
+
+        try {
+            String extension = getExtension(file.getOriginalFilename());
+            String fileName = folder + "/" + UUID.randomUUID() + "." + extension;
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata));
+
+            String publicUrl = amazonS3.getUrl(bucket, fileName).toString();
+
+            Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
+            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, fileName)
+                    .withMethod(com.amazonaws.HttpMethod.GET)
+                    .withExpiration(expiration);
+            String presignedUrl = amazonS3.generatePresignedUrl(request).toString();
+
+            Map<String, String> result = new HashMap<>();
+            result.put("fileName", fileName);
+            result.put("publicUrl", publicUrl);
+            result.put("presignedUrl", presignedUrl);
+            return result;
+
+        } catch (IOException e) {
             throw new InfrastructureException(InfrastructureErrorCode.S3_FILE_UPLOAD_FAIL);
         }
     }
