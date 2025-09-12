@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MakeCustomFairyTaleConceptResponse {
     private String imageUrl;
+    private String presignedUrl;
     private String imageContentType;
     List<ConceptResponse> conceptResponse;
 }

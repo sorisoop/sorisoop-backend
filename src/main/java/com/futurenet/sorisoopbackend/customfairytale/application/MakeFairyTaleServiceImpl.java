@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -52,8 +53,9 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
     @Override
     public MakeCustomFairyTaleConceptResponse makeSynopsis(MultipartFile image, Long profileId) {
 
-        String savedImageUrl = amazonS3Service.uploadImageAndGeneratePresignedUrl(image, FolderNameConstant.USER_DRAWING)
-                .get("presignedUrl");
+        Map<String, String> urlMap = amazonS3Service.uploadImageAndGeneratePresignedUrl(image, FolderNameConstant.USER_DRAWING);
+        String publicUrl = urlMap.get("publicUrl");
+        String presignedUrl = urlMap.get("presignedUrl");
 
         FindProfileResponse profileResponse = profileRepository.getProfileByProfileId(profileId);
 
@@ -61,7 +63,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         MimeType mimeType;
 
         try {
-            imageUrl = URI.create(savedImageUrl).toURL();
+            imageUrl = URI.create(presignedUrl).toURL();
             mimeType = Optional.ofNullable(image.getContentType())
                     .map(MimeType::valueOf)
                     .orElseThrow(() -> new RestApiException(GlobalErrorCode.INVALID_CONTENT_TYPE));
@@ -72,7 +74,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         List<ConceptResponse> conceptResponse = openAIService.generateCustomFairyTaleSynopsis(
                 imageUrl, mimeType, profileResponse.getAge());
 
-        return new MakeCustomFairyTaleConceptResponse(savedImageUrl, image.getContentType(), conceptResponse);
+        return new MakeCustomFairyTaleConceptResponse(publicUrl, presignedUrl, image.getContentType(), conceptResponse);
     }
 
     /**
@@ -90,7 +92,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         Long customFairyTaleId;
 
         try {
-            URL imageUrl = URI.create(request.getImageUrl()).toURL();
+            URL imageUrl = URI.create(request.getPresignedUrl()).toURL();
             MimeType mimeType = Optional.ofNullable(request.getImageContentType())
                     .map(MimeType::valueOf)
                     .orElseThrow(() -> new RestApiException(GlobalErrorCode.INVALID_CONTENT_TYPE));

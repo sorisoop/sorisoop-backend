@@ -12,6 +12,7 @@ import lombok.Setter;
 public class MakeCustomFairyTaleRequest {
     private Long profileId;
     private String imageUrl;
+    private String presignedUrl;
     private String imageContentType;
     private String concept;
 }
