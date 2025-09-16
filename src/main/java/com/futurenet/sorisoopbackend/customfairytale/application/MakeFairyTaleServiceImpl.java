@@ -120,8 +120,6 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
 
         String characterReferenceImage = geminiService.generateReferenceImageBase64(characterGuide);
 
-        log.info("characterReferenceImage: {}", characterReferenceImage);
-
         List<MakeCustomFairyTaleContentDto> completedPages = geminiService.generateImages(dto.getPages(), characterGuide, characterReferenceImage);
 
         List<SaveCustomFairyTaleContentRequest> contentRequests = completedPages.stream()
