@@ -97,9 +97,9 @@ public class GeminiService {
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                     .map(this::extractBase64FromResponse)
                     .block();
-        } catch (CustomFairyTaleException e) {
-            log.warn("Reference image generation failed, fallback to text-only image prompt");
-            return null; // 실패 시 그냥 null 리턴
+        } catch (Exception e) {
+            log.warn("error: Reference image generation failed, fallback to text-only image prompt");
+            return null;
         }
     }
 
@@ -107,7 +107,7 @@ public class GeminiService {
         try {
             List<?> candidates = (List<?>) response.get("candidates");
             if (candidates == null || candidates.isEmpty()) {
-                log.error("No candidate found in response");
+                log.error("error: No candidate found in response");
                 return null;
             }
 
@@ -121,7 +121,7 @@ public class GeminiService {
                     .findFirst();
 
             if (imagePartOpt.isEmpty()) {
-                log.error("image not found");
+                log.error("error: image not found");
                 return null;
             }
 

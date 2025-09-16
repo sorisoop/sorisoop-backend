@@ -33,8 +33,10 @@ public class CustomFairyTaleConsumer {
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("동화 생성 실패 : {}", e.getMessage());
             notificationService.sendToUser(request.getProfileId(), "죄송합니다. 동화 생성을 실패했습니다.");
+            //notificationService.sendToUser(request.getProfileId(), "동화 생성을 완료했습니다.");
+
         }
     }
 }
