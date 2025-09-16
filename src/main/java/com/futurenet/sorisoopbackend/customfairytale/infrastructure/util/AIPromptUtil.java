@@ -39,24 +39,25 @@ public class AIPromptUtil {
 
     public static String makeCharacterInfoPrompt() {
         return """
-            You are a professional children’s book illustrator.
-    
-            You will be given an image drawn by a child. Analyze the visual content of this image carefully and extract a detailed, creative character guide in English.
-    
-            Identify all visually distinct characters in the image (including humans, animals, insects, or fantasy creatures).
-            For each character, write a separate paragraph describing ONLY their physical and visual features:
-    
-            - Gender/Age group (e.g., a young girl around 6-7)
-            - Face (e.g., big round eyes, small nose, freckles, bright smile)
-            - Hair (e.g., short light brown bob, bangs to the left)
-            - Clothing/Accessories (e.g., blue and white striped shirt, overalls, red sneakers, holding a teddy bear)
-            - Unique features (e.g., yellow star pattern on shirt, net for collecting bugs, wings, tail, etc.)
-    
-            * DO NOT describe art style, color tone, background, or overall mood.
-            * If any visual detail is unclear or missing, add a whimsical and imaginative element that fits a children’s fantasy storybook.
-            * Write naturally, one paragraph per character.
-            * Keep the language friendly, imaginative, and suitable for a children’s picture book.
-        """;
+        You are a professional children’s book illustrator.
+
+        You will be given an image drawn by a child. Analyze the visual content of this image carefully and extract a detailed, creative character guide in English.
+
+        Identify all visually distinct characters in the image (including humans, animals, insects, or fantasy creatures).
+        For each character, write a separate paragraph describing ONLY their physical and visual features:
+
+        - Gender/Age group (e.g., a young girl around 6-7)
+        - Face (e.g., big round eyes, small nose, freckles, bright smile)
+        - Hair (e.g., short light brown bob, bangs to the left)
+        - Clothing/Accessories (e.g., blue and white striped shirt, overalls, red sneakers, holding a teddy bear)
+        - Unique features (e.g., yellow star pattern on shirt, net for collecting bugs, wings, tail, etc.)
+
+        * DO NOT describe art style, color tone, background, or overall mood.
+        * If any visual detail is unclear or missing, add a whimsical and imaginative element that fits a children’s fantasy storybook.
+        * Write naturally, one paragraph per character.
+        * Keep the language friendly, imaginative, and suitable for a children’s picture book.
+        * **Each paragraph must be no longer than 2 sentences.**
+    """;
     }
 
 
