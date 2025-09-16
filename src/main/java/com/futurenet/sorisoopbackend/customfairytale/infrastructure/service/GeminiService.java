@@ -88,14 +88,19 @@ public class GeminiService {
                 )
         );
 
-        return webClient.post()
-                .uri(GEMINI_API_URL + apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .map(this::extractBase64FromResponse)
-                .block();
+        try {
+            return webClient.post()
+                    .uri(GEMINI_API_URL + apiKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(body)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .map(this::extractBase64FromResponse)
+                    .block();
+        } catch (CustomFairyTaleException e) {
+            log.warn("Reference image generation failed, fallback to text-only image prompt");
+            return null; // 실패 시 그냥 null 리턴
+        }
     }
 
     private String extractBase64FromResponse(Map<String, Object> response) {
@@ -103,7 +108,7 @@ public class GeminiService {
             List<?> candidates = (List<?>) response.get("candidates");
             if (candidates == null || candidates.isEmpty()) {
                 log.error("No candidate found in response");
-                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
+                return null;
             }
 
             Map<?, ?> firstCandidate = (Map<?, ?>) candidates.get(0);
@@ -117,7 +122,7 @@ public class GeminiService {
 
             if (imagePartOpt.isEmpty()) {
                 log.error("image not found");
-                throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
+                return null;
             }
 
             Map<String, Object> inlineData = (Map<String, Object>) imagePartOpt.get().get("inlineData");
