@@ -108,6 +108,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
             int result = customFairyTaleRepository.saveCustomFairyTale(saveCustomFairyTaleRequest);
 
             if (result == 0) {
+                log.error("동화 저장 실패");
                 throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SAVE_CUSTOM_FAIRY_TALE_FAIL);
             }
 
@@ -133,6 +134,7 @@ public class MakeFairyTaleServiceImpl implements MakeFairyTaleService {
         int result = customFairyTaleContentRepository.saveCustomFairyTaleContents(contentRequests);
 
         if (result != contentRequests.size()) {
+            log.error("동화 내용 저장 실패");
             throw new CustomFairyTaleException(CustomFairyTaleErrorCode.SAVE_CUSTOM_FAIRY_TALE_CONTENT_FAIL);
         }
 

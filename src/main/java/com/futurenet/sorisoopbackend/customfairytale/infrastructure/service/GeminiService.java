@@ -6,6 +6,7 @@ import com.futurenet.sorisoopbackend.customfairytale.dto.MakeCustomFairyTaleCont
 import com.futurenet.sorisoopbackend.customfairytale.infrastructure.util.AIPromptUtil;
 import com.futurenet.sorisoopbackend.global.constant.FolderNameConstant;
 import com.futurenet.sorisoopbackend.global.infrastructure.service.AmazonS3Service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,6 +20,7 @@ import reactor.core.scheduler.Schedulers;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
+@Slf4j
 @Service
 public class GeminiService {
 
@@ -100,6 +102,7 @@ public class GeminiService {
         try {
             List<?> candidates = (List<?>) response.get("candidates");
             if (candidates == null || candidates.isEmpty()) {
+                log.error("No candidate found in response");
                 throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
             }
 
@@ -113,6 +116,7 @@ public class GeminiService {
                     .findFirst();
 
             if (imagePartOpt.isEmpty()) {
+                log.error("image not found");
                 throw new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL);
             }
 
