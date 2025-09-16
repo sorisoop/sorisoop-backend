@@ -144,7 +144,7 @@ public class AIPromptUtil {
         - Story Description: %s
 
         [Illustration Requirements]
-        - The character must **exactly match** the appearance and style of the provided reference image (same face, clothing, colors, and proportions).
+        - If a reference image is provided, the character must match its appearance and style. Otherwise, use the Character Guide as the design basis.
         - The character should be **performing the specified action** as naturally and clearly as possible.
         - Use the reference image as a **visual baseline**, and extend it to a dynamic scene where the character is in action.
         - The emotional state should be reflected through facial expression and body posture.

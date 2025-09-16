@@ -16,8 +16,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
 import java.io.ByteArrayInputStream;
+import java.time.Duration;
 import java.util.*;
 
 @Slf4j
@@ -39,6 +41,7 @@ public class GeminiService {
     }
 
     public List<MakeCustomFairyTaleContentDto> generateImages(List<MakeCustomFairyTaleContentDto> pages, String characterGuide, String characterReferenceImage) {
+        log.info("동화 이미지 생성 시작");
         return Flux.fromIterable(pages)
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
@@ -61,31 +64,69 @@ public class GeminiService {
             )));
         }
 
-        Map<String, Object> body = Map.of("contents", List.of(Map.of("parts", parts)));
+        Map<String, Object> body = Map.of("contents", List.of(Map.of(
+                "role", "user",
+                "parts", parts
+        )));
 
+//        return webClient.post()
+//                .uri(GEMINI_API_URL + apiKey)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .bodyValue(body)
+//                .retrieve()
+//                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+//                .map(this::extractBase64FromResponse)
+//                .flatMap(base64 -> {
+//                    byte[] imageBytes = Base64.getDecoder().decode(base64);
+//                    ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+//                    String s3Url = amazonS3Service.uploadImage(inputStream, FolderNameConstant.CUSTOM_FAIRY_TALE, "png");
+//                    page.setImageUrl(s3Url);
+//                    return Mono.just(page);
+//                });
         return webClient.post()
                 .uri(GEMINI_API_URL + apiKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                .map(this::extractBase64FromResponse)
-                .flatMap(base64 -> {
-                    byte[] imageBytes = Base64.getDecoder().decode(base64);
-                    ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
-                    String s3Url = amazonS3Service.uploadImage(inputStream, FolderNameConstant.CUSTOM_FAIRY_TALE, "png");
-                    page.setImageUrl(s3Url);
+                .flatMap(response -> {
+                    String base64 = extractBase64FromResponse(response);
+                    if (base64 == null) {
+                        log.error("Gemini 응답에서 이미지 base64 데이터를 찾을 수 없습니다 (page: {})", page.getPage());
+                        return Mono.error(new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL));
+                    }
+
+                    try {
+                        byte[] imageBytes = Base64.getDecoder().decode(base64);
+                        ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+                        String s3Url = amazonS3Service.uploadImage(inputStream, FolderNameConstant.CUSTOM_FAIRY_TALE, "png");
+                        page.setImageUrl(s3Url);
+                        return Mono.just(page);
+                    } catch (Exception e) {
+                        log.error("이미지 디코딩 또는 업로드 실패 (page: {})", page.getPage(), e);
+                        return Mono.error(new CustomFairyTaleException(CustomFairyTaleErrorCode.GEMINI_IMAGE_GENERATE_FAIL));
+                    }
+                })
+                .retryWhen(
+                        Retry.backoff(3, Duration.ofSeconds(2)) // 최대 3회, 2초 간격 지수 백오프
+                                .filter(ex -> ex instanceof CustomFairyTaleException || ex instanceof RuntimeException)
+                                .onRetryExhaustedThrow((retryBackoffSpec, signal) -> signal.failure())
+                )
+                .onErrorResume(ex -> {
+                    log.error("이미지 생성 실패 (page: {}) - 재시도 후에도 실패: {}", page.getPage(), ex.getMessage());
                     return Mono.just(page);
                 });
     }
 
     public String generateReferenceImageBase64(String characterGuide) {
+        log.info("가이드 이미지 생성 시작");
         String prompt = AIPromptUtil.makeReferenceImagePrompt(characterGuide);
 
         Map<String, Object> body = Map.of(
                 "contents", List.of(Map.of(
-                        "parts", List.of(Map.of("text", prompt)))
-                )
+                        "role", "user",
+                        "parts", List.of(Map.of("text", prompt))
+                ))
         );
 
         try {
