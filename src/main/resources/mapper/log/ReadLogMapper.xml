@@ -28,6 +28,7 @@
           AND book_id = #{bookId}
           AND TRUNC(created_at) BETWEEN #{startDate} AND #{endDate}
         AND type = 'FAIRY_TALE'
+        ORDER BY page;
     </select>
 
     <select id="getReadBookIdsByCategoryAndDate">
