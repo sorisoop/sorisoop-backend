@@ -60,150 +60,156 @@ public class AIPromptUtil {
     """;
     }
 
-    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
-        return String.format("""
-    You are a professional children's book author.
-
-    Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
-
-    "%s"
-
-    Requirements:
-    - The story must have 7 scenes(pages)
-    - Each scene should be logically connected and flow smoothly as part of the overall narrative.
-    - Each scene must be described in a narrative style (NO dialogue or direct speech).
-    - Follow a classic story arc:
-      1. Introduction (setting, character intro)
-      2. Inciting Incident (something unexpected happens)
-      3. Rising Action (challenge or decision emerges)
-      4. Climax (most intense or magical moment)
-      5. Falling Action (consequences or solution unfold)
-      6. Resolution (things settle, emotional closure)
-      7. Final Scene (positive ending or imaginative twist)
-
-    Character Rule:
-    - The **main character of the story must be the central figure described in the given concept**.
-    - This character should appear in **every scene** and be the focus of the action and emotional journey.
-
-    Each scene must describe:
-    - Who is present
-    - What is happening
-    - Emotional state of the character(s)
-    - Visual/background elements for illustration
-    - **The main character's action or pose (e.g., 'The girl is reaching for a glowing star', 'The dragon is flying above the trees')**
-
-    Emphasize:
-    - Strong sense of change or progress between each page
-    - Creative, child-friendly language and ideas
-    - Positive and peaceful resolutions to any conflict
-    - The 7 scenes must be **logically and causally connected**. Each scene must continue naturally from the previous one.
-    - Characters should **remember what happened before**, and scenes must reflect cause-and-effect changes based on previous events.
-
-    Additional Requirement:
-    - The story must convey a **clear and meaningful lesson** (moral/insight) throughout the entire arc — not only at the end.
-    - As the story progresses, the **characters should learn, grow, or realize something important**, reflecting the concept above.
-    - Do NOT insert the lesson as an explanation; instead, let it emerge naturally through the characters’ actions and events.
-    - Make sure the final scene reinforces or completes this lesson in a satisfying and child-appropriate way.
-
-    Categorize the story using one of the following categories, and output the corresponding number:
-    1 - Science
-    2 - Animals
-    3 - Adventure
-    4 - Daily Life
-    5 - History
-    6 - Food
-    7 - Nature
-
-    Output format (JSON, title in Korean, other fields in English and Korean):
-
-    {
-      "title": "동화 제목 (한글로)",
-      "categoryId": 3,
-      "pages": [
-        {
-          "page": 1,
-          "contentKr": "...",
-          "contentEn": "...",
-          "sceneType": "introduction",
-          "emotion": "curious",
-          "action": "The boy is holding a wooden sword and looking around the forest."
-        },
-        ...
-      ]
-    }
-
-    * Output ONLY valid JSON.
-    * Use imaginative, child-appropriate language.
-    * Do not include explanations or extra text.
-    * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
-    """, age, concept);
-    }
-
 //    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
 //        return String.format("""
-//            You are a professional children's book author.
+//    You are a professional children's book author.
 //
-//            Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
+//    Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
 //
-//            "%s"
+//    "%s"
 //
-//            Requirements:
-//            - The story must have 7 scenes (pages), each as a **distinct story beat** with clear progress or change.
-//            - Each scene must be described in a narrative style (NO dialogue or direct speech).
-//            - Follow a classic story arc:
-//              1. Introduction (setting, character intro)
-//              2. Inciting Incident (something unexpected happens)
-//              3. Rising Action (challenge or decision emerges)
-//              4. Climax (most intense or magical moment)
-//              5. Falling Action (consequences or solution unfold)
-//              6. Resolution (things settle, emotional closure)
-//              7. Final Scene (positive ending or imaginative twist)
+//    Requirements:
+//    - The story must have 7 scenes(pages)
+//    - Each scene should be logically connected and flow smoothly as part of the overall narrative.
+//    - Each scene must be described in a narrative style (NO dialogue or direct speech).
+//    - Follow a classic story arc:
+//      1. Introduction (setting, character intro)
+//      2. Inciting Incident (something unexpected happens)
+//      3. Rising Action (challenge or decision emerges)
+//      4. Climax (most intense or magical moment)
+//      5. Falling Action (consequences or solution unfold)
+//      6. Resolution (things settle, emotional closure)
+//      7. Final Scene (positive ending or imaginative twist)
 //
-//            Each scene must describe:
-//            - Who is present
-//            - What is happening
-//            - Emotional state of the character(s)
-//            - Visual/background elements for illustration
-//            **The main character's action or pose (e.g., 'The girl is reaching for a glowing star', 'The dragon is flying above the trees')**
+//    Character Rule:
+//    - The **main character of the story must be the central figure described in the given concept**.
+//    - This character should appear in **every scene** and be the focus of the action and emotional journey.
 //
-//            Emphasize:
-//            - Strong sense of change or progress between each page
-//            - Creative, child-friendly language and ideas
-//            - Positive and peaceful resolutions to any conflict
+//    Each scene must describe:
+//    - Who is present
+//    - What is happening
+//    - Emotional state of the character(s)
+//    - Visual/background elements for illustration
+//    - **The main character's action or pose (e.g., 'The girl is reaching for a glowing star', 'The dragon is flying above the trees')**
 //
-//            Categorize the story using one of the following categories, and output the corresponding number:
-//            1 - Science
-//            2 - Animals
-//            3 - Adventure
-//            4 - Daily Life
-//            5 - History
-//            6 - Food
-//            7 - Nature
+//    Emphasize:
+//    - Strong sense of change or progress between each page
+//    - Creative, child-friendly language and ideas
+//    - Positive and peaceful resolutions to any conflict
+//    - The 7 scenes must be **logically and causally connected**. Each scene must continue naturally from the previous one.
+//    - Characters should **remember what happened before**, and scenes must reflect cause-and-effect changes based on previous events.
 //
-//            Output format (JSON, title in Korean, other fields in English and Korean):
+//    Additional Requirement:
+//    - The story must convey a **clear and meaningful lesson** (moral/insight) throughout the entire arc — not only at the end.
+//    - As the story progresses, the **characters should learn, grow, or realize something important**, reflecting the concept above.
+//    - Do NOT insert the lesson as an explanation; instead, let it emerge naturally through the characters’ actions and events.
+//    - Make sure the final scene reinforces or completes this lesson in a satisfying and child-appropriate way.
 //
-//            {
-//              "title": "동화 제목 (한글로)",
-//              "categoryId": 3,
-//              "pages": [
-//                {
-//                  "page": 1,
-//                  "contentKr": "...",
-//                  "contentEn": "...",
-//                  "sceneType": "introduction",
-//                  "emotion": "curious",
-//                  "action": "The boy is holding a wooden sword and looking around the forest."
-//                },
-//                ...
-//              ]
-//            }
+//    Categorize the story using one of the following categories, and output the corresponding number:
+//    1 - Science
+//    2 - Animals
+//    3 - Adventure
+//    4 - Daily Life
+//    5 - History
+//    6 - Food
+//    7 - Nature
 //
-//            * Output ONLY valid JSON.
-//            * Use imaginative, child-appropriate language.
-//            * Do not include explanations or extra text.
-//            * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
-//            """, age, concept);
+//    Output format (JSON, title in Korean, other fields in English and Korean):
+//
+//    {
+//      "title": "동화 제목 (한글로)",
+//      "categoryId": 3,
+//      "pages": [
+//        {
+//          "page": 1,
+//          "contentKr": "...",
+//          "contentEn": "...",
+//          "sceneType": "introduction",
+//          "emotion": "curious",
+//          "action": "The boy is holding a wooden sword and looking around the forest."
+//        },
+//        ...
+//      ]
 //    }
+//
+//    * Output ONLY valid JSON.
+//    * Use imaginative, child-appropriate language.
+//    * Do not include explanations or extra text.
+//    * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
+//    """, age, concept);
+//    }
+
+    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
+        return String.format("""
+                You are a professional children's book author.
+
+                Create a warm, imaginative, and emotionally meaningful fairy tale for children aged %d, based on the following concept:
+
+                "%s"
+
+                Requirements:
+                - The story must consist of exactly **7 scenes (pages)**.
+                - The entire story must follow one consistent setting, genre, and tone. Do **NOT** introduce unrelated or magical elements suddenly (e.g., random flying creatures, unexpected fantasy lands).
+                - The story must feel **realistic within the story’s own world** — imaginative is okay, but **no abrupt or illogical surprises**.
+
+                Story Flow:
+                - Each scene must be **logically and causally connected** to the previous one (cause-and-effect).
+                - The **main character must have a goal, desire, or emotional struggle** that drives the whole story.
+                - The story should follow this arc:
+                  1. Introduction (show daily life and the main character's personality or wish)
+                  2. A small problem or change appears
+                  3. The character takes action or makes a decision
+                  4. Things get more difficult (emotionally or physically)
+                  5. The character reflects, learns, or finds help
+                  6. The situation improves through effort, kindness, or understanding
+                  7. Final scene showing emotional growth, lesson learned, or peaceful ending
+
+                Scene Instructions:
+                - Each scene must describe:
+                  - Who is present
+                  - What is happening (clearly continuing from the previous scene)
+                  - How the main character feels and reacts
+                  - What is seen in the background (for illustration)
+                  - The main character's pose or action
+
+                Tone & Emotion:
+                - The story should be **calm, gentle, and emotionally engaging**.
+                - It must convey a **meaningful life lesson** (such as patience, kindness, courage, or appreciation) **through actions**, not by stating it directly.
+                - The ending must feel **emotionally satisfying**, showing that the character has **learned or grown naturally** from their journey.
+
+                Categorize the story using one of the following:
+                1 - Science
+                2 - Animals
+                3 - Adventure
+                4 - Daily Life
+                5 - History
+                6 - Food
+                7 - Nature
+
+                Output format (JSON, title in Korean, others in Korean & English):
+
+                {
+                  "title": "동화 제목 (한글로)",
+                  "categoryId": 3,
+                  "pages": [
+                    {
+                      "page": 1,
+                      "contentKr": "...",
+                      "contentEn": "...",
+                      "sceneType": "introduction",
+                      "emotion": "curious",
+                      "action": "The boy is planting a seed and looking at the sky."
+                    },
+                    ...
+                  ]
+                }
+
+                * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
+                * Output only valid JSON.
+                * Do not add explanations or Markdown formatting.
+                * Use emotionally warm and child-friendly language.
+                """, age, concept);
+    }
 
 
     public static String makeCustomFairyTaleImagePrompt(String characterGuide, String sceneType, String emotion, String content, String action) {
