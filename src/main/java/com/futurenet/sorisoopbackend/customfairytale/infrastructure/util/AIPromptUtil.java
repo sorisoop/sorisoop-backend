@@ -95,6 +95,8 @@ public class AIPromptUtil {
     - Strong sense of change or progress between each page
     - Creative, child-friendly language and ideas
     - Positive and peaceful resolutions to any conflict
+    - The 7 scenes must be **logically and causally connected**. Each scene must continue naturally from the previous one.
+    - Characters should **remember what happened before**, and scenes must reflect cause-and-effect changes based on previous events.
 
     Additional Requirement:
     - The story must convey a **clear and meaningful lesson** (moral/insight) throughout the entire arc — not only at the end.
