@@ -62,74 +62,78 @@ public class AIPromptUtil {
 
     public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
         return String.format("""
-        You are a professional children's book author.
+    You are a professional children's book author.
 
-        Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
+    Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
 
-        "%s"
+    "%s"
 
-        Requirements:
-        - The story must have 7 scenes (pages), each as a **distinct story beat** with clear progress or change.
-        - Each scene must be described in a narrative style (NO dialogue or direct speech).
-        - Follow a classic story arc:
-          1. Introduction (setting, character intro)
-          2. Inciting Incident (something unexpected happens)
-          3. Rising Action (challenge or decision emerges)
-          4. Climax (most intense or magical moment)
-          5. Falling Action (consequences or solution unfold)
-          6. Resolution (things settle, emotional closure)
-          7. Final Scene (positive ending or imaginative twist)
+    Requirements:
+    - The story must have 7 scenes (pages), each as a **distinct story beat** with clear progress or change.
+    - Each scene must be described in a narrative style (NO dialogue or direct speech).
+    - Follow a classic story arc:
+      1. Introduction (setting, character intro)
+      2. Inciting Incident (something unexpected happens)
+      3. Rising Action (challenge or decision emerges)
+      4. Climax (most intense or magical moment)
+      5. Falling Action (consequences or solution unfold)
+      6. Resolution (things settle, emotional closure)
+      7. Final Scene (positive ending or imaginative twist)
 
-        Each scene must describe:
-        - Who is present
-        - What is happening
-        - Emotional state of the character(s)
-        - Visual/background elements for illustration
-        - **The main character's action or pose (e.g., 'The girl is reaching for a glowing star', 'The dragon is flying above the trees')**
+    Character Rule:
+    - The **main character of the story must be the central figure described in the given concept**.
+    - This character should appear in **every scene** and be the focus of the action and emotional journey.
 
-        Emphasize:
-        - Strong sense of change or progress between each page
-        - Creative, child-friendly language and ideas
-        - Positive and peaceful resolutions to any conflict
+    Each scene must describe:
+    - Who is present
+    - What is happening
+    - Emotional state of the character(s)
+    - Visual/background elements for illustration
+    - **The main character's action or pose (e.g., 'The girl is reaching for a glowing star', 'The dragon is flying above the trees')**
 
-        Additional Requirement:
-        - The story must convey a **clear and meaningful lesson** (moral/insight) throughout the entire arc — not only at the end.
-        - As the story progresses, the **characters should learn, grow, or realize something important**, reflecting the concept above.
-        - Do NOT insert the lesson as an explanation; instead, let it emerge naturally through the characters’ actions and events.
-        - Make sure the final scene reinforces or completes this lesson in a satisfying and child-appropriate way.
+    Emphasize:
+    - Strong sense of change or progress between each page
+    - Creative, child-friendly language and ideas
+    - Positive and peaceful resolutions to any conflict
 
-        Categorize the story using one of the following categories, and output the corresponding number:
-        1 - Science
-        2 - Animals
-        3 - Adventure
-        4 - Daily Life
-        5 - History
-        6 - Food
-        7 - Nature
+    Additional Requirement:
+    - The story must convey a **clear and meaningful lesson** (moral/insight) throughout the entire arc — not only at the end.
+    - As the story progresses, the **characters should learn, grow, or realize something important**, reflecting the concept above.
+    - Do NOT insert the lesson as an explanation; instead, let it emerge naturally through the characters’ actions and events.
+    - Make sure the final scene reinforces or completes this lesson in a satisfying and child-appropriate way.
 
-        Output format (JSON, title in Korean, other fields in English and Korean):
+    Categorize the story using one of the following categories, and output the corresponding number:
+    1 - Science
+    2 - Animals
+    3 - Adventure
+    4 - Daily Life
+    5 - History
+    6 - Food
+    7 - Nature
 
+    Output format (JSON, title in Korean, other fields in English and Korean):
+
+    {
+      "title": "동화 제목 (한글로)",
+      "categoryId": 3,
+      "pages": [
         {
-          "title": "동화 제목 (한글로)",
-          "categoryId": 3,
-          "pages": [
-            {
-              "page": 1,
-              "contentKr": "...",
-              "contentEn": "...",
-              "sceneType": "introduction",
-              "emotion": "curious",
-              "action": "The boy is holding a wooden sword and looking around the forest."
-            },
-            ...
-          ]
-        }
+          "page": 1,
+          "contentKr": "...",
+          "contentEn": "...",
+          "sceneType": "introduction",
+          "emotion": "curious",
+          "action": "The boy is holding a wooden sword and looking around the forest."
+        },
+        ...
+      ]
+    }
 
-        * Output ONLY valid JSON.
-        * Use imaginative, child-appropriate language.
-        * Do not include explanations or extra text.
-        * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
-        """, age, concept);
+    * Output ONLY valid JSON.
+    * Use imaginative, child-appropriate language.
+    * Do not include explanations or extra text.
+    * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
+    """, age, concept);
     }
 
 //    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
