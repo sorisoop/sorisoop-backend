@@ -69,7 +69,8 @@ public class AIPromptUtil {
     "%s"
 
     Requirements:
-    - The story must have 7 scenes (pages), each as a **distinct story beat** with clear progress or change.
+    - The story must have 7 scenes(pages)
+    - Each scene should be logically connected and flow smoothly as part of the overall narrative.
     - Each scene must be described in a narrative style (NO dialogue or direct speech).
     - Follow a classic story arc:
       1. Introduction (setting, character intro)
