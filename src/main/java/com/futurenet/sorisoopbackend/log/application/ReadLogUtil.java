@@ -20,7 +20,9 @@ public class ReadLogUtil {
 
         Set<Integer> readPageSet = new HashSet<>(readPages);
         for (int page = 1; page <= pageCount; page++) {
-            if (!readPageSet.contains(page)) return false;
+            if (!readPageSet.contains(page)) {
+                return false;
+            }
         }
 
         return true;

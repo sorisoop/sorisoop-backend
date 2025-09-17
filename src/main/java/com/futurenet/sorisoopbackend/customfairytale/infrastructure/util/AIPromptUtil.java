@@ -60,6 +60,77 @@ public class AIPromptUtil {
     """;
     }
 
+    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
+        return String.format("""
+        You are a professional children's book author.
+
+        Create a complete fairy tale for children aged %d, based on the provided image and the following concept:
+
+        "%s"
+
+        Requirements:
+        - The story must have 7 scenes (pages), each as a **distinct story beat** with clear progress or change.
+        - Each scene must be described in a narrative style (NO dialogue or direct speech).
+        - Follow a classic story arc:
+          1. Introduction (setting, character intro)
+          2. Inciting Incident (something unexpected happens)
+          3. Rising Action (challenge or decision emerges)
+          4. Climax (most intense or magical moment)
+          5. Falling Action (consequences or solution unfold)
+          6. Resolution (things settle, emotional closure)
+          7. Final Scene (positive ending or imaginative twist)
+
+        Each scene must describe:
+        - Who is present
+        - What is happening
+        - Emotional state of the character(s)
+        - Visual/background elements for illustration
+        - **The main character's action or pose (e.g., 'The girl is reaching for a glowing star', 'The dragon is flying above the trees')**
+
+        Emphasize:
+        - Strong sense of change or progress between each page
+        - Creative, child-friendly language and ideas
+        - Positive and peaceful resolutions to any conflict
+
+        Additional Requirement:
+        - The story must convey a **clear and meaningful lesson** (moral/insight) throughout the entire arc — not only at the end.
+        - As the story progresses, the **characters should learn, grow, or realize something important**, reflecting the concept above.
+        - Do NOT insert the lesson as an explanation; instead, let it emerge naturally through the characters’ actions and events.
+        - Make sure the final scene reinforces or completes this lesson in a satisfying and child-appropriate way.
+
+        Categorize the story using one of the following categories, and output the corresponding number:
+        1 - Science
+        2 - Animals
+        3 - Adventure
+        4 - Daily Life
+        5 - History
+        6 - Food
+        7 - Nature
+
+        Output format (JSON, title in Korean, other fields in English and Korean):
+
+        {
+          "title": "동화 제목 (한글로)",
+          "categoryId": 3,
+          "pages": [
+            {
+              "page": 1,
+              "contentKr": "...",
+              "contentEn": "...",
+              "sceneType": "introduction",
+              "emotion": "curious",
+              "action": "The boy is holding a wooden sword and looking around the forest."
+            },
+            ...
+          ]
+        }
+
+        * Output ONLY valid JSON.
+        * Use imaginative, child-appropriate language.
+        * Do not include explanations or extra text.
+        * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
+        """, age, concept);
+    }
 
 //    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
 //        return String.format("""
@@ -126,70 +197,6 @@ public class AIPromptUtil {
 //            * Do not wrap the output with any Markdown formatting such as json or  — output only plain JSON.
 //            """, age, concept);
 //    }
-
-    public static String makeCustomFairyTaleScriptPrompt(int age, String concept) {
-        return String.format("""
-        You are a professional children's book author.
-
-        Create a complete fairy tale for children aged %d, based on the following concept:
-        "%s"
-
-        Purpose:
-        - The story must center around **a meaningful life lesson or value**.
-        - This value should **organically emerge through the character's journey**, not by directly stating it.
-        - The main character should experience **emotional or behavioral growth** by the end.
-
-        Structure:
-        The story must consist of **7 scenes (pages)**, following a classic story arc:
-        1. **Introduction** – introduce the character, world, and tone
-        2. **Inciting Incident** – something unusual or challenging happens
-        3. **Rising Action** – the character struggles, reacts, or sets out
-        4. **Climax** – a big decision, realization, or intense moment
-        5. **Falling Action** – things begin to change or improve
-        6. **Resolution** – the situation settles, the value is reflected
-        7. **Final Scene** – a hopeful or imaginative closure showing growth
-
-        The value/lesson must be subtle yet clear, such as:
-        - "Kindness brings unexpected rewards"
-        - "Courage means trying even when afraid"
-        - "True friendship is about understanding"
-
-        Each scene must describe:
-        - Who is present
-        - What is happening
-        - The emotional state of the character(s)
-        - Visual/background details suitable for children’s illustration
-        - **The main character’s action or pose** (e.g., “The girl is gently placing the flower on the robot’s chest”)
-
-        Additional Requirements:
-        - No dialogue. Use storybook-style narration.
-        - Use vivid, imaginative, and age-appropriate language.
-        - Ensure **clear development** of the character across the 7 pages.
-        - Make sure the story naturally communicates its message through action and experience.
-
-        Categorize the story using one of the following:
-        1 - Science / 2 - Animals / 3 - Adventure / 4 - Daily Life / 5 - History / 6 - Food / 7 - Nature
-
-        Output format (only valid JSON — no extra text or Markdown):
-        Output format (JSON, title in Korean, other fields in English and Korean):
-
-        {
-          "title": "동화 제목 (한글)",
-          "categoryId": 3,
-          "pages": [
-            {
-              "page": 1,
-              "contentKr": "...",
-              "contentEn": "...",
-              "sceneType": "introduction",
-              "emotion": "curious",
-              "action": "The boy is holding a wooden sword and looking around the forest."
-            },
-            ...
-          ]
-        }
-        """, age, concept);
-    }
 
 
     public static String makeCustomFairyTaleImagePrompt(String characterGuide, String sceneType, String emotion, String content, String action) {

@@ -205,9 +205,11 @@ public class MissionServiceImpl implements MissionService {
 
         int successCount = 0;
         for (Long bookId : bookIds) {
+            System.out.println(bookId);
             int pageCount = fairyTaleRepository.getPageCountByBookId(bookId);
+            System.out.println(pageCount);
             boolean isComplete = readLogUtil.isFullyRead(childProfileId, bookId, pageCount, startDate, endDate);
-
+            System.out.println(isComplete);
             if (isComplete) successCount++;
         }
 
