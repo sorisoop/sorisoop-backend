@@ -153,6 +153,7 @@ public class AIPromptUtil {
                 - The story must feel **realistic within the story’s own world** — imaginative is okay, but **no abrupt or illogical surprises**.
 
                 Story Flow:
+                - The main character must be the character shown in the reference image, and this character must appear in the **first page (scene 1)** without exception.
                 - Each scene must be **logically and causally connected** to the previous one (cause-and-effect).
                 - The **main character must have a goal, desire, or emotional struggle** that drives the whole story.
                 - The story should follow this arc:
