@@ -38,21 +38,21 @@
 
 ### 📌 주요기능 소개
 
-#### 💡 쇼핑몰 기본 기능
-상품 조회, 장바구니 담기, 결제 등 쇼핑몰 기본 기능을 이용할 수 있습니다.
+#### 💡 일반 동화 관련 기능
+동화 보기, TTS 동화 낭독, 동화 찜하기, 동화 검색과 같은 기능을 이용할 수 있습니다.
 
 <table>
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">메인 페이지</p>
-  <img src="https://github.com/user-attachments/assets/216f4113-a210-4041-baf1-953aca8cdb9f" width="220px" />
+<p style="font-weight: bold">동화 보기</p>
+  <img src="https://github.com/user-attachments/assets/10b68541-3b95-41bd-a024-f059dbcbdd50" height="300px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">상품 상세 조회</p>
-  <img src="https://github.com/user-attachments/assets/050fa452-2080-423c-a0b9-82275b52c49a" width="215px" />
+<p style="font-weight: bold">TTS 동화 낭독</p>
+  <img src="https://github.com/user-attachments/assets/a16c04b8-3aee-4cb6-8a90-6f1cf80cc211" height="280px" />
 </div>
 </td>
 </tr>
@@ -62,20 +62,14 @@
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">친환경 상품 조회</p>
-  <img src="https://github.com/user-attachments/assets/9e7d8246-725a-4491-a6b2-77dd6eeee136" width="220px" />
+<p style="font-weight: bold">동화 찜하기</p>
+  <img src="https://github.com/user-attachments/assets/41aeaa9b-f490-4d24-b1ee-89c9eec5dba0" height="300px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">장바구니 기능</p>
-  <img src="https://github.com/user-attachments/assets/5a8abe7f-8ed9-46e9-b20a-9752539b86f5" width="220px" />
-</div>
-</td>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">상품 주문 기능</p>
-  <img src="https://github.com/user-attachments/assets/c907d872-d2ce-4a00-8a7b-e5ba09bb24e2" width="210px" />
+<p style="font-weight: bold">동화 검색하기</p>
+  <img src="https://github.com/user-attachments/assets/d2c015fc-e2ab-4595-b970-7a86b646a535" height="300px" />
 </div>
 </td>
 </tr>
@@ -83,18 +77,69 @@
 
 <hr>
 
-#### 💡 상품 추천 기능
-사용자의 활동 로그(구매 이력, 검색 기록 등)를 바탕으로 상품을 추천합니다.
-<br>
-활동 로그가 없는 경우 나이, 성별을 바탕으로 추천하여 콜드스타트 문제를 해결했습니다.
-<br>
+#### 💡 동화 생성 기능
+아이가 그린 그림을 바탕으로 생성형 AI를 활용해 동화를 생성합니다.
 
 <table>
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">산책 기능</p>
-  <img src="https://github.com/user-attachments/assets/cc7bf8dc-3eab-4e52-89cc-92a4b342cc94" width="220px" />
+<p style="font-weight: bold">그림 그리기</p>
+  <img src="https://github.com/user-attachments/assets/af5c58a1-57bf-4074-8741-e69e27dad645" height="300px" />
+</div>
+</td>
+  <td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">그림 기반 동화 생성</p>
+  <img src="https://github.com/user-attachments/assets/a9c67a6a-2cd4-4d49-b6da-912193bfa779" height="300px" />
+</div>
+</td>
+</tr>
+</table>
+
+<hr>
+
+#### 💡 독서 미션 기능
+아이에게 독서 미션을 부여할 수 있습니다.
+<br>
+특정 동화 읽기, 특정 카테고리 읽기, 동화 만들기와 같은 미션을 만들 수 있습니다.
+
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">미션 생성</p>
+  <img src="https://github.com/user-attachments/assets/939cf306-3313-4ee9-8917-e204f1d2df0b" height="300px" />
+</div>
+</td>
+  <td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">미션 조회</p>
+  <img src="https://github.com/user-attachments/assets/f8a29f28-b675-4224-9307-db2ed4ee8849" height="300px" />
+</div>
+</td>
+</tr>
+</table>
+
+<hr>
+
+#### 💡 3D 미술관 체험 기능
+3D 미술관을 체험할 수 있는 기능입니다.
+<br>
+3D 기반 미술 작품을 통해 사용자의 시각적으로 풍부한 경험을 제공합니다.
+
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">3D 미술관 탐방</p>
+  <img src="https://github.com/user-attachments/assets/f74e622b-8f5f-4e0f-8394-ea2ea7a2b11d" height="300px" />
+</div>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">미술 작품 체험</p>
+  <img src="https://github.com/user-attachments/assets/6059017d-c269-4aba-8a39-4d085c715cf4" height="300px" />
 </div>
 </td>
 </tr>
@@ -103,78 +148,18 @@
 
 <hr>
 
-#### 💡 특가 할인 기능
-매일 오후 7시 ~ 8시 사이 특가 이벤트를 합니다.
+
+#### 💡 구독하기 기능
+동화 생성하기 등 특정 서비스를 이용하기 위한 구독 기능입니다.
 <br>
-트래픽이 몰리는 상황에 대비하여 리팩토링과 부하테스트를 진행했습니다.
-<br>
-
-| 담당자 | 주요 기여 | 기술 스택 | 개선 효과 |
-|--------|-----------|------------|------------|
-| **원승현** | 재고 선차감 처리 로직 개선 | Redis, Lua Script | <ul><li>에러율: 20% → **1%**</li><li>TPS: 75 -> **155**</li></ul> |
-| **한상준** | 주문 순차 처리 시스템 설계 | Java `BlockingQueue` | <ul><li>에러율: 20% → **0%**, 커넥션 풀 고갈 현상 완화</li><li>응답 시간 증가(큐 대기 발생)</li></ul> |
-
-
-<table>
-<tr>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">산책 기록</p>
-  <img src="https://github.com/user-attachments/assets/52313ae3-53b5-4ce4-8f3a-8bb3cdc071e7" width="220px" />
-</div>
-</td>
-</tr>
-</table>
-
-<hr>
-
-#### 💡 나무 키우기 기능
-친환경 상품을 구매하면 얻을 수 있는 그린 포인트로 3D 나무를 키울 수 있습니다.
-<br>
-사용자는 이 과정을 통해 환경에 기여하고 있다는 몰입형 경험을 할 수 있습니다.
-<br>
-특정 레벨을 달성하면 리워드를 얻을 수 있습니다.
-
-<table>
-<tr>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">나무 키우기 기능</p>
-  <img src="https://github.com/user-attachments/assets/f490faa1-477f-4fa2-8fe4-7f68aca12be2" width="220px" />
-</div>
-</td>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">리워드 확인</p>
-  <img src="https://github.com/user-attachments/assets/ee492c93-6d16-4ea1-98c6-daa4a488b2be" width="220px" />
-</div>
-</td>
-</tr>
-</table>
-
-<hr>
-
-#### 💡 관리자 대시보드
-서비스 운영 현황을 시각화해 제공하는 관리자 전용 대시보드입니다.
-<br>
-상품 판매 데이터를 기반으로 카테고리, 연령대, 성별 기준의 통계를 제공하는 분석 리포트를 제공합니다.
+1개월 구독과 1년 구독을 제공합니다.
 
 <table>
 <tr>
 <td width="100%" valign="top">
 <div>
-<p style="font-weight: bold">관리자 대시보드</p>
-  <img src="https://github.com/user-attachments/assets/4ab0a912-18db-4d29-98e6-8f740eb71d6e" width="700px" />
-</div>
-</td>
-</tr>
-</table>
-<table>
-<tr>
-<td width="100%" valign="top">
-<div>
-<p style="font-weight: bold">분석 리포트</p>
-  <img src="https://github.com/user-attachments/assets/1d626536-e20e-4abd-8d27-fef25316ead1" width="700px" />
+<p style="font-weight: bold">서비스 구독</p>
+  <img src="https://github.com/user-attachments/assets/fe41a3fd-f602-4f3c-94ff-d6210c410997" height="500px" />
 </div>
 </td>
 </tr>
