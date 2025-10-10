@@ -2,37 +2,36 @@
 
 
 <p align="center">
-  <img width="80%" src="https://github.com/user-attachments/assets/0ae946d9-1163-40cc-afc8-d446e2ec1493" alt="Description">
+  <img width="80%" src="https://github.com/user-attachments/assets/ef8fcbf2-56e4-4dbe-9370-941d82e9e91b" alt="Description">
 </p>
 
 
 ## 🌈 프로젝트 소개
 
 ### 🔗 서비스 주소  
-[**https://cotree.n-e.kr**](https://cotree.n-e.kr)
+[**https://sorisoop.n-e.kr**](https://sorisoop.n-e.kr)
 
 ### 🎈 서비스 개요
-**[친환경 소비 유도 쇼핑몰]**
+**[AI 기반 맞춤형 동화 플랫폼]**
 
-코트리는 친환경 소비를 쉽게 실천할 수 있도록 돕는 쇼핑 기반 ESG 실천 서비스입니다.
-상품 목록에 ‘친환경’ 라벨이 부착되어 사용자가 별도의 학습 없이도 친환경 제품을 인지하고 선택할 수 있으며, 개인 맞춤 추천에서도 친환경 여부가 시각적으로 강조됩니다.
-
-또한 사용자가 친환경 제품을 구매할 때마다 포인트가 적립되고, 이 포인트는 3D 나무 성장 애니메이션으로 전환되어 작은 실천이 누적되는 과정을 시각적으로 체감할 수 있습니다.
-해당 구조는 단순한 정보 제공을 넘어 소비 행동을 유도하고, 그 결과를 데이터로 남겨 기업과 사용자가 함께 지속가능한 순환 구조를 만들어갑니다.
+소리숲은 AI를 활용하여 아이에게 맞춤형 독서 경험을 제공하는 동화플랫폼입니다.
+<br>
+아이가 그린 그림을 바탕으로 새로운 동화를 생성하고, 부모의 목소리를 적용한 낭독 기능과 접근성을 고려한 서비스 설계를 통해 특별한 독서 경험을 즐길 수 있습니다.
+<br>
+또한 3D 가상 전시 기능을 통해 예술 작품을 입체적으로 감상할 수 있는 디지털 전시 공간을 제공하므로써 아이의 창의력과 표현력을 자연스럽게 확장하고, 창작의 즐거움을 경험할 수 있도록 하였습니다.
 
 <br>
 
 ### 📆 진행 기간 
-2025.6 - 2024.7 ( 2주 )
+2025.8 - 2024.9 ( 6주 )
 
 <br>
   
 ### 👨🏻‍💻 개발 인원
 
-|         <img src="https://github.com/hyeon8571.png" width="150">          |   <img src="https://github.com/sangzun-han.png" width="150">   | <img src="https://github.com/aswe0409.png" width="150">   |
+|         <img src="https://github.com/sangzun-han.png" width="150">          |   <img src="https://github.com/hyeon8571.png" width="150">   | <img src="https://github.com/aswe0409.png" width="150">   |
 | :----------------------------------------------------------------------: | :---------------------------------------------------------: | :---------------------------------------------------------: |
-| [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`팀장` | [한상준<br>@sangzun-han](https://github.com/sangzun-han)<br/>`팀원` | [정석영<br>@aswe0409](https://github.com/aswe0409)<br/>`팀원` |
-
+| [한상준<br>@sangzun-han](https://github.com/sangzun-han)<br/>`팀장` | [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`팀원` | [정석영<br>@aswe0409](https://github.com/aswe0409)<br/>`팀원` |
 
 
 <br>
@@ -208,7 +207,6 @@
 **데이터베이스**
 <div>
   <span><img src="https://img.shields.io/badge/Oracle-F80000?style=flat-square&logo=oracle&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white"/></span>
 </div>
 
 <br>
@@ -216,15 +214,18 @@
 **인프라 및 배포**
 <div>
   <span><img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/AWS EC2-FF9900?style=flat-square&logo=amazonec2&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/jenkins-%232C5263.svg?style=flat-square&logo=jenkins&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/Oracle-F80000?style=flat-square&logo=oracle&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/AWS-FF9900?style=flat-square&logo=amazonec2&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white"/></span>
 </div>
 
 <br>
 
-**모니터링**
-<div> <span><img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white"/></span> <span><img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white"/></span> </div>
+**메시지 큐**
+<div>
+  <span><img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq&logoColor=white"/></span>
+</div>
 
 <br>
 
@@ -232,8 +233,7 @@
 
 ## <img align="center" width="50" src="https://github.com/user-attachments/assets/2e9357e9-30a3-4de4-9db6-b753a952ec55"> 시스템 아키텍처
 <p align="center">
-  <img width="80%" src="https://github.com/user-attachments/assets/95288d44-2500-4b8a-8ee7-ce4ff2cbfad9"> 
+  <img width="80%" src="https://github.com/user-attachments/assets/7fee11e5-caee-4e28-95f0-3997043c1262"> 
 </p>
-
 
 
